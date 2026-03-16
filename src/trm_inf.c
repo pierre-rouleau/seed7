@@ -259,7 +259,7 @@ static void fix_capability (void)
     home_dir_len = strlen(home_dir_path);
     terminal_name_len = strlen(terminal_name);
     if (terminal_name_len > MAX_MEMSIZETYPE - 6 ||
-	home_dir_len > MAX_MEMSIZETYPE - 6 - terminal_name_len) {
+        home_dir_len > MAX_MEMSIZETYPE - 6 - terminal_name_len) {
       /* The computation of file_name_len would overflow. */
       file_name_len = 0;
     } else {
