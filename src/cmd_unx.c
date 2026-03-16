@@ -145,6 +145,7 @@ striType getExecutablePath (const const_striType arg_0)
     if (executablePath == NULL) {
       err_info = OKAY_NO_ERROR;
 #endif
+      /* All calls of getExecutablePath() assure that arg_0 is never NULL. */
       if (strChPos(arg_0, (charType) '/') == 0) {
         executablePath = examineSearchPath(arg_0);
       } else if (arg_0->size >= 1 && arg_0->mem[0] == (charType) '/') {
