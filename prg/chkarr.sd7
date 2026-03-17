@@ -118,529 +118,94 @@ const func boolean: raisesIndexError (in proc: statement) is func
   end func;
 
 
-const func boolean: raisesIndexError (in func boolean: expression) is func
-  result
-    var boolean: raisesIndexError is FALSE;
-  local
-    var boolean: exprResult is FALSE;
+const proc: DECLARE_RAISES_INDEX_ERROR (in type: aType) is func
   begin
-    block
-      exprResult := expression;
-    exception
-      catch INDEX_ERROR:
-        raisesIndexError := TRUE;
-    end block;
+
+    const func boolean: raisesIndexError (in func aType: expression) is func
+      result
+        var boolean: raisesIndexError is FALSE;
+      local
+        var aType: exprResult is aType.value;
+      begin
+        block
+          exprResult := expression;
+        exception
+          catch INDEX_ERROR:
+            raisesIndexError := TRUE;
+        end block;
+      end func;
+
+    const func boolean: raisesIndexError (ref varfunc aType: expression) is func
+      result
+        var boolean: raisesIndexError is FALSE;
+      local
+        var aType: exprResult is aType.value;
+      begin
+        block
+          exprResult := expression;
+        exception
+          catch INDEX_ERROR:
+            raisesIndexError := TRUE;
+        end block;
+      end func;
+
+    const func boolean: raisesIndexError (in func array aType: expression) is func
+      result
+        var boolean: raisesIndexError is FALSE;
+      local
+        var array aType: exprResult is 0 times aType.value;
+      begin
+        block
+          exprResult := expression;
+        exception
+          catch INDEX_ERROR:
+            raisesIndexError := TRUE;
+        end block;
+      end func;
+
   end func;
 
 
-const func boolean: raisesIndexError (in func integer: expression) is func
-  result
-    var boolean: raisesIndexError is FALSE;
-  local
-    var integer: exprResult is 0;
+DECLARE_RAISES_INDEX_ERROR(boolean);
+DECLARE_RAISES_INDEX_ERROR(integer);
+DECLARE_RAISES_INDEX_ERROR(bigInteger);
+DECLARE_RAISES_INDEX_ERROR(float);
+DECLARE_RAISES_INDEX_ERROR(complex);
+DECLARE_RAISES_INDEX_ERROR(char);
+DECLARE_RAISES_INDEX_ERROR(string);
+DECLARE_RAISES_INDEX_ERROR(bstring);
+DECLARE_RAISES_INDEX_ERROR(bitset);
+
+
+const proc: DECLARE_RAISES_RAMGE_ERROR (in type: aType) is func
   begin
-    block
-      exprResult := expression;
-    exception
-      catch INDEX_ERROR:
-        raisesIndexError := TRUE;
-    end block;
+
+    const func boolean: raisesRangeError (in func array aType: expression) is func
+      result
+        var boolean: raisesRangeError is FALSE;
+      local
+        var array aType: exprResult is 0 times aType.value;
+      begin
+        block
+          exprResult := expression;
+        exception
+          catch RANGE_ERROR:
+            raisesRangeError := TRUE;
+        end block;
+      end func;
+
   end func;
 
 
-const func boolean: raisesIndexError (in func bigInteger: expression) is func
-  result
-    var boolean: raisesIndexError is FALSE;
-  local
-    var bigInteger: exprResult is 0_;
-  begin
-    block
-      exprResult := expression;
-    exception
-      catch INDEX_ERROR:
-        raisesIndexError := TRUE;
-    end block;
-  end func;
-
-
-const func boolean: raisesIndexError (in func float: expression) is func
-  result
-    var boolean: raisesIndexError is FALSE;
-  local
-    var float: exprResult is 0.0;
-  begin
-    block
-      exprResult := expression;
-    exception
-      catch INDEX_ERROR:
-        raisesIndexError := TRUE;
-    end block;
-  end func;
-
-
-const func boolean: raisesIndexError (in func complex: expression) is func
-  result
-    var boolean: raisesIndexError is FALSE;
-  local
-    var complex: exprResult is complex.value;
-  begin
-    block
-      exprResult := expression;
-    exception
-      catch INDEX_ERROR:
-        raisesIndexError := TRUE;
-    end block;
-  end func;
-
-
-const func boolean: raisesIndexError (in func char: expression) is func
-  result
-    var boolean: raisesIndexError is FALSE;
-  local
-    var char: exprResult is ' ';
-  begin
-    block
-      exprResult := expression;
-    exception
-      catch INDEX_ERROR:
-        raisesIndexError := TRUE;
-    end block;
-  end func;
-
-
-const func boolean: raisesIndexError (in func string: expression) is func
-  result
-    var boolean: raisesIndexError is FALSE;
-  local
-    var string: exprResult is "";
-  begin
-    block
-      exprResult := expression;
-    exception
-      catch INDEX_ERROR:
-        raisesIndexError := TRUE;
-    end block;
-  end func;
-
-
-const func boolean: raisesIndexError (in func bstring: expression) is func
-  result
-    var boolean: raisesIndexError is FALSE;
-  local
-    var bstring: exprResult is bstring.value;
-  begin
-    block
-      exprResult := expression;
-    exception
-      catch INDEX_ERROR:
-        raisesIndexError := TRUE;
-    end block;
-  end func;
-
-
-const func boolean: raisesIndexError (in func bitset: expression) is func
-  result
-    var boolean: raisesIndexError is FALSE;
-  local
-    var bitset: exprResult is {};
-  begin
-    block
-      exprResult := expression;
-    exception
-      catch INDEX_ERROR:
-        raisesIndexError := TRUE;
-    end block;
-  end func;
-
-
-const func boolean: raisesIndexError (ref varfunc boolean: expression) is func
-  result
-    var boolean: raisesIndexError is FALSE;
-  local
-    var boolean: exprResult is FALSE;
-  begin
-    block
-      exprResult := expression;
-    exception
-      catch INDEX_ERROR:
-        raisesIndexError := TRUE;
-    end block;
-  end func;
-
-
-const func boolean: raisesIndexError (ref varfunc integer: expression) is func
-  result
-    var boolean: raisesIndexError is FALSE;
-  local
-    var integer: exprResult is 0;
-  begin
-    block
-      exprResult := expression;
-    exception
-      catch INDEX_ERROR:
-        raisesIndexError := TRUE;
-    end block;
-  end func;
-
-
-const func boolean: raisesIndexError (ref varfunc bigInteger: expression) is func
-  result
-    var boolean: raisesIndexError is FALSE;
-  local
-    var bigInteger: exprResult is 0_;
-  begin
-    block
-      exprResult := expression;
-    exception
-      catch INDEX_ERROR:
-        raisesIndexError := TRUE;
-    end block;
-  end func;
-
-
-const func boolean: raisesIndexError (ref varfunc float: expression) is func
-  result
-    var boolean: raisesIndexError is FALSE;
-  local
-    var float: exprResult is 0.0;
-  begin
-    block
-      exprResult := expression;
-    exception
-      catch INDEX_ERROR:
-        raisesIndexError := TRUE;
-    end block;
-  end func;
-
-
-const func boolean: raisesIndexError (ref varfunc complex: expression) is func
-  result
-    var boolean: raisesIndexError is FALSE;
-  local
-    var complex: exprResult is complex.value;
-  begin
-    block
-      exprResult := expression;
-    exception
-      catch INDEX_ERROR:
-        raisesIndexError := TRUE;
-    end block;
-  end func;
-
-
-const func boolean: raisesIndexError (ref varfunc char: expression) is func
-  result
-    var boolean: raisesIndexError is FALSE;
-  local
-    var char: exprResult is ' ';
-  begin
-    block
-      exprResult := expression;
-    exception
-      catch INDEX_ERROR:
-        raisesIndexError := TRUE;
-    end block;
-  end func;
-
-
-const func boolean: raisesIndexError (ref varfunc string: expression) is func
-  result
-    var boolean: raisesIndexError is FALSE;
-  local
-    var string: exprResult is "";
-  begin
-    block
-      exprResult := expression;
-    exception
-      catch INDEX_ERROR:
-        raisesIndexError := TRUE;
-    end block;
-  end func;
-
-
-const func boolean: raisesIndexError (ref varfunc bstring: expression) is func
-  result
-    var boolean: raisesIndexError is FALSE;
-  local
-    var bstring: exprResult is bstring.value;
-  begin
-    block
-      exprResult := expression;
-    exception
-      catch INDEX_ERROR:
-        raisesIndexError := TRUE;
-    end block;
-  end func;
-
-
-const func boolean: raisesIndexError (ref varfunc bitset: expression) is func
-  result
-    var boolean: raisesIndexError is FALSE;
-  local
-    var bitset: exprResult is {};
-  begin
-    block
-      exprResult := expression;
-    exception
-      catch INDEX_ERROR:
-        raisesIndexError := TRUE;
-    end block;
-  end func;
-
-
-const func boolean: raisesIndexError (in func array integer: expression) is func
-  result
-    var boolean: raisesIndexError is FALSE;
-  local
-    var array integer: exprResult is 0 times 0;
-  begin
-    block
-      exprResult := expression;
-    exception
-      catch INDEX_ERROR:
-        raisesIndexError := TRUE;
-    end block;
-  end func;
-
-
-const func boolean: raisesIndexError (in func array bigInteger: expression) is func
-  result
-    var boolean: raisesIndexError is FALSE;
-  local
-    var array bigInteger: exprResult is 0 times 0_;
-  begin
-    block
-      exprResult := expression;
-    exception
-      catch INDEX_ERROR:
-        raisesIndexError := TRUE;
-    end block;
-  end func;
-
-
-const func boolean: raisesIndexError (in func array float: expression) is func
-  result
-    var boolean: raisesIndexError is FALSE;
-  local
-    var array float: exprResult is 0 times 0.0;
-  begin
-    block
-      exprResult := expression;
-    exception
-      catch INDEX_ERROR:
-        raisesIndexError := TRUE;
-    end block;
-  end func;
-
-
-const func boolean: raisesIndexError (in func array complex: expression) is func
-  result
-    var boolean: raisesIndexError is FALSE;
-  local
-    var array complex: exprResult is 0 times complex.value;
-  begin
-    block
-      exprResult := expression;
-    exception
-      catch INDEX_ERROR:
-        raisesIndexError := TRUE;
-    end block;
-  end func;
-
-
-const func boolean: raisesIndexError (in func array char: expression) is func
-  result
-    var boolean: raisesIndexError is FALSE;
-  local
-    var array char: exprResult is 0 times ' ';
-  begin
-    block
-      exprResult := expression;
-    exception
-      catch INDEX_ERROR:
-        raisesIndexError := TRUE;
-    end block;
-  end func;
-
-
-const func boolean: raisesIndexError (in func array string: expression) is func
-  result
-    var boolean: raisesIndexError is FALSE;
-  local
-    var array string: exprResult is 0 times "";
-  begin
-    block
-      exprResult := expression;
-    exception
-      catch INDEX_ERROR:
-        raisesIndexError := TRUE;
-    end block;
-  end func;
-
-
-const func boolean: raisesIndexError (in func array bstring: expression) is func
-  result
-    var boolean: raisesIndexError is FALSE;
-  local
-    var array bstring: exprResult is 0 times bstring.value;
-  begin
-    block
-      exprResult := expression;
-    exception
-      catch INDEX_ERROR:
-        raisesIndexError := TRUE;
-    end block;
-  end func;
-
-
-const func boolean: raisesIndexError (in func array bitset: expression) is func
-  result
-    var boolean: raisesIndexError is FALSE;
-  local
-    var array bitset: exprResult is 0 times {};
-  begin
-    block
-      exprResult := expression;
-    exception
-      catch INDEX_ERROR:
-        raisesIndexError := TRUE;
-    end block;
-  end func;
-
-
-const func boolean: raisesRangeError (in func array boolean: expression) is func
-  result
-    var boolean: raisesRangeError is FALSE;
-  local
-    var array boolean: exprResult is 0 times FALSE;
-  begin
-    block
-      exprResult := expression;
-    exception
-      catch RANGE_ERROR:
-        raisesRangeError := TRUE;
-    end block;
-  end func;
-
-
-const func boolean: raisesRangeError (in func array integer: expression) is func
-  result
-    var boolean: raisesRangeError is FALSE;
-  local
-    var array integer: exprResult is 0 times 0;
-  begin
-    block
-      exprResult := expression;
-    exception
-      catch RANGE_ERROR:
-        raisesRangeError := TRUE;
-    end block;
-  end func;
-
-
-const func boolean: raisesRangeError (in func array bigInteger: expression) is func
-  result
-    var boolean: raisesRangeError is FALSE;
-  local
-    var array bigInteger: exprResult is 0 times 0_;
-  begin
-    block
-      exprResult := expression;
-    exception
-      catch RANGE_ERROR:
-        raisesRangeError := TRUE;
-    end block;
-  end func;
-
-
-const func boolean: raisesRangeError (in func array float: expression) is func
-  result
-    var boolean: raisesRangeError is FALSE;
-  local
-    var array float: exprResult is 0 times 0.0;
-  begin
-    block
-      exprResult := expression;
-    exception
-      catch RANGE_ERROR:
-        raisesRangeError := TRUE;
-    end block;
-  end func;
-
-
-const func boolean: raisesRangeError (in func array complex: expression) is func
-  result
-    var boolean: raisesRangeError is FALSE;
-  local
-    var array complex: exprResult is 0 times complex.value;
-  begin
-    block
-      exprResult := expression;
-    exception
-      catch RANGE_ERROR:
-        raisesRangeError := TRUE;
-    end block;
-  end func;
-
-
-const func boolean: raisesRangeError (in func array char: expression) is func
-  result
-    var boolean: raisesRangeError is FALSE;
-  local
-    var array char: exprResult is 0 times ' ';
-  begin
-    block
-      exprResult := expression;
-    exception
-      catch RANGE_ERROR:
-        raisesRangeError := TRUE;
-    end block;
-  end func;
-
-
-const func boolean: raisesRangeError (in func array string: expression) is func
-  result
-    var boolean: raisesRangeError is FALSE;
-  local
-    var array string: exprResult is 0 times "";
-  begin
-    block
-      exprResult := expression;
-    exception
-      catch RANGE_ERROR:
-        raisesRangeError := TRUE;
-    end block;
-  end func;
-
-
-const func boolean: raisesRangeError (in func array bstring: expression) is func
-  result
-    var boolean: raisesRangeError is FALSE;
-  local
-    var array bstring: exprResult is 0 times bstring.value;
-  begin
-    block
-      exprResult := expression;
-    exception
-      catch RANGE_ERROR:
-        raisesRangeError := TRUE;
-    end block;
-  end func;
-
-
-const func boolean: raisesRangeError (in func array bitset: expression) is func
-  result
-    var boolean: raisesRangeError is FALSE;
-  local
-    var array bitset: exprResult is 0 times {};
-  begin
-    block
-      exprResult := expression;
-    exception
-      catch RANGE_ERROR:
-        raisesRangeError := TRUE;
-    end block;
-  end func;
+DECLARE_RAISES_RAMGE_ERROR(boolean);
+DECLARE_RAISES_RAMGE_ERROR(integer);
+DECLARE_RAISES_RAMGE_ERROR(bigInteger);
+DECLARE_RAISES_RAMGE_ERROR(float);
+DECLARE_RAISES_RAMGE_ERROR(complex);
+DECLARE_RAISES_RAMGE_ERROR(char);
+DECLARE_RAISES_RAMGE_ERROR(string);
+DECLARE_RAISES_RAMGE_ERROR(bstring);
+DECLARE_RAISES_RAMGE_ERROR(bitset);
 
 
 const proc: subprog1 is func
