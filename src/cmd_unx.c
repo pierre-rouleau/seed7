@@ -210,6 +210,7 @@ int setenv7 (const char *name, const char *value, int overwrite)
 
   {
     size_t nameLen;
+    size_t valueLen;
     char **p;
     char *c;
     size_t nameCount = 0;
@@ -224,13 +225,18 @@ int setenv7 (const char *name, const char *value, int overwrite)
       return -1;
     } else {
       nameLen = strlen(name);
+      valueLen = strlen(value);
+      if (nameLen > MAX_MEMSIZETYPE - valueLen - 2) {
+        errno = ENOMEM;
+        return -1;
+      } /* if */
       if (environ7 != NULL) {
         for (p = environ7; (c = *p) != NULL; ++p) {
           nameCount++;
           if (environmentStrncmp(c, name, nameLen) == 0 &&
               c[nameLen] == '=') {
             if (overwrite) {
-              if ((c = realloc(*p, nameLen + strlen(value) + 2)) == NULL) {
+              if ((c = realloc(*p, nameLen + valueLen + 2)) == NULL) {
                 errno = ENOMEM;
                 return -1;
               } else {
@@ -242,13 +248,17 @@ int setenv7 (const char *name, const char *value, int overwrite)
           } /* if */
         } /* for */
       } /* if */
-      resizedEnviron7 = realloc(environ7, sizeof(char *) * (nameCount + 2));
+      if (nameCount > MAX_MEMSIZETYPE / sizeof(char *) - 2) {
+        errno = ENOMEM;
+        return -1;
+      } /* if */
+      resizedEnviron7 = realloc(environ7, (nameCount + 2) * sizeof(char *));
       if (resizedEnviron7 == NULL) {
         errno = ENOMEM;
         return -1;
       } else {
         environ7 = resizedEnviron7;
-        if ((c = malloc(nameLen + strlen(value) + 2)) == NULL) {
+        if ((c = malloc(nameLen + valueLen + 2)) == NULL) {
           errno = ENOMEM;
           return -1;
         } else {
@@ -295,9 +305,11 @@ int unsetenv7 (const char *name)
             *found = environ7[nameCount - 1];
           } /* if */
           environ7[nameCount - 1] = NULL;
-          resizedEnviron7 = realloc(environ7, sizeof(char *) * (nameCount));
-          if (resizedEnviron7 != NULL) {
-            environ7 = resizedEnviron7;
+          if (nameCount <= MAX_MEMSIZETYPE / sizeof(char *)) {
+            resizedEnviron7 = realloc(environ7, nameCount * sizeof(char *));
+            if (resizedEnviron7 != NULL) {
+              environ7 = resizedEnviron7;
+            } /* if */
           } /* if */
         } /* if */
       } /* if */
