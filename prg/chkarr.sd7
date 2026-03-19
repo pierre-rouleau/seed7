@@ -1989,6 +1989,7 @@ const func boolean: testFixArrayIndex is func
     var boolean: okay is TRUE;
   local
     var fixArrayType: anArray is fixArrayType.value;
+    var fixArrayType: anArrayB is fixArrayType.value;
     var fixArrayType2: anArray2 is fixArrayType2.value;
     var fixArrayType3: anArray3 is fixArrayType3.value;
   begin
@@ -2049,6 +2050,14 @@ const func boolean: testFixArrayIndex is func
         anArray3[-abs(intExpr(1)) - 2147483646] <> -2147483647 or
         anArray3[-abs(intExpr(0)) - 2147483646] <> -2147483646 then
       writeln(" ***** Indexing into a fixed size array failed. (3)");
+      okay := FALSE;
+    end if;
+
+    anArrayB := anArray;
+    if  anArrayB[ 1] <>  1 or
+        anArrayB[12] <> 12 or
+        anArrayB[64] <> 64 then
+      writeln(" ***** Copying a fixed size array failed.");
       okay := FALSE;
     end if;
 
