@@ -114,7 +114,7 @@ objectType bin_binary (listType arguments)
 objectType bin_bit_length (listType arguments)
 
   { /* bin_bit_length */
-    isit_int(arg_1(arguments));
+    isit_binary(arg_1(arguments));
     return bld_int_temp((intType)
         uint64MostSignificantBit((uintType) take_int(arg_1(arguments))) + 1);
   } /* bin_bit_length */
@@ -232,7 +232,7 @@ objectType bin_lowest_set_bit (listType arguments)
     uintType number;
 
   /* bin_lowest_set_bit */
-    isit_int(arg_1(arguments));
+    isit_binary(arg_1(arguments));
     number = (uintType) take_int(arg_1(arguments));
     return bld_int_temp((intType)
         (number == 0 ? -1 : uint64LeastSignificantBit(number)));
