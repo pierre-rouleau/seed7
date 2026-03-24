@@ -51,34 +51,28 @@ const func boolean: boolExpr (ref boolean: value) is
   return value and str(rand(1, 9))[2 ..] = "";
 
 
-const func boolean: raisesRangeError (in func string: expression) is func
-  result
-    var boolean: raisesRangeError is FALSE;
-  local
-    var string: exprResult is "";
+const proc: DECLARE_RAISES_RAMGE_ERROR (in type: aType) is func
   begin
-    block
-      exprResult := expression;
-    exception
-      catch RANGE_ERROR:
-        raisesRangeError := TRUE;
-    end block;
+
+    const func boolean: raisesRangeError (in func aType: expression) is func
+      result
+        var boolean: raisesRangeError is FALSE;
+      local
+        var aType: exprResult is aType.value;
+      begin
+        block
+          exprResult := expression;
+        exception
+          catch RANGE_ERROR:
+            raisesRangeError := TRUE;
+        end block;
+      end func;
+
   end func;
 
 
-const func boolean: raisesRangeError (in func integer: expression) is func
-  result
-    var boolean: raisesRangeError is FALSE;
-  local
-    var integer: exprResult is 0;
-  begin
-    block
-      exprResult := expression;
-    exception
-      catch RANGE_ERROR:
-        raisesRangeError := TRUE;
-    end block;
-  end func;
+DECLARE_RAISES_RAMGE_ERROR(string);
+DECLARE_RAISES_RAMGE_ERROR(integer);
 
 
 const func boolean: raisesNumericError (in func integer: expression) is func
