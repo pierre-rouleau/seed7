@@ -87,7 +87,7 @@ void bstAppend (bstriType *const destination, const_bstriType extension)
         memcpy(&new_bstri->mem[new_bstri->size], extension->mem,
             (size_t) extension->size);
         new_bstri->size = new_size;
-        *destination = new_bstri     ;
+        *destination = new_bstri;
       } /* if */
     } /* if */
     logFunctionResult(printf("\"%s\"\n", bstriAsUnquotedCStri(*destination)););
@@ -337,17 +337,8 @@ void bstDestrGeneric (const genericType old_value)
  */
 intType bstHashCode (const const_bstriType bstri)
 
-  {
-    intType result;
-
-  /* bstHashCode */
-    if (bstri->size == 0) {
-      result = 0;
-    } else {
-      result = (intType) ((memSizeType) bstri->mem[0] << 5 ^
-          bstri->size << 3 ^ bstri->mem[bstri->size - 1]);
-    } /* if */
-    return result;
+  { /* bstHashCode */
+    return bstringHashCode(bstri);
   } /* bstHashCode */
 
 

@@ -479,7 +479,7 @@ objectType bln_ternary (listType arguments)
     } else {
       result = evaluate(arg_5(arguments));
     } /* if */
-    if (result != NULL &&
+    if (!fail_flag && result != NULL &&
         (CATEGORY_OF_OBJ(result) == CONSTENUMOBJECT ||
          CATEGORY_OF_OBJ(result) == VARENUMOBJECT)) {
       if (TEMP_OBJECT(result)) {
