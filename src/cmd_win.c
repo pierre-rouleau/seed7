@@ -497,7 +497,7 @@ int winRename (const const_os_striType oldPath, const const_os_striType newPath)
   /* winRename */
     logFunction(printf("winRename(\"" FMT_S_OS "\", \"" FMT_S_OS "\")\n",
                        oldPath, newPath););
-    if (unlikely(MoveFileExW(oldPath, newPath, MOVEFILE_REPLACE_EXISTING)) == 0) {
+    if (unlikely(MoveFileExW(oldPath, newPath, MOVEFILE_REPLACE_EXISTING) == 0)) {
       lastError = GetLastError();
       logError(printf("winRename(\"" FMT_S_OS "\", \"" FMT_S_OS "\"): "
                       "MoveFileW failed:\nlastError=" FMT_U32 "\n",
@@ -1071,7 +1071,7 @@ const wchar_t *winFollowSymlink (const wchar_t *path, int numberOfFollowsAllowed
                                              &bytesReturned, NULL) == 0)) {
                   logError(printf("winFollowSymlink(\"%ls\", ...): "
                                   "DeviceIoControl(" FMT_U_MEM ", ...) failed:\n"
-                                  "lastError=" FMT_U32 "%\n",
+                                  "lastError=" FMT_U32 "\n",
                                   path, (memSizeType) fileHandle,
                                   (uint32Type) GetLastError()););
                   errno = EACCES;
@@ -1288,7 +1288,7 @@ void winCopySymlink (const const_os_striType sourcePath,
                                          &bytesReturned, NULL) == 0)) {
               logError(printf("winCopySymlink(\"%ls\", \"%ls\", %d): "
                               "DeviceIoControl(" FMT_U_MEM ", ...) failed:\n"
-                              "lastError=" FMT_U32 "%\n",
+                              "lastError=" FMT_U32 "\n",
                               sourcePath, destPath, *err_info,
                               (memSizeType) fileHandle,
                               (uint32Type) GetLastError()););
