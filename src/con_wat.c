@@ -188,7 +188,7 @@ static charType map_key[] = {
  *  Struct termios has data at and after &c_cc[NCCS].
  *  Therefore memcmp sees differences, even if the
  *  official fields of struct termios are equal.
- *  @return TRUE if the thow termios structs are equal,
+ *  @return TRUE if the termios structs are equal,
  *          FALSE otherwise.
  */
 static boolType term_descr_equal (struct termios *term_descr1, struct termios *term_descr2)
