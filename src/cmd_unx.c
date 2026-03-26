@@ -979,7 +979,7 @@ void cmdSetMTimeOfSymlink (const const_striType filePath,
     intType min, intType sec, intType micro_sec, intType time_zone)
 
   {
-    const_os_striType os_path;
+    os_striType os_path;
     int path_info;
     errInfoType err_info = OKAY_NO_ERROR;
     os_stat_struct stat_buf;

@@ -4178,7 +4178,7 @@ void cmdSetATime (const const_striType filePath,
     intType min, intType sec, intType micro_sec, intType time_zone)
 
   {
-    const_os_striType os_path;
+    os_striType os_path;
     os_stat_struct stat_buf;
     os_utimbuf_struct utime_buf;
     int path_info;
@@ -4319,7 +4319,7 @@ void cmdSetMTime (const const_striType filePath,
     intType min, intType sec, intType micro_sec, intType time_zone)
 
   {
-    const_os_striType os_path;
+    os_striType os_path;
     os_stat_struct stat_buf;
     os_utimbuf_struct utime_buf;
     int path_info;
