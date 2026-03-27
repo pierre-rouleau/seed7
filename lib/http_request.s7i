@@ -343,7 +343,6 @@ const func httpHeader: getHttpHeader (inout file: sock) is func
     var integer: colonPos is 0;
     var string: fieldName is "";
     var string: contentLengthStri is "";
-    var string: decimalDigits is "";
     var string: cookieName is "";
     var string: cookieValue is "";
   begin
@@ -363,9 +362,8 @@ const func httpHeader: getHttpHeader (inout file: sock) is func
             header.contentEncoding := lower(trim(line[succ(colonPos) ..]));
           when {"content-length"}:
             contentLengthStri := trim(line[succ(colonPos) ..]);
-            decimalDigits := getDigits(contentLengthStri);
-            if decimalDigits <> "" and contentLengthStri = "" then
-              header.contentLength := integer(decimalDigits);
+            if isDigitString(contentLengthStri) then
+              header.contentLength := integer(contentLengthStri);
             else
               header.contentLength := -1;
             end if;
@@ -393,7 +391,6 @@ const func string: getHttpBody (inout file: sock, in httpHeader: header) is func
     var string: data is "";
   local
     var string: line is "";
-    var string: hexDigits is "";
     var integer: chunkSize is 0;
     var integer: contentLength is 0;
     var string: buffer is "";
@@ -401,9 +398,8 @@ const func string: getHttpBody (inout file: sock, in httpHeader: header) is func
     if header.transferEncoding = "chunked" then
       if not eof(sock) then
         line := getln(sock);
-        hexDigits := getHexDigits(line);
-        if hexDigits <> "" and line = "" then
-          chunkSize := integer(hexDigits, 16);
+        if isDigitString(line, 16) then
+          chunkSize := integer(line, 16);
         else
           chunkSize := -1;
         end if;
@@ -416,9 +412,8 @@ const func string: getHttpBody (inout file: sock, in httpHeader: header) is func
           if not eof(sock) then
             ignore(getln(sock));
             line := getln(sock);
-            hexDigits := getHexDigits(line);
-            if hexDigits <> "" and line = "" then
-              chunkSize := integer(hexDigits, 16);
+            if isDigitString(line, 16) then
+              chunkSize := integer(line, 16);
             else
               chunkSize := -1;
             end if;
