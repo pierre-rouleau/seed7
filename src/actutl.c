@@ -183,7 +183,7 @@ const_actEntryType findActEntry (const const_striType actionName)
     char actName[MAX_CSTRI_BUFFER_LEN + NULL_TERMINATION_LEN];
     const_actEntryType actEntryFound;
 
- /* findActEntry */
+  /* findActEntry */
     logFunction(printf("findActEntry(\"%s\")\n",
                        striAsUnquotedCStri(actionName)););
     if (unlikely(actionName->size > MAX_CSTRI_BUFFER_LEN)) {
@@ -215,6 +215,7 @@ actType getActIllegal (void)
     if (actTable.table != NULL) {
       actionFound = actTable.table[0].action;
     } else {
+      logError(printf("getActIllegal: actTable.table is NULL.\n"););
       actionFound = NULL;
     } /* if */
     return actionFound;
@@ -313,6 +314,8 @@ const_actEntryType getActEntry (actType actionSearched)
     if (unlikely(actEntryMap.table == NULL)) {
       genActPtrTable();
       if (unlikely(actEntryMap.table == NULL)) {
+        logError(printf("getActEntry: genActPtrTable() failed to "
+                        "allocate actEntryMap.table.\n"););
         actionSearched = actTable.table[0].action;
       } /* if */
     } /* if */

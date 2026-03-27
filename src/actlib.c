@@ -88,8 +88,9 @@ objectType ace_create (listType arguments)
     dest = arg_1(arguments);
     source = arg_3(arguments);
     isit_actentry(source);
-    logFunction(printf("ace_create(*, action \"%s\")\n",
-                       take_actentry(source)->name););
+    logFunction(printf("ace_create(*, action %s)\n",
+                       take_actentry(source) != NULL ?
+                           take_actentry(source)->name : "NULL"););
     SET_CATEGORY_OF_OBJ(dest, ACTENTRYOBJECT);
     dest->value.actEntryValue = take_actentry(source);
     return SYS_EMPTY_OBJECT;
@@ -166,7 +167,7 @@ objectType ace_iconv1 (listType arguments)
     isit_int(arg_1(arguments));
     ordinal = take_int(arg_1(arguments));
     if (ordinal < 0 || (uintType) ordinal >= actTable.size) {
-      logError(printf("ace_iconv(" FMT_D "): No such action exists.\n",
+      logError(printf("ace_iconv1(" FMT_D "): No such action exists.\n",
                       ordinal););
       return raise_exception(SYS_RNG_EXCEPTION);
     } else {
@@ -191,7 +192,7 @@ objectType ace_iconv3 (listType arguments)
     isit_int(arg_3(arguments));
     ordinal = take_int(arg_3(arguments));
     if (ordinal < 0 || (uintType) ordinal >= actTable.size) {
-      logError(printf("ace_iconv(" FMT_D "): No such action exists.\n",
+      logError(printf("ace_iconv3(" FMT_D "): No such action exists.\n",
                       ordinal););
       return raise_exception(SYS_RNG_EXCEPTION);
     } else {
