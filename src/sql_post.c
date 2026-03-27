@@ -593,7 +593,7 @@ static void freePreparedStmt (sqlStmtType sqlStatement)
   {
     preparedStmtType preparedStmt;
     memSizeType pos;
-    static PGresult *deallocate_result;
+    PGresult *deallocate_result;
 
   /* freePreparedStmt */
     logFunction(printf("freePreparedStmt(" FMT_U_MEM ")\n",
