@@ -322,16 +322,16 @@ static rtlArrayType copyArgv (const int argc, const os_striType *const argv)
           if (likely(stri != NULL)) {
             arg_v->arr[number].value.striValue = stri;
           } else {
+            logError(printf("copyArgv(%d, ...): "
+                            "os_stri_to_stri(\"" FMT_S_OS "\", *) failed:\n"
+                            "err_info=%d\n",
+                            argc, argv[number], err_info););
             while (number >= 1) {
               number--;
               stri = arg_v->arr[number].value.striValue;
               FREE_STRI(stri);
             } /* while */
             FREE_RTL_ARRAY(arg_v, arg_c);
-            logError(printf("copyArgv(%d, ...): "
-                            "os_stri_to_stri(\"" FMT_S_OS "\", *) failed:\n"
-                            "err_info=%d\n",
-                            argc, argv[number], err_info););
             raise_error(err_info);
             arg_v = NULL;
             number = arg_c; /* leave for-loop */
@@ -1778,7 +1778,7 @@ rtlArrayType arrRealloc (rtlArrayType arr, memSizeType oldSize, memSizeType newS
                                   FMT_U_MEM ")\n",
                        (memSizeType) arr,
                        arr != NULL ? arr->min_position : (intType) 1,
-                       arr != NULL ? arr->max_position : (intType) 1,
+                       arr != NULL ? arr->max_position : (intType) 0,
                        oldSize, newSize););
     if (unlikely(!REALLOC_RTL_ARRAY(resized_arr, arr, newSize))) {
       if (oldSize >= newSize) {
@@ -1828,8 +1828,6 @@ genericType arrRemove (rtlArrayType *arr_to, intType position)
                            (*arr_to)->max_position : (intType) 0,
                        position););
     arr1 = *arr_to;
-    logFunction(printf("arrRemove(" FMT_U_MEM " (size=" FMT_U_MEM "), " FMT_D "))\n",
-                       (memSizeType) arr1, arraySize(arr1), position););
     if (unlikely(position < arr1->min_position ||
                  position > arr1->max_position)) {
       logError(printf("arrRemove(arr1, " FMT_D "): "
@@ -1903,9 +1901,6 @@ rtlArrayType arrRemoveArray (rtlArrayType *arr_to, intType position, intType len
                            (*arr_to)->max_position : (intType) 0,
                        position, length););
     arr1 = *arr_to;
-    logFunction(printf("arrRemoveArray(" FMT_U_MEM " (size=" FMT_U_MEM "), "
-                       FMT_D ", " FMT_D "))\n",
-                       (memSizeType) arr1, arraySize(arr1), position, length););
     if (unlikely(length < 0)) {
       logError(printf("arrRemoveArray(arr1, " FMT_D ", " FMT_D "): "
                       "Length is negative.\n", position, length););
@@ -1981,9 +1976,12 @@ rtlArrayType arrRemoveArray (rtlArrayType *arr_to, intType position, intType len
 rtlArrayType arrSort (rtlArrayType arr1, compareType cmp_func)
 
   { /* arrSort */
-    logFunction(printf("arrSort(" FMT_U_MEM ", " FMT_D ", " FMT_D ")\n",
+    logFunction(printf("arrSort(" FMT_U_MEM " (array[" FMT_D " .. "
+                                FMT_D "]), " FMT_U_MEM ")\n",
                        (memSizeType) arr1,
-                       arr1->min_position, arr1->max_position););
+                       arr1 != NULL ? arr1->min_position : (intType) 1,
+                       arr1 != NULL ? arr1->max_position : (intType) 0,
+                       (memSizeType) cmp_func););
     rtl_qsort_array(arr1->arr, &arr1->arr[arr1->max_position - arr1->min_position], cmp_func);
     return arr1;
   } /* arrSort */
@@ -1993,9 +1991,12 @@ rtlArrayType arrSort (rtlArrayType arr1, compareType cmp_func)
 rtlArrayType arrSortReverse (rtlArrayType arr1, compareType cmp_func)
 
   { /* arrSortReverse */
-    logFunction(printf("arrSortReverse(" FMT_U_MEM ", " FMT_D ", " FMT_D ")\n",
+    logFunction(printf("arrSortReverse(" FMT_U_MEM " (array[" FMT_D
+                                       " .. " FMT_D "]), " FMT_U_MEM ")\n",
                        (memSizeType) arr1,
-                       arr1->min_position, arr1->max_position););
+                       arr1 != NULL ? arr1->min_position : (intType) 1,
+                       arr1 != NULL ? arr1->max_position : (intType) 0,
+                       (memSizeType) cmp_func););
     rtl_qsort_array_reverse(arr1->arr, &arr1->arr[arr1->max_position - arr1->min_position], cmp_func);
     return arr1;
   } /* arrSortReverse */

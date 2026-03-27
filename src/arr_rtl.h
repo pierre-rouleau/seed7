@@ -37,7 +37,9 @@ rtlArrayType getArgv (const int argc, const utf16striType *const argv,
 rtlArrayType getArgv (const int argc, const cstriType *const argv,
     striType *arg_0, striType *programName, striType *exePath);
 #endif
+#ifndef OS_STRI_WCHAR
 striType examineSearchPath (const const_striType fileName);
+#endif
 void freeRtlStriArray (rtlArrayType work_array, intType used_max_position);
 void arrAppend (rtlArrayType *const arr_variable, const rtlArrayType extension);
 rtlArrayType arrArrlit2 (intType start_position, rtlArrayType arr1);
