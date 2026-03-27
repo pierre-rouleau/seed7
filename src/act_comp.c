@@ -105,10 +105,11 @@ const_actEntryType aceIConv (intType ordinal)
 
 
 /**
- *  Get the ordinal number of an action.
+ *  Get the ordinal number of an action entry.
  *  The action ACT_ILLEGAL has the ordinal number 0.
- *  @param actEntry Action for which the ordinal number is determined.
- *  @return the ordinal number of the action.
+ *  @param actEntry Action entry for which the ordinal number is determined.
+ *  @return the ordinal number of 'actEntry'.
+ *  @exception RANGE_ERROR If 'actEntry' is NULL.
  */
 intType aceOrd (const_actEntryType actEntry)
 
@@ -134,8 +135,8 @@ intType aceOrd (const_actEntryType actEntry)
 /**
  *  Get the name of an action entry.
  *  @param actEntry Action entry from which the name is retrieved.
- *  @return the name of the action entry.
- *  @exception RANGE_ERROR The action entry is NULL.
+ *  @return the name of 'actEntry'.
+ *  @exception RANGE_ERROR If 'actEntry' is NULL.
  *  @exception MEMORY_ERROR Not enough memory to represent the result.
  */
 striType aceStr (const_actEntryType actEntry)

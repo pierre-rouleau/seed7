@@ -227,10 +227,11 @@ objectType ace_ne (listType arguments)
 
 
 /**
- *  Get the ordinal number of an action.
+ *  Get the ordinal number of an action entry.
  *  The action ACT_ILLEGAL has the ordinal number 0.
- *  @param anAction/arg_1 Action for which the ordinal number is determined.
- *  @return the ordinal number of the action.
+ *  @param actEntry/arg_1 Action entry for which the ordinal number is determined.
+ *  @return the ordinal number of actEntry/arg_1.
+ *  @exception RANGE_ERROR If actEntry/arg_1 is NULL.
  */
 objectType ace_ord (listType arguments)
 
@@ -255,8 +256,8 @@ objectType ace_ord (listType arguments)
 /**
  *  Get the name of an action entry.
  *  @param actEntry/arg_1 Action entry from which the name is retrieved.
- *  @return the name of the action entry.
- *  @exception RANGE_ERROR The action entry is NULL.
+ *  @return the name of actEntry/arg_1.
+ *  @exception RANGE_ERROR If actEntry/arg_1 is NULL.
  *  @exception MEMORY_ERROR Not enough memory to represent the result.
  */
 objectType ace_str (listType arguments)
