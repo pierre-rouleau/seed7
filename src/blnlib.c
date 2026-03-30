@@ -89,7 +89,7 @@ objectType bln_and (listType arguments)
 
 
 /**
- *  Assign dest/arg_1 and source/arg_3 to dest/arg_1.
+ *  Assign the result of 'dest/arg_1 and source/arg_3' to dest/arg_1.
  *  This corresponds to dest := dest and source;
  *  The 'and' operation used here always evaluates the right argument.
  */
@@ -313,6 +313,7 @@ objectType bln_lt (listType arguments)
 
 /**
  *  Check if two boolean values are not equal.
+ *  The boolean <> operator is the same as an exclusive or.
  *  @return FALSE if the two boolean values are equal,
  *          TRUE otherwise.
  */
@@ -405,7 +406,7 @@ objectType bln_ord (listType arguments)
 
 
 /**
- *  Assign dest/arg_1 or source/arg_3 to dest/arg_1.
+ *  Assign the result of 'dest/arg_1 or source/arg_3' to dest/arg_1.
  *  This corresponds to dest := dest or source;
  *  The 'or' operation used here always evaluates the right argument.
  */
@@ -532,8 +533,9 @@ objectType bln_value (listType arguments)
 
 
 /**
- *  Assign dest/arg_1 xor source/arg_3 to dest/arg_1.
+ *  Assign the result of 'dest/arg_1 <> source/arg_3' to dest/arg_1.
  *  This corresponds to dest := dest <> source;
+ *  The boolean <> operator is the same as an exclusive or.
  */
 objectType bln_xor_assign (listType arguments)
 
