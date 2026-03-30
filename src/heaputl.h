@@ -626,7 +626,7 @@ striType shrinkStri (striType stri, memSizeType len);
 #if DO_HEAP_CHECK
 void check_heap (long, const char *, unsigned int);
 #endif
-void no_memory (const_cstriType source_file, int source_line);
+NORETURN void no_memory (const_cstriType source_file, int source_line);
 #if !DO_HEAP_STATISTIC
 void heapStatistic (void);
 #endif

@@ -216,7 +216,7 @@ void freelistStatistic (void)
 
 
 
-void no_memory (const_cstriType source_file, int source_line)
+NORETURN void no_memory (const_cstriType source_file, int source_line)
 
   { /* no_memory */
     logFunction(printf("no_memory(\"%s\", %d)\n", source_file, source_line););
