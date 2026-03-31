@@ -569,8 +569,6 @@ void pcsPty (const const_striType command, const const_rtlArrayType parameters,
     int masterfd;
     int slavefd;
     char *slavedevice;
-    int savedStdin;
-    int savedStdout;
     errInfoType err_info = OKAY_NO_ERROR;
     pid_t pid;
 
@@ -613,14 +611,10 @@ void pcsPty (const const_striType command, const const_rtlArrayType parameters,
           FREE_RECORD(childStdoutFile, fileRecord, count.files);
           raise_error(FILE_ERROR);
         } else {
-          savedStdin  = dup(0);
-          savedStdout = dup(1);
-          close(0);
-          close(1);
-          dup2(slavefd, 0); /* Make the read end of slavefd as stdin */
-          dup2(slavefd, 1);  /* Make the write end of slavefd as stdout */
           pid = fork();
           if (pid == 0) {
+            dup2(slavefd, 0); /* Make the read end of slavefd as stdin */
+            dup2(slavefd, 1); /* Make the write end of slavefd as stdout */
             close(masterfd); /* Not required for the child */
             close(slavefd);
             execv(argv[0], argv);
@@ -629,20 +623,13 @@ void pcsPty (const const_striType command, const const_rtlArrayType parameters,
           } else if (unlikely(pid == (pid_t) -1)) {
             logError(printf("pcsPty: fork failed:\nerrno=%d\nerror: %s\n",
                             errno, strerror(errno)););
-            close(0); /* Restore the original std fds of parent */
-            close(1);
-            dup2(savedStdin, 0);
-            dup2(savedStdout, 1);
-            close(slavefd); /* This is unused */
+            close(masterfd); /* These are unused */
+            close(slavefd);
             freeArgVector(argv);
             FREE_RECORD(childStdinFile, fileRecord, count.files);
             FREE_RECORD(childStdoutFile, fileRecord, count.files);
             raise_error(FILE_ERROR);
           } else {
-            close(0); /* Restore the original std fds of parent */
-            close(1);
-            dup2(savedStdin, 0);
-            dup2(savedStdout, 1);
             close(slavefd); /* This is being used by the child */
             initFileType(childStdinFile, FALSE, TRUE);
             childStdinFile->cFile = os_fdopen(masterfd, "w");
