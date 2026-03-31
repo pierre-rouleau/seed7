@@ -493,6 +493,7 @@ void pcsPipe2 (const const_striType command, const const_rtlArrayType parameters
         execv(argv[0], argv);
         logError(printf("pcsPipe2: execv(" FMT_S_OS ") failed:\nerrno=%d\nerror: %s\n",
                         argv[0], errno, strerror(errno)););
+        os_exit(1);
       } else if (unlikely(pid == (pid_t) -1)) {
         logError(printf("pcsPipe2: fork failed:\nerrno=%d\nerror: %s\n",
                         errno, strerror(errno)););
@@ -620,6 +621,7 @@ void pcsPty (const const_striType command, const const_rtlArrayType parameters,
             execv(argv[0], argv);
             logError(printf("pcsPty: execv(" FMT_S_OS ") failed:\nerrno=%d\nerror: %s\n",
                             argv[0], errno, strerror(errno)););
+            os_exit(1);
           } else if (unlikely(pid == (pid_t) -1)) {
             logError(printf("pcsPty: fork failed:\nerrno=%d\nerror: %s\n",
                             errno, strerror(errno)););
@@ -894,10 +896,7 @@ processType pcsStartPipe (const const_striType command, const const_rtlArrayType
         execv(argv[0], argv);
         logError(printf("pcsStartPipe: execv(" FMT_S_OS ") failed:\nerrno=%d\nerror: %s\n",
                         argv[0], errno, strerror(errno)););
-        /* printf("EACCES=%d  EBUSY=%d  EEXIST=%d  ENOTEMPTY=%d  ENOENT=%d  ENOTDIR=%d  EROFS=%d\n",
-            EACCES, EBUSY, EEXIST, ENOTEMPTY, ENOENT, ENOTDIR, EROFS);
-        printf("EFAULT=%d  EISDIR=%d  ENAMETOOLONG=%d  ENODEV=%d  EINVAL=%d\n",
-            EFAULT, EISDIR, ENAMETOOLONG, ENODEV, EINVAL); */
+        os_exit(1);
       } else if (unlikely(pid == (pid_t) -1)) {
         logError(printf("pcsStartPipe: fork failed:\nerrno=%d\nerror: %s\n",
                         errno, strerror(errno)););
