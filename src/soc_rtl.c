@@ -1256,24 +1256,23 @@ bstriType socInetAddr (const const_striType hostName, intType port)
 #else
         host_ent = gethostbyname(os_hostName);
         if (host_ent == NULL && h_errno == TRY_AGAIN) {
-          /*
-          printf("***** h_errno=%d\n", h_errno);
-          printf("***** os_hostName=\"%s\"\n", os_hostName);
-          printf("***** port=" FMT_D "\n", port);
-          printf("***** hostName=%s\n", striAsUnquotedCStri(hostName));
-          */
+          logMessage(printf("socInetAddr(\"%s\"): gethostbyname(\"%s\") "
+                            "failed with TRY_AGAIN.\n",
+                            striAsUnquotedCStri(hostName),
+                            os_hostName););
           host_ent = gethostbyname(os_hostName);
         } /* if */
         if (unlikely(host_ent == NULL)) {
           emptyBStriType emptyBStri;
 
           logMessage(printf("socInetAddr: gethostbyname(\"%s\") failed: "
-                            "h_errno=%d\n",
-                            os_hostName, h_errno);
-                     printf("HOST_NOT_FOUND=%d  NO_DATA=%d  "
-                            "NO_RECOVERY=%d  TRY_AGAIN=%d\n",
-                            HOST_NOT_FOUND, NO_DATA,
-                            NO_RECOVERY, TRY_AGAIN););
+                            "h_errno=%d %s\n",
+                            os_hostName, h_errno,
+                            h_errno == HOST_NOT_FOUND ? "HOST_NOT_FOUND" :
+                            h_errno == TRY_AGAIN ? "TRY_AGAIN" :
+                            h_errno == NO_RECOVERY ? "NO_RECOVERY" :
+                            h_errno == NO_DATA ? "NO_DATA" :
+                            "**UNKNOWN**"););
           free_cstri8(os_hostName, hostName);
           /* Return empty address */
           if (unlikely(!ALLOC_EMPTY_BSTRI(emptyBStri))) {
@@ -1283,15 +1282,22 @@ bstriType socInetAddr (const const_striType hostName, intType port)
           } /* if */
           result = (bstriType) emptyBStri;
         } else {
-          /*
-          printf("Host name:      %s\n", host_ent->h_name);
-          printf("Port:           " FMT_D "\n", port);
-          printf("Address type:   %d\n", host_ent->h_addrtype);
-          printf("Address type:   %d\n", AF_INET);
-          printf("Address length: %d\n", host_ent->h_length);
-          printf("Address length: %d\n", sizeof(struct sockaddr_in));
-          printf("IP Address:     %s\n", inet_ntoa(*((struct in_addr *)host_ent->h_addr)));
-          */
+          logMessage(printf("socInetAddr: gethostbyname(\"%s\") returned:\n"
+                            "Host name:      %s\n"
+                            "Address type:   %d %s\n"
+                            "Address length: %d\n",
+                            os_hostName, host_ent->h_name,
+                            host_ent->h_addrtype,
+                            host_ent->h_addrtype == AF_INET ? "AF_INET" :
+                            host_ent->h_addrtype == AF_INET6 ? "AF_INET6" :
+                            "**UNKNOWN**",
+                            host_ent->h_length);
+                     if (host_ent->h_addrtype == AF_INET &&
+                         host_ent->h_length ==
+                             sizeof(inet_address->sin_addr.s_addr)) {
+                       printf("IP Address:     %s\n", inet_ntoa(
+                              *((struct in_addr *) host_ent->h_addr)));
+                     });
           free_cstri8(os_hostName, hostName);
           if (host_ent->h_addrtype == AF_INET &&
               host_ent->h_length == sizeof(inet_address->sin_addr.s_addr)) {
@@ -1305,20 +1311,26 @@ bstriType socInetAddr (const const_striType hostName, intType port)
               memcpy(&inet_address->sin_addr.s_addr, host_ent->h_addr,
                      (size_t) host_ent->h_length);
               memset(inet_address->sin_zero, '\0', sizeof(inet_address->sin_zero));
-              /* {
-                uint32Type ip4_address = ntohl(inet_address->sin_addr.s_addr);
-                printf("ip4_address=%d.%d.%d.%d\n",
-                    (ip4_address >> 24  & 255,
-                    (ip4_address >> 16) & 255,
-                    (ip4_address >>  8) & 255,
-                     ip4_address        & 255);
-              } */
+              logMessage({
+                           uint32Type ip4_address =
+                               ntohl(inet_address->sin_addr.s_addr);
+                           printf("socInetAddr: ip4_address=%d.%d.%d.%d\n",
+                                  (ip4_address >> 24) & 255,
+                                  (ip4_address >> 16) & 255,
+                                  (ip4_address >>  8) & 255,
+                                   ip4_address        & 255);
+                         });
             } /* if */
           } else {
             emptyBStriType emptyBStri;
 
-            logMessage(printf("socInetAddr: addrtype=%d\n",
-                              host_ent->h_addrtype););
+            logMessage(printf("socInetAddr: gethostbyname(\"%s\") "
+                              "returned addrtype=%d %s\n",
+                              os_hostName,
+                              host_ent->h_addrtype,
+                              host_ent->h_addrtype == AF_INET ? "AF_INET" :
+                              host_ent->h_addrtype == AF_INET6 ? "AF_INET6" :
+                              "**UNKNOWN**"););
             /* Return empty address */
             if (unlikely(!ALLOC_EMPTY_BSTRI(emptyBStri))) {
               raise_error(MEMORY_ERROR);
