@@ -1267,9 +1267,13 @@ bstriType socInetAddr (const const_striType hostName, intType port)
         if (unlikely(host_ent == NULL)) {
           emptyBStriType emptyBStri;
 
-          /* printf("***** gethostbyname(\"%s\"): h_errno=%d\n", os_hostName, h_errno);
-             printf("HOST_NOT_FOUND=%d  NO_DATA=%d  NO_RECOVERY=%d  TRY_AGAIN=%d\n",
-                 HOST_NOT_FOUND, NO_DATA, NO_RECOVERY, TRY_AGAIN); */
+          logMessage(printf("socInetAddr: gethostbyname(\"%s\") failed: "
+                            "h_errno=%d\n",
+                            os_hostName, h_errno);
+                     printf("HOST_NOT_FOUND=%d  NO_DATA=%d  "
+                            "NO_RECOVERY=%d  TRY_AGAIN=%d\n",
+                            HOST_NOT_FOUND, NO_DATA,
+                            NO_RECOVERY, TRY_AGAIN););
           free_cstri8(os_hostName, hostName);
           /* Return empty address */
           if (unlikely(!ALLOC_EMPTY_BSTRI(emptyBStri))) {
@@ -1313,9 +1317,8 @@ bstriType socInetAddr (const const_striType hostName, intType port)
           } else {
             emptyBStriType emptyBStri;
 
-            /* printf("socInetAddr: addrtype=%d\n", host_ent->h_addrtype); */
-            /* raise_error(FILE_ERROR);
-               result = NULL; */
+            logMessage(printf("socInetAddr: addrtype=%d\n",
+                              host_ent->h_addrtype););
             /* Return empty address */
             if (unlikely(!ALLOC_EMPTY_BSTRI(emptyBStri))) {
               raise_error(MEMORY_ERROR);
