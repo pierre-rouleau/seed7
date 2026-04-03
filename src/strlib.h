@@ -48,7 +48,7 @@ objectType str_head          (listType arguments);
 objectType str_idx           (listType arguments);
 objectType str_ipos          (listType arguments);
 objectType str_le            (listType arguments);
-objectType str_lit           (listType arguments);
+objectType str_literal       (listType arguments);
 objectType str_lng           (listType arguments);
 objectType str_low           (listType arguments);
 objectType str_lpad          (listType arguments);

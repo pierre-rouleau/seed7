@@ -46,7 +46,7 @@ const ACTION: STR_HEAD          is action "STR_HEAD";
 const ACTION: STR_IDX           is action "STR_IDX";
 const ACTION: STR_IPOS          is action "STR_IPOS";
 const ACTION: STR_LE            is action "STR_LE";
-const ACTION: STR_LIT           is action "STR_LIT";
+const ACTION: STR_LITERAL       is action "STR_LITERAL";
 const ACTION: STR_LNG           is action "STR_LNG";
 const ACTION: STR_LOW           is action "STR_LOW";
 const ACTION: STR_LPAD          is action "STR_LPAD";
@@ -118,7 +118,7 @@ const proc: str_prototypes (inout file: c_prog) is func
     declareExtern(c_prog, "striType    strHeadTemp (const striType, const intType);");
     declareExtern(c_prog, "intType     strIPos (const const_striType, const const_striType, const intType);");
     declareExtern(c_prog, "boolType    strLe (const const_striType, const const_striType);");
-    declareExtern(c_prog, "striType    strLit (const const_striType);");
+    declareExtern(c_prog, "striType    strLiteral (const const_striType);");
     declareExtern(c_prog, "striType    strLow (const const_striType);");
     declareExtern(c_prog, "striType    strLowTemp (const striType);");
     declareExtern(c_prog, "striType    strLpad (const const_striType, const intType);");
@@ -2629,12 +2629,12 @@ const proc: process (STR_LE, in reference: function,
   end func;
 
 
-const proc: process (STR_LIT, in reference: function,
+const proc: process (STR_LITERAL, in reference: function,
     in ref_list: params, inout expr_type: c_expr) is func
 
   begin
     prepare_stri_result(c_expr);
-    c_expr.result_expr := "strLit(";
+    c_expr.result_expr := "strLiteral(";
     getAnyParamToResultExpr(params[1], c_expr);
     c_expr.result_expr &:= ")";
   end func;

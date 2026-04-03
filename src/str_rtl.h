@@ -91,7 +91,7 @@ striType strHeadTemp (const striType stri, const intType stop);
 intType strIPos (const const_striType mainStri, const const_striType searched,
     const intType fromIndex);
 boolType strLe (const const_striType stri1, const const_striType stri2);
-striType strLit (const const_striType stri);
+striType strLiteral (const const_striType stri);
 striType strLow (const const_striType stri);
 striType strLowTemp (const striType stri);
 striType strLpad (const const_striType stri, const intType padSize);

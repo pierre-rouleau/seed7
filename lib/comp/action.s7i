@@ -1936,8 +1936,8 @@ const proc: process_action (in reference: function, in ref_list: params,
         process(STR_IPOS, function, params, c_expr);
       when {"STR_LE"}:
         process(STR_LE, function, params, c_expr);
-      when {"STR_LIT"}:
-        process(STR_LIT, function, params, c_expr);
+      when {"STR_LITERAL"}:
+        process(STR_LITERAL, function, params, c_expr);
       when {"STR_LNG"}:
         process(STR_LNG, function, params, c_expr);
       when {"STR_LOW"}:

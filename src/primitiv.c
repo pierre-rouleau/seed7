@@ -1026,7 +1026,7 @@ static const actEntryRecord actEntryTable[] = {
     { "STR_IDX",                      str_idx,                      },
     { "STR_IPOS",                     str_ipos,                     },
     { "STR_LE",                       str_le,                       },
-    { "STR_LIT",                      str_lit,                      },
+    { "STR_LITERAL",                  str_literal,                  },
     { "STR_LNG",                      str_lng,                      },
     { "STR_LOW",                      str_low,                      },
     { "STR_LPAD",                     str_lpad,                     },

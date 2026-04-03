@@ -726,7 +726,7 @@ const func string: str (in string: stri)                       is action "STR_ST
  *  @return the ''string'' literal.
  *  @exception MEMORY_ERROR  Not enough memory to represent the result.
  *)
-const func string: literal (in string: stri)                   is action "STR_LIT";
+const func string: literal (in string: stri)                   is action "STR_LITERAL";
 
 
 const func string: c_literal (in string: stri)                 is action "STR_C_LITERAL";

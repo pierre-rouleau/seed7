@@ -3359,7 +3359,7 @@ boolType strLe (const const_striType stri1, const const_striType stri2)
 
 
 
-striType strLit (const const_striType stri)
+striType strLiteral (const const_striType stri)
 
   {
     /* A string literal starts and ends with double quotes ("): */
@@ -3373,8 +3373,8 @@ striType strLit (const const_striType stri)
     striType resized_literal;
     striType literal;
 
-  /* strLit */
-    logFunction(printf("strLit(\"%s\")", striAsUnquotedCStri(stri));
+  /* strLiteral */
+    logFunction(printf("strLiteral(\"%s\")", striAsUnquotedCStri(stri));
                 fflush(stdout););
     striSize = stri->size;
     if (unlikely(striSize > (MAX_STRI_LEN - numOfQuotes) / ESC_SEQUENCE_MAX_LEN ||
@@ -3449,7 +3449,7 @@ striType strLit (const const_striType stri)
     logFunctionResult(printf("\"%s\"\n",
                              striAsUnquotedCStri(literal)););
     return literal;
-  } /* strLit */
+  } /* strLiteral */
 
 
 

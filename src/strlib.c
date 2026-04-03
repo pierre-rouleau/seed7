@@ -1034,13 +1034,13 @@ objectType str_le (listType arguments)
 
 
 
-objectType str_lit (listType arguments)
+objectType str_literal (listType arguments)
 
-  { /* str_lit */
+  { /* str_literal */
     isit_stri(arg_1(arguments));
     return bld_stri_temp(
-        strLit(take_stri(arg_1(arguments))));
-  } /* str_lit */
+        strLiteral(take_stri(arg_1(arguments))));
+  } /* str_literal */
 
 
 
