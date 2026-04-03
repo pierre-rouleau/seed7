@@ -729,7 +729,7 @@ const func string: str (in string: stri)                       is action "STR_ST
 const func string: literal (in string: stri)                   is action "STR_LIT";
 
 
-const func string: c_literal (in string: stri)                 is action "STR_CLIT";
+const func string: c_literal (in string: stri)                 is action "STR_C_LITERAL";
 
 
 const func string: getint (inout string: stri) is func

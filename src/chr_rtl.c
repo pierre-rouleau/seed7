@@ -481,7 +481,7 @@ static inline boolType is_doublewidth (charType ch)
 
 
 
-striType chrCLit (charType character)
+striType chrCLiteral (charType character)
 
   {
     /* A string literal starts and ends with apostrophe ('): */
@@ -489,8 +489,8 @@ striType chrCLit (charType character)
     memSizeType len;
     striType result;
 
-  /* chrCLit */
-    logFunction(printf("chrCLit('\\" FMT_U32 ";')\n", character););
+  /* chrCLiteral */
+    logFunction(printf("chrCLiteral('\\" FMT_U32 ";')\n", character););
     if (character < 127) {
       if (character < ' ') {
         len = strlen(cstri_escape_sequence[character]);
@@ -527,22 +527,22 @@ striType chrCLit (charType character)
       result = intStr((intType) character);
     } /* if */
     return result;
-  } /* chrCLit */
+  } /* chrCLiteral */
 
 
 
 #if ALLOW_STRITYPE_SLICES
-striType chrCLitToBuffer (charType character, striType buffer)
+striType chrCLiteralToBuffer (charType character, striType buffer)
 
-  { /* chrCLitToBuffer */
-    logFunction(printf("chrCLitToBuffer('\\" FMT_U32 ";')\n", character););
+  { /* chrCLiteralToBuffer */
+    logFunction(printf("chrCLiteralToBuffer('\\" FMT_U32 ";')\n", character););
     if (character < 127) {
       buffer->mem = buffer->mem1;
       buffer->mem1[0] = (strElemType) '\'';
       if (character < ' ') {
         buffer->mem1[1] = (strElemType) '\\';
         if (cstri_escape_sequence[character][1] == '0') {
-          /* Always write three octal digits as strCLit does. */
+          /* Always write three octal digits as strCLiteral does. */
           buffer->mem1[2] = (strElemType) '0';
           /* Write the character as two octal digits. */
           /* This code is much faster than sprintf(). */
@@ -569,7 +569,7 @@ striType chrCLitToBuffer (charType character, striType buffer)
       (void) intStrToBuffer((intType) character, buffer);
     } /* if */
     return buffer;
-  } /* chrCLitToBuffer */
+  } /* chrCLiteralToBuffer */
 #endif
 
 

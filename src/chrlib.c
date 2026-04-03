@@ -50,16 +50,6 @@
 
 
 
-objectType chr_clit (listType arguments)
-
-  { /* chr_clit */
-    isit_char(arg_1(arguments));
-    return bld_stri_temp(
-        chrCLit(take_char(arg_1(arguments))));
-  } /* chr_clit */
-
-
-
 /**
  *  Compare two characters.
  *  @return -1, 0 or 1 if the first argument is considered to be
@@ -122,6 +112,16 @@ objectType chr_create (listType arguments)
     arg_1(arguments)->value.charValue = take_char(arg_3(arguments));
     return SYS_EMPTY_OBJECT;
   } /* chr_create */
+
+
+
+objectType chr_c_literal (listType arguments)
+
+  { /* chr_c_literal */
+    isit_char(arg_1(arguments));
+    return bld_stri_temp(
+        chrCLiteral(take_char(arg_1(arguments))));
+  } /* chr_c_literal */
 
 
 

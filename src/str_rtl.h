@@ -67,7 +67,7 @@ striType strChRepl (const const_striType mainStri,
     const charType searched, const const_striType replacement);
 /* rtlArrayType strChSplit (const const_striType mainStri,
     const charType delimiter); */
-striType strCLit (const const_striType stri);
+striType strCLiteral (const const_striType stri);
 intType strCompare (const const_striType stri1, const const_striType stri2);
 striType strConcat (const const_striType stri1, const const_striType stri2);
 striType strConcatChar (const const_striType stri1, const charType aChar);

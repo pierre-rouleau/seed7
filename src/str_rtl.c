@@ -2246,7 +2246,7 @@ rtlArrayType strChSplit (const const_striType mainStri, const charType delimiter
 
 
 
-striType strCLit (const const_striType stri)
+striType strCLiteral (const const_striType stri)
 
   {
     /* A string literal starts and ends with double quotes ("): */
@@ -2260,8 +2260,8 @@ striType strCLit (const const_striType stri)
     striType resized_literal;
     striType literal;
 
-  /* strCLit */
-    logFunction(printf("strCLit(\"%s\")\n", striAsUnquotedCStri(stri)););
+  /* strCLiteral */
+    logFunction(printf("strCLiteral(\"%s\")\n", striAsUnquotedCStri(stri)););
     striSize = stri->size;
     if (unlikely(striSize > (MAX_STRI_LEN - numOfQuotes) / escSequenceMax ||
                  !ALLOC_STRI_SIZE_OK(literal, escSequenceMax * striSize + numOfQuotes))) {
@@ -2331,7 +2331,7 @@ striType strCLit (const const_striType stri)
           pos += 4;
         } else {
           FREE_STRI2(literal, escSequenceMax * striSize + numOfQuotes);
-          logError(printf("strCLit(\"%s\"): Character > '\\255;' found.\n",
+          logError(printf("strCLiteral(\"%s\"): Character > '\\255;' found.\n",
                           striAsUnquotedCStri(stri)););
           raise_error(RANGE_ERROR);
           return NULL;
@@ -2350,10 +2350,10 @@ striType strCLit (const const_striType stri)
         literal = resized_literal;
       } /* if */
     } /* if */
-    logFunction(printf("strCLit --> \"%s\"\n",
+    logFunction(printf("strCLiteral --> \"%s\"\n",
                        striAsUnquotedCStri(literal)););
     return literal;
-  } /* strCLit */
+  } /* strCLiteral */
 
 
 

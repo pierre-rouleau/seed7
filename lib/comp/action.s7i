@@ -441,12 +441,12 @@ const proc: process_action (in reference: function, in ref_list: params,
         process(BST_STR, function, params, c_expr);
       when {"BST_VALUE"}:
         process(BST_VALUE, function, params, c_expr);
-      when {"CHR_CLIT"}:
-        process(CHR_CLIT, function, params, c_expr);
       when {"CHR_CMP"}:
         process(CHR_CMP, function, params, c_expr);
       when {"CHR_CPY"}:
         process(CHR_CPY, function, params, c_expr);
+      when {"CHR_C_LITERAL"}:
+        process(CHR_C_LITERAL, function, params, c_expr);
       when {"CHR_EQ"}:
         process(CHR_EQ, function, params, c_expr);
       when {"CHR_DECR"}:
@@ -1904,12 +1904,12 @@ const proc: process_action (in reference: function, in ref_list: params,
         process(STR_CHPOS, function, params, c_expr);
       when {"STR_CHSPLIT"}:
         process(STR_CHSPLIT, function, params, c_expr);
-      when {"STR_CLIT"}:
-        process(STR_CLIT, function, params, c_expr);
       when {"STR_CMP"}:
         process(STR_CMP, function, params, c_expr);
       when {"STR_CPY"}:
         process(STR_CPY, function, params, c_expr);
+      when {"STR_C_LITERAL"}:
+        process(STR_C_LITERAL, function, params, c_expr);
       when {"STR_ELEMCPY"}:
         process(STR_ELEMCPY, function, params, c_expr);
       when {"STR_EQ"}:
