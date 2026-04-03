@@ -806,8 +806,8 @@ const proc: process_action (in reference: function, in ref_list: params,
         process(ENU_ICONV2, function, params, c_expr);
       when {"ENU_ICONV3_EXCEPT"}:
         process(ENU_ICONV3_EXCEPT, function, params, c_expr);
-      when {"ENU_LIT"}:
-        process(ENU_LIT, function, params, c_expr);
+      when {"ENU_LITERAL"}:
+        process(ENU_LITERAL, function, params, c_expr);
       when {"ENU_NE"}:
         process(ENU_NE, function, params, c_expr);
       when {"ENU_ORD2"}:

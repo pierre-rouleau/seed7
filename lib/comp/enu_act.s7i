@@ -29,7 +29,7 @@ const ACTION: ENU_CPY           is action "ENU_CPY";
 const ACTION: ENU_EQ            is action "ENU_EQ";
 const ACTION: ENU_ICONV2        is action "ENU_ICONV2";
 const ACTION: ENU_ICONV3_EXCEPT is action "ENU_ICONV3_EXCEPT";
-const ACTION: ENU_LIT           is action "ENU_LIT";
+const ACTION: ENU_LITERAL       is action "ENU_LITERAL";
 const ACTION: ENU_NE            is action "ENU_NE";
 const ACTION: ENU_ORD2          is action "ENU_ORD2";
 const ACTION: ENU_ORD_EXCEPT    is action "ENU_ORD_EXCEPT";
@@ -143,7 +143,7 @@ const proc: process (ENU_ICONV3_EXCEPT, in reference: function,
   end func;
 
 
-const proc: process (ENU_LIT, in reference: function,
+const proc: process (ENU_LITERAL, in reference: function,
     in ref_list: params, inout expr_type: c_expr) is func
 
   local

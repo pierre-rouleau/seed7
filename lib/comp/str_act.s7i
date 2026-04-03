@@ -457,7 +457,7 @@ const func boolean: mightOverlap (in reference: dest, in reference: source) is f
   local
     const set of string: stringActions0 is
         {"BIG_RADIX", "BIG_radix", "BIG_STR", "BIN_RADIX", "BIN_radix",
-         "BIN_STR", "BST_STR", "ENU_LIT", "INT_RADIX", "INT_radix",
+         "BIN_STR", "BST_STR", "ENU_LITERAL", "INT_RADIX", "INT_radix",
          "INT_STR"};
     const set of string: stringActions1 is
         {"ARR_IDX", "SCT_SELECT", "STR_HEAD", "STR_RANGE",

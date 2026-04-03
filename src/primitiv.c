@@ -415,7 +415,7 @@ static const actEntryRecord actEntryTable[] = {
     { "ENU_GENLIT",                   enu_genlit,                   },
     { "ENU_ICONV2",                   enu_iconv2,                   },
     { "ENU_ICONV3_EXCEPT",            enu_iconv3_except,            },
-    { "ENU_LIT",                      enu_lit,                      },
+    { "ENU_LITERAL",                  enu_literal,                  },
     { "ENU_NE",                       enu_ne,                       },
     { "ENU_ORD2",                     enu_ord2,                     },
     { "ENU_ORD_EXCEPT",               enu_ord_except,               },

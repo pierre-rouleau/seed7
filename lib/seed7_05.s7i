@@ -340,7 +340,7 @@ $ system "graphic_error"   is GRAPHIC_ERROR;
 $ system "illegal_action"  is ILLEGAL_ACTION;
 
 const proc: raise (in EXCEPTION: anException)      is action "PRC_RAISE";
-const func string: str (in EXCEPTION: anException) is action "ENU_LIT";
+const func string: str (in EXCEPTION: anException) is action "ENU_LITERAL";
 const func EXCEPTION: (attr EXCEPTION) conv (in integer: exceptionNum) is action "ENU_ICONV3_EXCEPT";
 const func integer: ord (in EXCEPTION: anException) is action "ENU_ORD_EXCEPT";
 
