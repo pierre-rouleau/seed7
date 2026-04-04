@@ -168,7 +168,8 @@ $ syntax expr: .().exp.()                    is  -> 17;
 $ syntax expr: .().lpad.()                   is  -> 17;
 $ syntax expr: .().rpad.()                   is  -> 17;
 $ syntax expr: .().lpad0.()                  is  -> 17;
-$ syntax expr: .(). <& .()                   is  -> 18;
+$ syntax expr: .action.()                    is  -> 18;
+$ syntax expr: .(). <& .()                   is  -> 19;
 $ syntax expr: .(). := .()                   is <-> 20;
 $ syntax expr: .(). +:= .()                  is <-> 20;
 $ syntax expr: .(). -:= .()                  is <-> 20;
@@ -240,8 +241,6 @@ $ syntax expr: .return.()                                                       
 $ syntax expr: .return.var.()                                                      is <-  30;
 $ syntax expr: .().return.()                                                       is <-  30;
 $ syntax expr: .().return.var.()                                                   is <-  30;
-
-$ syntax expr: .action.()                      is  -> 30;
 
 $ syntax expr: . $ .()                         is  -> 35;
 
