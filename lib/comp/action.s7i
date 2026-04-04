@@ -596,9 +596,9 @@ const proc: process_action (in reference: function, in ref_list: params,
       when {"CON_HEIGHT"}:
         programUses.consoleLibrary := TRUE;
         process(CON_HEIGHT, function, params, c_expr);
-      when {"CON_H_SCL"}:
+      when {"CON_H_SCROLL"}:
         programUses.consoleLibrary := TRUE;
-        process(CON_H_SCL, function, params, c_expr);
+        process(CON_H_SCROLL, function, params, c_expr);
       when {"CON_LINE"}:
         programUses.consoleLibrary := TRUE;
         process(CON_LINE, function, params, c_expr);
