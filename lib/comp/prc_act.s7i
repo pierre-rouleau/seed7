@@ -802,6 +802,11 @@ const proc: generate_switch (in reference: controlExpr,
       c_expr.expr &:= "(scharType)(";
       process_expr(controlExpr, c_expr);
       c_expr.expr &:= ")";
+    elsif controlExprType in typeData.typeCategory and
+        typeData.typeCategory[controlExprType] = ACTENTRYOBJECT then
+      c_expr.expr &:= "aceOrd(";
+      process_expr(controlExpr, c_expr);
+      c_expr.expr &:= ")";
     elsif ccConf.SWITCH_WORKS_FOR_INT64TYPE then
       process_expr(controlExpr, c_expr);
     else

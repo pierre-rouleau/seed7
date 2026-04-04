@@ -1680,6 +1680,7 @@ const proc: process_call (in reference: current_expression, inout expr_type: c_e
           functionCategory = DATABASEOBJECT or
           functionCategory = SQLSTMTOBJECT or
           functionCategory = ENUMLITERALOBJECT or
+          functionCategory = ACTENTRYOBJECT or
           functionCategory = TYPEOBJECT then
       process_expr(function, c_expr);
     elsif functionCategory = REFOBJECT or
@@ -3118,7 +3119,15 @@ const proc: action_address (in reference: function, inout expr_type: c_expr) is 
   begin
     current_action := getValue(function, ACTION);
     action_name := str(current_action);
-    if action_name = "ARR_CPY" then
+    if action_name = "ACE_CMP" then
+      c_expr.expr &:= "&ptrCmpGeneric";
+    elsif action_name = "ACE_CPY" then
+      c_expr.expr &:= "&genericCpy";
+    elsif action_name = "ACE_CREATE" then
+      c_expr.expr &:= "&genericCreate";
+    elsif action_name = "ACE_HASHCODE" then
+      c_expr.expr &:= "&aceHashCode";
+    elsif action_name = "ARR_CPY" then
       object_type := getType(formalParams(function)[1]);
       process_generic_cpy_declaration(object_type, global_c_expr);
       c_expr.expr &:= "&generic_cpy_";
