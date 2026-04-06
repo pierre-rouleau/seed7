@@ -3265,17 +3265,13 @@ const proc: action_address (in reference: function, inout expr_type: c_expr) is 
       c_expr.expr &:= "&prgDestrGeneric";
     elsif action_name = "PRG_HASHCODE" then
       c_expr.expr &:= "&ptrHashCodeGeneric";
-    elsif action_name = "REF_CMP" or
-          action_name = "SEL_CMP" then
+    elsif action_name = "REF_CMP" then
       c_expr.expr &:= "&ptrCmpGeneric";
-    elsif action_name = "REF_CPY" or
-          action_name = "SEL_CPY" then
+    elsif action_name = "REF_CPY" then
       c_expr.expr &:= "&ptrCpyGeneric";
-    elsif action_name = "REF_CREATE" or
-          action_name = "SEL_CREATE" then
+    elsif action_name = "REF_CREATE" then
       c_expr.expr &:= "&ptrCreateGeneric";
-    elsif action_name = "REF_HASHCODE" or
-          action_name = "SEL_HASHCODE" then
+    elsif action_name = "REF_HASHCODE" then
       c_expr.expr &:= "&ptrHashCodeGeneric";
     elsif action_name = "RFL_CMP" then
       c_expr.expr &:= "&rflCmpGeneric";
@@ -3301,6 +3297,14 @@ const proc: action_address (in reference: function, inout expr_type: c_expr) is 
       process_generic_destr_declaration(object_type, global_c_expr);
       c_expr.expr &:= "&generic_destr_";
       c_expr.expr &:= str(typeNumber(object_type));
+    elsif action_name = "SEL_CMP" then
+      c_expr.expr &:= "&ptrCmpGeneric";
+    elsif action_name = "SEL_CPY" then
+      c_expr.expr &:= "&genericCpy";
+    elsif action_name = "SEL_CREATE" then
+      c_expr.expr &:= "&genericCreate";
+    elsif action_name = "SEL_HASHCODE" then
+      c_expr.expr &:= "&ptrHashCodeGeneric";
     elsif action_name = "SET_CMP" then
       c_expr.expr &:= "&setCmpGeneric";
     elsif action_name = "SET_CPY" then
