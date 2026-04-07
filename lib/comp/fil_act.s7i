@@ -110,7 +110,7 @@ const proc: process (FIL_BIG_LNG, in reference: function,
   begin
     prepare_bigint_result(c_expr);
     c_expr.result_expr := "filBigLng(";
-    getStdParamToResultExpr(params[1], c_expr);
+    getAnyParamToResultExpr(params[1], c_expr);
     c_expr.result_expr &:= ")";
   end func;
 
@@ -121,7 +121,7 @@ const proc: process (FIL_BIG_SEEK, in reference: function,
   begin
     setDiagnosticLine(c_expr);
     c_expr.expr &:= "filBigSeek(";
-    process_expr(params[1], c_expr);
+    getAnyParamToExpr(params[1], c_expr);
     c_expr.expr &:= ", ";
     getAnyParamToExpr(params[2], c_expr);
     c_expr.expr &:= ");\n";
@@ -134,7 +134,7 @@ const proc: process (FIL_BIG_TELL, in reference: function,
   begin
     prepare_bigint_result(c_expr);
     c_expr.result_expr := "filBigTell(";
-    getStdParamToResultExpr(params[1], c_expr);
+    getAnyParamToResultExpr(params[1], c_expr);
     c_expr.result_expr &:= ")";
   end func;
 
@@ -145,7 +145,7 @@ const proc: process (FIL_CLOSE, in reference: function,
   begin
     setDiagnosticLine(c_expr);
     c_expr.expr &:= "filClose(";
-    process_expr(params[1], c_expr);
+    getAnyParamToExpr(params[1], c_expr);
     c_expr.expr &:= ");\n";
   end func;
 
@@ -204,7 +204,7 @@ const proc: process (FIL_EOF, in reference: function,
 
   begin
     c_expr.expr &:= "filEof(";
-    process_expr(params[1], c_expr);
+    getAnyParamToExpr(params[1], c_expr);
     c_expr.expr &:= ")";
   end func;
 
@@ -214,9 +214,9 @@ const proc: process (FIL_EQ, in reference: function,
 
   begin
     c_expr.expr &:= "(";
-    process_expr(params[1], c_expr);
+    getAnyParamToExpr(params[1], c_expr);
     c_expr.expr &:= ") == (";
-    process_expr(params[3], c_expr);
+    getAnyParamToExpr(params[3], c_expr);
     c_expr.expr &:= ")";
   end func;
 
@@ -235,7 +235,7 @@ const proc: process (FIL_FLUSH, in reference: function,
   begin
     setDiagnosticLine(c_expr);
     c_expr.expr &:= "filFlush(";
-    process_expr(params[1], c_expr);
+    getAnyParamToExpr(params[1], c_expr);
     c_expr.expr &:= ");\n";
   end func;
 
@@ -245,7 +245,7 @@ const proc: process (FIL_GETC, in reference: function,
 
   begin
     c_expr.expr &:= "filGetc(";
-    process_expr(params[1], c_expr);
+    getAnyParamToExpr(params[1], c_expr);
     c_expr.expr &:= ")";
   end func;
 
@@ -256,7 +256,7 @@ const proc: process (FIL_GETS, in reference: function,
   begin
     prepare_stri_result(c_expr);
     c_expr.result_expr := "filGets(";
-    getStdParamToResultExpr(params[1], c_expr);
+    getAnyParamToResultExpr(params[1], c_expr);
     c_expr.result_expr &:= ", ";
     getStdParamToResultExpr(params[2], c_expr);
     c_expr.result_expr &:= ")";
@@ -268,7 +268,7 @@ const proc: process (FIL_HAS_NEXT, in reference: function,
 
   begin
     c_expr.expr &:= "filHasNext(";
-    process_expr(params[1], c_expr);
+    getAnyParamToExpr(params[1], c_expr);
     c_expr.expr &:= ")";
   end func;
 
@@ -286,7 +286,7 @@ const proc: process (FIL_INPUT_READY, in reference: function,
 
   begin
     c_expr.expr &:= "filInputReady(";
-    process_expr(params[1], c_expr);
+    getAnyParamToExpr(params[1], c_expr);
     c_expr.expr &:= ")";
   end func;
 
@@ -297,7 +297,7 @@ const proc: process (FIL_LINE_READ, in reference: function,
   begin
     prepare_stri_result(c_expr);
     c_expr.result_expr := "filLineRead(";
-    getStdParamToResultExpr(params[1], c_expr);
+    getAnyParamToResultExpr(params[1], c_expr);
     c_expr.result_expr &:= ", &(";
     getStdParamToResultExpr(params[2], c_expr);
     c_expr.result_expr &:= "))";
@@ -310,7 +310,7 @@ const proc: process (FIL_LITERAL, in reference: function,
   begin
     prepare_stri_result(c_expr);
     c_expr.result_expr := "filLiteral(";
-    getStdParamToResultExpr(params[1], c_expr);
+    getAnyParamToResultExpr(params[1], c_expr);
     c_expr.result_expr &:= ")";
   end func;
 
@@ -320,7 +320,7 @@ const proc: process (FIL_LNG, in reference: function,
 
   begin
     c_expr.expr &:= "filLng(";
-    process_expr(params[1], c_expr);
+    getAnyParamToExpr(params[1], c_expr);
     c_expr.expr &:= ")";
   end func;
 
@@ -330,9 +330,9 @@ const proc: process (FIL_NE, in reference: function,
 
   begin
     c_expr.expr &:= "(";
-    process_expr(params[1], c_expr);
+    getAnyParamToExpr(params[1], c_expr);
     c_expr.expr &:= ") != (";
-    process_expr(params[3], c_expr);
+    getAnyParamToExpr(params[3], c_expr);
     c_expr.expr &:= ")";
   end func;
 
@@ -373,7 +373,7 @@ const proc: process (FIL_PCLOSE, in reference: function,
   begin
     setDiagnosticLine(c_expr);
     c_expr.expr &:= "filPclose(";
-    process_expr(params[1], c_expr);
+    getAnyParamToExpr(params[1], c_expr);
     c_expr.expr &:= ");\n";
   end func;
 
@@ -423,7 +423,7 @@ const proc: process (FIL_SEEK, in reference: function,
   begin
     setDiagnosticLine(c_expr);
     c_expr.expr &:= "filSeek(";
-    process_expr(params[1], c_expr);
+    getAnyParamToExpr(params[1], c_expr);
     c_expr.expr &:= ", ";
     process_expr(params[2], c_expr);
     c_expr.expr &:= ");\n";
@@ -435,7 +435,7 @@ const proc: process (FIL_SEEKABLE, in reference: function,
 
   begin
     c_expr.expr &:= "filSeekable(";
-    process_expr(params[1], c_expr);
+    getAnyParamToExpr(params[1], c_expr);
     c_expr.expr &:= ")";
   end func;
 
@@ -446,7 +446,7 @@ const proc: process (FIL_SETBUF, in reference: function,
   begin
     setDiagnosticLine(c_expr);
     c_expr.expr &:= "filSetbuf(";
-    process_expr(params[1], c_expr);
+    getAnyParamToExpr(params[1], c_expr);
     c_expr.expr &:= ", ";
     process_expr(params[2], c_expr);
     c_expr.expr &:= ", ";
@@ -460,7 +460,7 @@ const proc: process (FIL_TELL, in reference: function,
 
   begin
     c_expr.expr &:= "filTell(";
-    process_expr(params[1], c_expr);
+    getAnyParamToExpr(params[1], c_expr);
     c_expr.expr &:= ")";
   end func;
 
@@ -471,7 +471,7 @@ const proc: process (FIL_TERMINATED_READ, in reference: function,
   begin
     prepare_stri_result(c_expr);
     c_expr.result_expr := "filTerminatedRead(";
-    getStdParamToResultExpr(params[1], c_expr);
+    getAnyParamToResultExpr(params[1], c_expr);
     c_expr.result_expr &:= ", ";
     getStdParamToResultExpr(params[2], c_expr);
     c_expr.result_expr &:= ", &(";
@@ -486,7 +486,7 @@ const proc: process (FIL_TRUNCATE, in reference: function,
   begin
     setDiagnosticLine(c_expr);
     c_expr.expr &:= "filTruncate(";
-    process_expr(params[1], c_expr);
+    getAnyParamToExpr(params[1], c_expr);
     c_expr.expr &:= ", ";
     process_expr(params[2], c_expr);
     c_expr.expr &:= ");\n";
@@ -497,9 +497,10 @@ const proc: process (FIL_VALUE, in reference: function,
     in ref_list: params, inout expr_type: c_expr) is func
 
   begin
-    c_expr.expr &:= "filValue(";
-    process_expr(params[1], c_expr);
-    c_expr.expr &:= ")";
+    prepare_file_result(c_expr);
+    c_expr.result_expr &:= "filValue(";
+    getStdParamToResultExpr(params[1], c_expr);
+    c_expr.result_expr &:= ")";
   end func;
 
 
@@ -509,7 +510,7 @@ const proc: process (FIL_WORD_READ, in reference: function,
   begin
     prepare_stri_result(c_expr);
     c_expr.result_expr := "filWordRead(";
-    getStdParamToResultExpr(params[1], c_expr);
+    getAnyParamToResultExpr(params[1], c_expr);
     c_expr.result_expr &:= ", &(";
     getStdParamToResultExpr(params[2], c_expr);
     c_expr.result_expr &:= "))";
@@ -522,7 +523,7 @@ const proc: process (FIL_WRITE, in reference: function,
   begin
     setDiagnosticLine(c_expr);
     c_expr.expr &:= "filWrite(";
-    process_expr(params[1], c_expr);
+    getAnyParamToExpr(params[1], c_expr);
     c_expr.expr &:= ", ";
     getAnyParamToExpr(params[2], c_expr);
     c_expr.expr &:= ");\n";
