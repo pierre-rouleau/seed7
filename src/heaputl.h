@@ -79,6 +79,7 @@ typedef struct {
     memSizeType fetch_data_bytes;
     unsigned long sql_func;
     unsigned long files;
+    unsigned long sockets;
     unsigned long win;
     memSizeType win_bytes;
     unsigned long process;
@@ -95,7 +96,7 @@ countType count = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                   0, 0, 0, 0};
+                   0, 0, 0, 0, 0};
 #else
 EXTERN countType count;
 #endif

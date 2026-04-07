@@ -29,6 +29,12 @@
 /*                                                                  */
 /********************************************************************/
 
+#ifdef DO_INIT
+socketRecord emptySocketRecord = {(socketNumberType) -1, 0};
+#else
+EXTERN socketRecord emptySocketRecord;
+#endif
+
 #define SOC_OPT_NONE      0
 #define SOC_OPT_REUSEADDR 1
 
@@ -49,6 +55,10 @@ striType socAddrService (const const_bstriType address);
 void socBind (socketType listenerSocket, const_bstriType address);
 void socClose (socketType aSocket);
 void socConnect (socketType aSocket, const_bstriType address);
+void socCpy (socketType *const dest, const socketType source);
+socketType socCreate (const socketType source);
+void socDestr (const socketType oldSocket);
+void socFree (socketType oldSocket);
 charType socGetc (socketType inSocket, charType *const eofIndicator);
 striType socGets (socketType inSocket, intType length, charType *const eofIndicator);
 striType socGetHostname (void);
@@ -61,6 +71,7 @@ bstriType socInetServAddr (intType port);
 boolType socInputReady (socketType sock, intType seconds, intType micro_seconds);
 striType socLineRead (socketType inSocket, charType *const terminationChar);
 void socListen (socketType listenerSocket, intType backlog);
+intType socOrd (socketType aSocket);
 intType socRecv (socketType sock, striType *stri, intType length, intType flags);
 intType socRecvfrom (socketType sock, striType *stri, intType length, intType flags,
     bstriType *address);

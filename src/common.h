@@ -556,13 +556,15 @@ typedef uint32Type           utf32charType;
 typedef utf32charType       *utf32striType;
 typedef const utf32charType *const_utf32striType;
 
-typedef int                socketType;
+typedef int                socketNumberType;
 typedef unsigned int       usocketType;
 
 /* Possible values for SOCKET_LIB: */
 #define NO_SOCKETS      (-1)
 #define UNIX_SOCKETS      1
 #define WINSOCK_SOCKETS   2
+
+#define EMPTY_SOCKET (-1)
 
 #if SOCKET_LIB == UNIX_SOCKETS
 typedef int                os_socketType;
@@ -657,6 +659,7 @@ typedef struct setStruct      *setType;
 typedef struct striStruct     *striType;
 typedef struct bstriStruct    *bstriType;
 typedef struct fileStruct     *fileType;
+typedef struct socketStruct   *socketType;
 typedef struct pollStruct     *pollType;
 typedef struct winStruct      *winType;
 typedef struct processStruct  *processType;
@@ -667,6 +670,7 @@ typedef const struct setStruct      *const_setType;
 typedef const struct striStruct     *const_striType;
 typedef const struct bstriStruct    *const_bstriType;
 typedef const struct fileStruct     *const_fileType;
+typedef const struct socketStruct   *const_socketType;
 typedef const struct pollStruct     *const_pollType;
 typedef const struct winStruct      *const_winType;
 typedef const struct processStruct  *const_processType;
@@ -729,6 +733,11 @@ typedef struct fileStruct {
     boolType readingAllowed;
     boolType writingAllowed;
   } fileRecord;
+
+typedef struct socketStruct {
+    socketNumberType socketNumber;
+    uintType usage_count;
+  } socketRecord;
 
 typedef struct pollStruct {
 #if !EMPTY_STRUCTS_ALLOWED

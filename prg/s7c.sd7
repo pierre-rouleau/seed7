@@ -572,6 +572,8 @@ const func boolean: identical_values (in reference: object1, in reference: objec
         isIdentical := getValue(object1, reference) = getValue(object2, reference);
       when {FILEOBJECT}:
         isIdentical := getValue(object1, clib_file) = getValue(object2, clib_file);
+      when {SOCKETOBJECT}:
+        isIdentical := getValue(object1, PRIMITIVE_SOCKET) = getValue(object2, PRIMITIVE_SOCKET);
       when {POINTLISTOBJECT}:
         isIdentical := getValue(object1, pointList) = getValue(object2, pointList);
       when {CONSTENUMOBJECT, VARENUMOBJECT}:
@@ -881,7 +883,7 @@ const proc: process_local_declaration (in reference: current_object, in var refe
       create_name(current_object, c_declaration.temp_frees);
       c_declaration.temp_frees &:= ");\n";
     elsif valueCategory = SOCKETOBJECT then
-      c_declaration.temp_decls &:= "=-1";
+      c_declaration.temp_decls &:= "=&emptySocketRecord";
     elsif valueCategory = POLLOBJECT then
       c_declaration.temp_assigns &:= diagnosticLine(current_object);
       c_declaration.temp_assigns &:= "o_";
@@ -1672,6 +1674,7 @@ const proc: process_call (in reference: current_expression, inout expr_type: c_e
           functionCategory = STRUCTELEMOBJECT or
           functionCategory = INTERFACEOBJECT or
           functionCategory = FILEOBJECT or
+          functionCategory = SOCKETOBJECT or
           functionCategory = POLLOBJECT or
           functionCategory = WINOBJECT or
           functionCategory = POINTLISTOBJECT or
@@ -3315,6 +3318,12 @@ const proc: action_address (in reference: function, inout expr_type: c_expr) is 
       c_expr.expr &:= "&setDestrGeneric";
     elsif action_name = "SET_HASHCODE" then
       c_expr.expr &:= "&setHashCodeGeneric";
+    elsif action_name = "SOC_CPY" then
+      c_expr.expr &:= "&socCpyGeneric";
+    elsif action_name = "SOC_CREATE" then
+      c_expr.expr &:= "&socCreateGeneric";
+    elsif action_name = "SOC_DESTR" then
+      c_expr.expr &:= "&socDestrGeneric";
     elsif action_name = "SQL_CMP_DB" then
       c_expr.expr &:= "&ptrCmpGeneric";
     elsif action_name = "SQL_CPY_DB" then
@@ -3539,7 +3548,7 @@ const proc: process_socket_declaration (in reference: current_object,
   begin
     c_expr.expr &:= "socketType o_";
     create_name(current_object, c_expr.expr);
-    c_expr.expr &:= " = (socketType) -1;\n\n";
+    c_expr.expr &:= " = &emptySocketRecord;\n\n";
     count_declarations(c_expr);
   end func;
 
@@ -5627,6 +5636,7 @@ const proc: write_file_head is func
     writeln(c_prog, "typedef uintType bitSetType;");
     writeln(c_prog, "typedef uint" <& ccConf.POINTER_SIZE <& "Type memSizeType;");
     writeln(c_prog, "typedef FILE *cFileType;");
+    writeln(c_prog, "typedef int socketNumberType;");
     writeln(c_prog, "typedef char *cstriType;");
     writeln(c_prog, "typedef const char *const_cstriType;");
     writeln(c_prog, "typedef unsigned char *ustriType;");
@@ -5660,6 +5670,11 @@ const proc: write_file_head is func
                     \  uintType usage_count;\n\
                     \} *fileType;");
     writeln(c_prog, "typedef const struct fileStruct  *const_fileType;");
+    writeln(c_prog, "typedef struct socketStruct {\n\
+                    \  socketNumberType socketNumber;\n\
+                    \  uintType usage_count;\n\
+                    \} *socketType;");
+    writeln(c_prog, "typedef const struct socketStruct  *const_socketType;");
     writeln(c_prog, "typedef struct setStruct {\n\
                     \  intType min_position;\n\
                     \  intType max_position;\n\
@@ -5724,8 +5739,7 @@ const proc: write_file_head is func
                     \  actType action;\n\
                     \} actEntryRecord;\n\
                     \typedef actEntryRecord *actEntryType;\n\
-                    \typedef const actEntryRecord *const_actEntryType;\n\
-                    \typedef int socketType;");
+                    \typedef const actEntryRecord *const_actEntryType;");
     writeln(c_prog, "typedef uint" <& ccConf.GENERIC_SIZE <& "Type genericType;");
     writeln(c_prog, "typedef union {\n\
                     \  genericType   genericValue;\n\
@@ -5964,6 +5978,7 @@ const proc: write_file_head is func
     writeln(c_prog, "extern struct fileStruct stdinFileRecord;");
     writeln(c_prog, "extern struct fileStruct stdoutFileRecord;");
     writeln(c_prog, "extern struct fileStruct stderrFileRecord;");
+    writeln(c_prog, "extern struct socketStruct emptySocketRecord;");
     writeln(c_prog, "typedef int errInfoType;");
     writeln(c_prog, "#define OKAY_NO_ERROR   0\n\
                     \#define MEMORY_ERROR    1\n\
@@ -6382,8 +6397,7 @@ const proc: init_const_value (in reference: current_object, inout expr_type: c_e
       c_expr.expr &:= lower(literal(getValue(current_object, clib_file)));
       c_expr.expr &:= "FileRecord";
     elsif objectCategory = SOCKETOBJECT then
-      c_expr.expr &:= ".value.intValue=";
-      c_expr.expr &:= "-1";
+      c_expr.expr &:= ".value.socketValue=&emptySocketRecord";
     elsif objectCategory = POLLOBJECT then
       c_expr.expr &:= ".value.pollValue=";
       process_pollData_literal(getValue(current_object, pollData), c_expr);

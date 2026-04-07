@@ -370,7 +370,7 @@ static boolType replaceFdSet (testType *test, memSizeType capacity)
 
 
 
-static void addCheck (testType *test, const socketType aSocket,
+static void addCheck (testType *test, const socketNumberType aSocket,
     const genericType fileObj)
 
   {
@@ -431,7 +431,7 @@ static void addCheck (testType *test, const socketType aSocket,
 
 
 
-static void removeCheck (testType *test, const socketType aSocket)
+static void removeCheck (testType *test, const socketNumberType aSocket)
 
   {
     memSizeType pos;
@@ -450,7 +450,7 @@ static void removeCheck (testType *test, const socketType aSocket)
                  &test->files[test->iterPos], sizeof(fdAndFileType));
           hshIdxAddr(test->indexHash,
                      (genericType) (usocketType) test->files[pos].fd,
-                     (intType) (socketType) test->files[pos].fd,
+                     (intType) (socketNumberType) test->files[pos].fd,
                      (compareType) &genericCmp)->value.genericValue = (genericType) pos;
           pos = test->iterPos;
         } /* if */
@@ -461,7 +461,7 @@ static void removeCheck (testType *test, const socketType aSocket)
                &test->files[test->size], sizeof(fdAndFileType));
         hshIdxAddr(test->indexHash,
                    (genericType) (usocketType) test->files[pos].fd,
-                   (intType) (socketType) test->files[pos].fd,
+                   (intType) (socketNumberType) test->files[pos].fd,
                    (compareType) &genericCmp)->value.genericValue = (genericType) pos;
       } /* if */
       hshExcl(test->indexHash, (genericType) (usocketType) aSocket,
@@ -548,7 +548,7 @@ static void doPoll (const pollType pollData, struct timeval *timeout)
 
 
 
-static boolType isChecked (const testType *test, const socketType aSocket)
+static boolType isChecked (const testType *test, const socketNumberType aSocket)
 
   {
     memSizeType pos;
@@ -566,7 +566,7 @@ static boolType isChecked (const testType *test, const socketType aSocket)
 
 
 
-static boolType isReady (const testType *test, const socketType aSocket)
+static boolType isReady (const testType *test, const socketNumberType aSocket)
 
   {
     memSizeType pos;
@@ -702,21 +702,38 @@ void polAddCheck (const pollType pollData, const socketType aSocket,
     intType eventsToCheck, const genericType fileObj)
 
   { /* polAddCheck */
-    switch (castIntTypeForSwitch(eventsToCheck)) {
-      case POLL_IN:
-        addCheck(&var_conv(pollData)->readTest, aSocket, fileObj);
-        break;
-      case POLL_OUT:
-        addCheck(&var_conv(pollData)->writeTest, aSocket, fileObj);
-        break;
-      case POLL_INOUT:
-        addCheck(&var_conv(pollData)->readTest, aSocket, fileObj);
-        addCheck(&var_conv(pollData)->writeTest, aSocket, fileObj);
-        break;
-      default:
-        raise_error(RANGE_ERROR);
-        break;
-    } /* switch */
+    logFunction(printf("polAddCheck(" FMT_U_MEM ", %d, " FMT_X ", "
+                       FMT_U_GEN ")\n",
+                       (memSizeType) pollData,
+                       aSocket != NULL ? aSocket->socketNumber : 0,
+                       eventsToCheck, fileObj););
+    if (unlikely(aSocket->socketNumber == EMPTY_SOCKET)) {
+      logError(printf("polAddCheck(" FMT_U_MEM ", %d, " FMT_X ", "
+                      FMT_U_GEN "): Attempt to use a closed socket.\n",
+                      (memSizeType) pollData, aSocket->socketNumber,
+                      eventsToCheck, fileObj););
+      raise_error(FILE_ERROR);
+    } else {
+      switch (castIntTypeForSwitch(eventsToCheck)) {
+        case POLL_IN:
+          addCheck(&var_conv(pollData)->readTest,
+                   aSocket->socketNumber, fileObj);
+          break;
+        case POLL_OUT:
+          addCheck(&var_conv(pollData)->writeTest,
+                   aSocket->socketNumber, fileObj);
+          break;
+        case POLL_INOUT:
+          addCheck(&var_conv(pollData)->readTest,
+                   aSocket->socketNumber, fileObj);
+          addCheck(&var_conv(pollData)->writeTest,
+                   aSocket->socketNumber, fileObj);
+          break;
+        default:
+          raise_error(RANGE_ERROR);
+          break;
+      } /* switch */
+    } /* if */
   } /* polAddCheck */
 
 
@@ -1139,16 +1156,31 @@ intType polGetCheck (const const_pollType pollData, const socketType aSocket)
     intType result;
 
   /* polGetCheck */
-    if (isChecked(&conv(pollData)->readTest, aSocket)) {
-      if (isChecked(&conv(pollData)->writeTest, aSocket)) {
-        result = POLL_INOUT;
-      } else {
-        result = POLL_IN;
-      } /* if */
-    } else if (isChecked(&conv(pollData)->writeTest, aSocket)) {
-      result = POLL_OUT;
+    logFunction(printf("polGetCheck(" FMT_U_MEM ", %d)\n",
+                       (memSizeType) pollData,
+                       aSocket != NULL ?
+                           aSocket->socketNumber : 0););
+    if (unlikely(aSocket->socketNumber == EMPTY_SOCKET)) {
+      logError(printf("polGetCheck(" FMT_U_MEM ", %d)\n",
+                       (memSizeType) pollData,
+                       aSocket->socketNumber););
+      raise_error(FILE_ERROR);
+      result = 0;
     } else {
-      result = POLL_NOTHING;
+      if (isChecked(&conv(pollData)->readTest,
+                          aSocket->socketNumber)) {
+        if (isChecked(&conv(pollData)->writeTest,
+                      aSocket->socketNumber)) {
+          result = POLL_INOUT;
+        } else {
+          result = POLL_IN;
+        } /* if */
+      } else if (isChecked(&conv(pollData)->writeTest,
+                           aSocket->socketNumber)) {
+        result = POLL_OUT;
+      } else {
+        result = POLL_NOTHING;
+      } /* if */
     } /* if */
     return result;
   } /* polGetCheck */
@@ -1174,16 +1206,31 @@ intType polGetFinding (const const_pollType pollData, const socketType aSocket)
     intType result;
 
   /* polGetFinding */
-    if (isReady(&conv(pollData)->readTest, aSocket)) {
-      if (isReady(&conv(pollData)->writeTest, aSocket)) {
-        result = POLL_INOUT;
-      } else {
-        result = POLL_IN;
-      } /* if */
-    } else if (isReady(&conv(pollData)->writeTest, aSocket)) {
-      result = POLL_OUT;
+    logFunction(printf("polGetFinding(" FMT_U_MEM ", %d)\n",
+                       (memSizeType) pollData,
+                       aSocket != NULL ?
+                           aSocket->socketNumber : 0););
+    if (unlikely(aSocket->socketNumber == EMPTY_SOCKET)) {
+      logError(printf("polGetFinding(" FMT_U_MEM ", %d)\n",
+                       (memSizeType) pollData,
+                       aSocket->socketNumber););
+      raise_error(FILE_ERROR);
+      result = 0;
     } else {
-      result = POLL_NOTHING;
+      if (isReady(&conv(pollData)->readTest,
+                  aSocket->socketNumber)) {
+        if (isReady(&conv(pollData)->writeTest,
+                    aSocket->socketNumber)) {
+          result = POLL_INOUT;
+        } else {
+          result = POLL_IN;
+        } /* if */
+      } else if (isReady(&conv(pollData)->writeTest,
+                         aSocket->socketNumber)) {
+        result = POLL_OUT;
+      } else {
+        result = POLL_NOTHING;
+      } /* if */
     } /* if */
     return result;
   } /* polGetFinding */
@@ -1400,19 +1447,34 @@ void polPoll (const pollType pollData)
     intType eventsToCheck)
 
   { /* polRemoveCheck */
-    switch (castIntTypeForSwitch(eventsToCheck)) {
-      case POLL_IN:
-        removeCheck(&var_conv(pollData)->readTest, aSocket);
-        break;
-      case POLL_OUT:
-        removeCheck(&var_conv(pollData)->writeTest, aSocket);
-        break;
-      case POLL_INOUT:
-        removeCheck(&var_conv(pollData)->readTest, aSocket);
-        removeCheck(&var_conv(pollData)->writeTest, aSocket);
-        break;
-      default:
-        raise_error(RANGE_ERROR);
-        break;
-    } /* switch */
+    logFunction(printf("polRemoveCheck(" FMT_U_MEM ", %d, " FMT_X ")\n",
+                       (memSizeType) pollData,
+                       aSocket != NULL ? aSocket->socketNumber : 0,
+                       eventsToCheck););
+    if (unlikely(aSocket->socketNumber == EMPTY_SOCKET)) {
+      logError(printf("polRemoveCheck(" FMT_U_MEM ", %d, " FMT_X ")\n",
+                       (memSizeType) pollData, aSocket->socketNumber,
+                       eventsToCheck););
+      raise_error(FILE_ERROR);
+    } else {
+      switch (castIntTypeForSwitch(eventsToCheck)) {
+        case POLL_IN:
+          removeCheck(&var_conv(pollData)->readTest,
+                      aSocket->socketNumber);
+          break;
+        case POLL_OUT:
+          removeCheck(&var_conv(pollData)->writeTest,
+                      aSocket->socketNumber);
+          break;
+        case POLL_INOUT:
+          removeCheck(&var_conv(pollData)->readTest,
+                      aSocket->socketNumber);
+          removeCheck(&var_conv(pollData)->writeTest,
+                      aSocket->socketNumber);
+          break;
+        default:
+          raise_error(RANGE_ERROR);
+          break;
+      } /* switch */
+    } /* if */
   } /* polRemoveCheck */

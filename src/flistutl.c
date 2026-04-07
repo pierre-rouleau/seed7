@@ -539,6 +539,13 @@ void heapStatistic (void)
           (unsigned int) SIZ_REC(fileRecord));
       bytes_used += count.files * SIZ_REC(fileRecord);
     } /* if */
+    if (count.sockets != 0) {
+      printf(F_U_MEM(9) " bytes in %8lu sockets of             %4u bytes\n",
+          count.sockets * SIZ_REC(socketRecord),
+          count.sockets,
+          (unsigned int) SIZ_REC(socketRecord));
+      bytes_used += count.sockets * SIZ_REC(socketRecord);
+    } /* if */
     if (count.win != 0) {
       printf(F_U_MEM(9) " bytes in %8lu windows of             %4u bytes\n",
           count.win_bytes,
@@ -762,6 +769,7 @@ static memSizeType compute_hs (void)
         count.fetch_data_bytes +
         (memSizeType) count.sql_func       * SIZ_REC(sqlFuncRecord) +
         (memSizeType) count.files          * SIZ_REC(fileRecord) +
+        (memSizeType) count.sockets        * SIZ_REC(socketRecord) +
         (memSizeType) count.win_bytes +
         (memSizeType) count.process        * sizeof_processRecord +
         count.fnam_bytes + (memSizeType) count.fnam +

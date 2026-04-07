@@ -917,6 +917,7 @@ static const actEntryRecord actEntryTable[] = {
     { "SOC_CONNECT",                  soc_connect,                  },
     { "SOC_CPY",                      soc_cpy,                      },
     { "SOC_CREATE",                   soc_create,                   },
+    { "SOC_DESTR",                    soc_destr,                    },
     { "SOC_EMPTY",                    soc_empty,                    },
     { "SOC_EQ",                       soc_eq,                       },
     { "SOC_GETC",                     soc_getc,                     },
@@ -939,6 +940,7 @@ static const actEntryRecord actEntryTable[] = {
     { "SOC_SENDTO",                   soc_sendto,                   },
     { "SOC_SET_OPT_BOOL",             soc_set_opt_bool,             },
     { "SOC_SOCKET",                   soc_socket,                   },
+    { "SOC_VALUE",                    soc_value,                    },
     { "SOC_WORD_READ",                soc_word_read,                },
     { "SOC_WRITE",                    soc_write,                    },
 

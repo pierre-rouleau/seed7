@@ -1732,6 +1732,8 @@ const proc: process_action (in reference: function, in ref_list: params,
         process(SOC_SET_OPT_BOOL, function, params, c_expr);
       when {"SOC_SOCKET"}:
         process(SOC_SOCKET, function, params, c_expr);
+      when {"SOC_VALUE"}:
+        process(SOC_VALUE, function, params, c_expr);
       when {"SOC_WORD_READ"}:
         process(SOC_WORD_READ, function, params, c_expr);
       when {"SOC_WRITE"}:
