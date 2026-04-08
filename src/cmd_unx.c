@@ -188,7 +188,9 @@ char *getenv7 (const char *name)
     char *c;
 
   /* getenv7 */
-    logFunction(printf("getenv7(\"%s\")\n", name););
+    logFunction(printf("getenv7(%s\"%s\")\n",
+                       name == NULL ? "NULL " : "",
+                       name != NULL ? name : ""););
     if (name != NULL && environ7 != NULL && strchr(name, '=') == NULL) {
       nameLen = strlen(name);
       for (p = environ7; (c = *p) != NULL; ++p) {
@@ -200,7 +202,9 @@ char *getenv7 (const char *name)
         } /* if */
       } /* for */
     } /* if */
-    logFunction(printf("getenv7(\"%s\") --> NULL\n", name));
+    logFunction(printf("getenv7(%s\"%s\") --> NULL\n",
+                       name == NULL ? "NULL " : "",
+                       name != NULL ? name : ""););
     return NULL;
   } /* getenv7 */
 
@@ -217,8 +221,12 @@ int setenv7 (const char *name, const char *value, int overwrite)
     char **resizedEnviron7;
 
   /* setenv7 */
-    logFunction(printf("setenv7(\"%s\", \"%s\", %d)\n",
-                       name, value, overwrite););
+    logFunction(printf("setenv7(%s\"%s\", %s\"%s\", %d)\n",
+                       name != NULL ? "NULL " : "",
+                       name != NULL ? name : "",
+                       value == NULL ? "NULL " : "",
+                       value != NULL ? value : "",
+                       overwrite););
     if (name == NULL || name[0] == '\0' ||
         strchr(name, '=') != NULL || value == NULL) {
       errno = EINVAL;
