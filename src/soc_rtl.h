@@ -67,30 +67,30 @@ charType socGetc (const const_socketType inSocket,
 striType socGets (const const_socketType inSocket, intType length,
                   charType *const eofIndicator);
 striType socGetHostname (void);
-bstriType socGetLocalAddr (const const_socketType sock);
-bstriType socGetPeerAddr (const const_socketType sock);
+bstriType socGetLocalAddr (const const_socketType aSocket);
+bstriType socGetPeerAddr (const const_socketType aSocket);
 boolType socHasNext (const const_socketType inSocket);
 bstriType socInetAddr (const const_striType hostName, intType port);
 bstriType socInetLocalAddr (intType port);
 bstriType socInetServAddr (intType port);
-boolType socInputReady (const const_socketType sock, intType seconds,
+boolType socInputReady (const const_socketType inSocket, intType seconds,
                         intType micro_seconds);
 striType socLineRead (const const_socketType inSocket,
                       charType *const terminationChar);
 void socListen (const const_socketType listenerSocket,
                 intType backlog);
 intType socOrd (const const_socketType aSocket);
-intType socRecv (const const_socketType sock, striType *const stri,
+intType socRecv (const const_socketType inSocket, striType *const stri,
                  intType length, intType flags);
-intType socRecvfrom (const const_socketType sock,
+intType socRecvfrom (const const_socketType inSocket,
                      striType *const stri, intType length,
                      intType flags, bstriType *const address);
-intType socSend (const const_socketType sock,
+intType socSend (const const_socketType outSocket,
                  const const_striType stri, intType flags);
-intType socSendto (const const_socketType sock,
+intType socSendto (const const_socketType outSocket,
                    const const_striType stri, intType flags,
                    const_bstriType address);
-void socSetOptBool (const const_socketType sock, intType optname,
+void socSetOptBool (const const_socketType aSocket, intType optname,
                     boolType optval);
 socketType socSocket (intType domain, intType type,
                       intType protocol);
