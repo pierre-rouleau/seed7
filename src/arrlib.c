@@ -77,7 +77,7 @@ static void qsort_array (objectType begin_sort, objectType end_sort,
     if (end_sort - begin_sort < QSORT_LIMIT) {
       /* Use insertion sort */
       for (middle_elem = begin_sort + 1; middle_elem <= end_sort; middle_elem++) {
-        memcpy(&compare_elem, middle_elem, sizeof(objectRecord));
+        compare_elem = *middle_elem;
         less_elem = begin_sort - 1;
         do {
           less_elem++;
@@ -88,13 +88,13 @@ static void qsort_array (objectType begin_sort, objectType end_sort,
         } while (cmp < 0);
         memmove(&less_elem[1], less_elem,
                 (memSizeType) (middle_elem - less_elem) * sizeof(objectRecord));
-        memcpy(less_elem, &compare_elem, sizeof(objectRecord));
+        *less_elem = compare_elem;
       } /* for */
     } else {
       middle_elem = &begin_sort[(memSizeType) (end_sort - begin_sort) >> 1];
-      memcpy(&compare_elem, middle_elem, sizeof(objectRecord));
-      memcpy(middle_elem, end_sort, sizeof(objectRecord));
-      memcpy(end_sort, &compare_elem, sizeof(objectRecord));
+      compare_elem = *middle_elem;
+      *middle_elem = *end_sort;
+      *end_sort = compare_elem;
       less_elem = begin_sort - 1;
       greater_elem = end_sort;
       do {
@@ -112,13 +112,13 @@ static void qsort_array (objectType begin_sort, objectType end_sort,
           cmp = take_int(cmp_obj);
           FREE_OBJECT(cmp_obj);
         } while (cmp > 0 && greater_elem != begin_sort);
-        memcpy(&help_element, less_elem, sizeof(objectRecord));
-        memcpy(less_elem, greater_elem, sizeof(objectRecord));
-        memcpy(greater_elem, &help_element, sizeof(objectRecord));
+        help_element = *less_elem;
+        *less_elem = *greater_elem;
+        *greater_elem = help_element;
       } while (greater_elem > less_elem);
-      memcpy(greater_elem, less_elem, sizeof(objectRecord));
-      memcpy(less_elem, &compare_elem, sizeof(objectRecord));
-      memcpy(end_sort, &help_element, sizeof(objectRecord));
+      *greater_elem = *less_elem;
+      *less_elem = compare_elem;
+      *end_sort = help_element;
       qsort_array(begin_sort, less_elem - 1, cmp_func);
       qsort_array(less_elem + 1, end_sort, cmp_func);
     } /* if */
@@ -150,7 +150,7 @@ static void qsort_array_reverse (objectType begin_sort, objectType end_sort,
     if (end_sort - begin_sort < QSORT_LIMIT) {
       /* Use insertion sort */
       for (middle_elem = begin_sort + 1; middle_elem <= end_sort; middle_elem++) {
-        memcpy(&compare_elem, middle_elem, sizeof(objectRecord));
+        compare_elem = *middle_elem;
         greater_elem = begin_sort - 1;
         do {
           greater_elem++;
@@ -161,13 +161,13 @@ static void qsort_array_reverse (objectType begin_sort, objectType end_sort,
         } while (cmp > 0);
         memmove(&greater_elem[1], greater_elem,
                 (memSizeType) (middle_elem - greater_elem) * sizeof(objectRecord));
-        memcpy(greater_elem, &compare_elem, sizeof(objectRecord));
+        *greater_elem = compare_elem;
       } /* for */
     } else {
       middle_elem = &begin_sort[(memSizeType) (end_sort - begin_sort) >> 1];
-      memcpy(&compare_elem, middle_elem, sizeof(objectRecord));
-      memcpy(middle_elem, end_sort, sizeof(objectRecord));
-      memcpy(end_sort, &compare_elem, sizeof(objectRecord));
+      compare_elem = *middle_elem;
+      *middle_elem = *end_sort;
+      *end_sort = compare_elem;
       greater_elem = begin_sort - 1;
       less_elem = end_sort;
       do {
@@ -185,13 +185,13 @@ static void qsort_array_reverse (objectType begin_sort, objectType end_sort,
           cmp = take_int(cmp_obj);
           FREE_OBJECT(cmp_obj);
         } while (cmp < 0 && less_elem != begin_sort);
-        memcpy(&help_element, greater_elem, sizeof(objectRecord));
-        memcpy(greater_elem, less_elem, sizeof(objectRecord));
-        memcpy(less_elem, &help_element, sizeof(objectRecord));
+        help_element  = *greater_elem;
+        *greater_elem = *less_elem;
+        *less_elem = help_element;
       } while (less_elem > greater_elem);
-      memcpy(less_elem, greater_elem, sizeof(objectRecord));
-      memcpy(greater_elem, &compare_elem, sizeof(objectRecord));
-      memcpy(end_sort, &help_element, sizeof(objectRecord));
+      *less_elem = *greater_elem;
+      *greater_elem = compare_elem;
+      *end_sort = help_element;
       qsort_array_reverse(begin_sort, greater_elem - 1, cmp_func);
       qsort_array_reverse(greater_elem + 1, end_sort, cmp_func);
     } /* if */
