@@ -55,6 +55,8 @@
 #define DO_INIT
 #include "stackutl.h"
 
+#define INITIAL_CATCH_STACK_SIZE 128
+
 /* Some compilers/linkers only support determining the stack size   */
 /* by defining a global variable. This variable must be set to the  */
 /* desired stack size. In this case the makefile defines the macro  */
@@ -152,11 +154,11 @@ void setupStack (memSizeType stackSize)
 #if HAS_SIGALTSTACK && !SIGNAL_STACK_ENABLED
     if (alternateSignalStack()) {
 #endif
-      catch_stack = (catch_type *) malloc(CATCH_STACK_INCREMENT * sizeof(catch_type));
+      catch_stack = (catch_type *) malloc(INITIAL_CATCH_STACK_SIZE * sizeof(catch_type));
       /* If catch_stack is NULL interpreted and */
       /* compiled programs raise MEMORY_ERROR.  */
       if (likely(catch_stack != NULL)) {
-        max_catch_stack = CATCH_STACK_INCREMENT;
+        max_catch_stack = INITIAL_CATCH_STACK_SIZE;
       } /* if */
 #if HAS_SIGALTSTACK && !SIGNAL_STACK_ENABLED
     } /* if */
@@ -180,11 +182,11 @@ boolType resizeCatchStackOkay (void)
 
   /* resizeCatchStackOkay */
     if (unlikely(max_catch_stack >
-                 MAX_MEMSIZETYPE / sizeof(catch_type) - CATCH_STACK_INCREMENT)) {
+                 MAX_MEMSIZETYPE / sizeof(catch_type) - max_catch_stack)) {
       catch_stack_pos--;
       okay = FALSE;
     } else {
-      new_max_catch_stack = max_catch_stack + CATCH_STACK_INCREMENT;
+      new_max_catch_stack = max_catch_stack << 1;
       resized_stack = (catch_type *) realloc(catch_stack,
           new_max_catch_stack * sizeof(catch_type));
       if (unlikely(resized_stack == NULL)) {
@@ -208,11 +210,11 @@ void resize_catch_stack (void)
 
   /* resize_catch_stack */
     if (unlikely(max_catch_stack >
-                 MAX_MEMSIZETYPE / sizeof(catch_type) - CATCH_STACK_INCREMENT)) {
+                 MAX_MEMSIZETYPE / sizeof(catch_type) - max_catch_stack)) {
       catch_stack_pos--;
       raise_error(MEMORY_ERROR);
     } else {
-      new_max_catch_stack = max_catch_stack + CATCH_STACK_INCREMENT;
+      new_max_catch_stack = max_catch_stack << 1;
       resized_stack = (catch_type *) realloc(catch_stack,
           new_max_catch_stack * sizeof(catch_type));
       if (unlikely(resized_stack == NULL)) {
