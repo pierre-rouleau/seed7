@@ -261,52 +261,21 @@ extern os_striType *os_environ;
 static const os_charType path_variable[] = {'P', 'A', 'T', 'H', 0};
 
 
-#define driveLetterPathWrong(standardPath) \
-    ((standardPath)->size >= 2 && \
-     ((standardPath)->mem[(standardPath)->size - 1] == '/' || \
-      ((standardPath)->mem[1] == ':' && \
-      (((standardPath)->mem[0] >= 'a' && (standardPath)->mem[0] <= 'z') || \
-       ((standardPath)->mem[0] >= 'A' && (standardPath)->mem[0] <= 'Z')))))
-
-#define standardPathWrong(standardPath) \
-    ((standardPath)->size >= 2 && \
-     (standardPath)->mem[(standardPath)->size - 1] == '/')
-
-
 #ifdef DETERMINE_OS_PROPERTIES_AT_RUNTIME
 
 char *nullDevice;
 unsigned char shellPathDelimiter;
 boolType shellUsesDriveLetters;
+
 #ifdef EMULATE_ENVIRONMENT
 int (*environmentStrncmp) (const char *s1, const char *s2, size_t n);
 #endif
+
 #define NULL_DEVICE_FOR_SCRIPTS nullDevice
-#define SHELL_PATH_DELIMITER shellPathDelimiter
-#define if_pathDelimiterNotSlash(thenPart) if (shellPathDelimiter != '/') thenPart
-#define pathIsWrong(standardPath) (shellUsesDriveLetters && driveLetterPathWrong(standardPath)) || \
-                                  (!shellUsesDriveLetters && standardPathWrong(standardPath))
-#define if_mapAbsoluteShellPathToDriveLetters(cond, thenPart, elsePart) \
-    if (shellUsesDriveLetters && (cond)) thenPart else elsePart
 
 #else
 
 #define NULL_DEVICE_FOR_SCRIPTS NULL_DEVICE
-#define SHELL_PATH_DELIMITER PATH_DELIMITER
-
-#if PATH_DELIMITER != '/'
-#define if_pathDelimiterNotSlash(thenPart) thenPart
-#else
-#define if_pathDelimiterNotSlash(thenPart)
-#endif
-
-#if MAP_ABSOLUTE_PATH_TO_DRIVE_LETTERS
-#define pathIsWrong(standardPath) driveLetterPathWrong(standardPath)
-#define if_mapAbsoluteShellPathToDriveLetters(cond, thenPart, elsePart) if (cond) thenPart else elsePart
-#else
-#define pathIsWrong(standardPath) standardPathWrong(standardPath)
-#define if_mapAbsoluteShellPathToDriveLetters(cond, thenPart, elsePart) elsePart
-#endif
 
 #endif
 
@@ -4502,84 +4471,17 @@ striType cmdToOsPath (const const_striType standardPath)
     striType result;
 
   /* cmdToOsPath */
-    logFunction(printf("cmdToOsPath(\"%s\")", striAsUnquotedCStri(standardPath));
-                fflush(stdout););
-    if (unlikely(pathIsWrong(standardPath))) {
-      logError(printf("cmdToOsPath: "
-                      "\"%s\" uses a drive letter or ends with slash.\n",
-                      striAsUnquotedCStri(standardPath)););
-      err_info = RANGE_ERROR;
-    } else {
-      if_mapAbsoluteShellPathToDriveLetters(
-          standardPath->size >= 1 && standardPath->mem[0] == '/', {
-        /* Absolute path: Try to map the path to a drive letter */
-        if (unlikely(standardPath->size == 1)) {
-          /* "/"    cannot be mapped to a drive letter */
-          logError(printf("cmdToOsPath: "
-                          "\"%s\" cannot be mapped to a drive letter.\n",
-                          striAsUnquotedCStri(standardPath)););
-          err_info = RANGE_ERROR;
-        } else if (standardPath->mem[1] >= 'a' && standardPath->mem[1] <= 'z') {
-          if (standardPath->size == 2) {
-            /* "/c"   is mapped to "c:/"  */
-            if (unlikely(!ALLOC_STRI_SIZE_OK(result, 3))) {
-              err_info = MEMORY_ERROR;
-            } else {
-              result->size = 3;
-              result->mem[0] = standardPath->mem[1];
-              result->mem[1] = ':';
-              result->mem[2] = '/';
-            } /* if */
-          } else if (unlikely(standardPath->mem[2] != '/')) {
-            /* "/cd"  cannot be mapped to a drive letter */
-            logError(printf("cmdToOsPath: "
-                            "\"%s\" cannot be mapped to a drive letter.\n",
-                            striAsUnquotedCStri(standardPath)););
-            err_info = RANGE_ERROR;
-          } else {
-            /* "/c/d" is mapped to "c:/d" */
-            if (unlikely(!ALLOC_STRI_SIZE_OK(result, standardPath->size))) {
-              err_info = MEMORY_ERROR;
-            } else {
-              result->size = standardPath->size;
-              result->mem[0] = standardPath->mem[1];
-              result->mem[1] = ':';
-              result->mem[2] = '/';
-              memcpy(&result->mem[3], &standardPath->mem[3],
-                     (standardPath->size - 3) * sizeof(strElemType));
-            } /* if */
-          } /* if */
-        } else {
-          /* "/C"  cannot be mapped to a drive letter */
-          logError(printf("cmdToOsPath: "
-                          "\"%s\" cannot be mapped to a drive letter.\n",
-                          striAsUnquotedCStri(standardPath)););
-          err_info = RANGE_ERROR;
-        } /* if */
-      }, /* else */ {
-        if (unlikely(!ALLOC_STRI_SIZE_OK(result, standardPath->size))) {
-          err_info = MEMORY_ERROR;
-        } else {
-          result->size = standardPath->size;
-          memcpy(result->mem, standardPath->mem, standardPath->size * sizeof(strElemType));
-        } /* if */
-      });
-    } /* if */
-    if (unlikely(err_info != OKAY_NO_ERROR)) {
+    logFunction(printf("cmdToOsPath(\"%s\")\n",
+                       striAsUnquotedCStri(standardPath)););
+    result = toOsPath(standardPath, &err_info);
+    if (unlikely(result == NULL)) {
+      logError(printf("cmdToOsPath: toOsPath(\"%s\") failed:\n"
+                      "err_info=%d\n",
+                      striAsUnquotedCStri(stri), err_info););
       raise_error(err_info);
-      result = NULL;
-    } else {
-      if_pathDelimiterNotSlash({
-        memSizeType position;
-
-        for (position = 0; position < result->size; position++) {
-          if (result->mem[position] == '/') {
-            result->mem[position] = SHELL_PATH_DELIMITER;
-          } /* if */
-        } /* for */
-      });
     } /* if */
-    logFunctionResult(printf("\"%s\"\n", striAsUnquotedCStri(result)););
+    logFunction(printf("cmdToOsPath --> \"%s\"\n",
+                       striAsUnquotedCStri(result)););
     return result;
   } /* cmdToOsPath */
 
