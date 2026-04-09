@@ -4413,7 +4413,8 @@ intType cmdShell (const const_striType command, const const_striType parameters)
     intType result;
 
   /* cmdShell */
-    logFunction(printf("cmdShell(\"%s\", ", striAsUnquotedCStri(command));
+    logFunction(printf("cmdShell(\"%s\", ",
+                       striAsUnquotedCStri(command));
                 printf("\"%s\")\n", striAsUnquotedCStri(parameters)););
 #if defined USE_EXTENDED_LENGTH_PATH && USE_EXTENDED_LENGTH_PATH
     adjustCwdForShell(&err_info);
@@ -4428,12 +4429,18 @@ intType cmdShell (const const_striType command, const const_striType parameters)
       raise_error(err_info);
       result = 0;
     } else {
-      logMessage(printf("cmdShell: os_command: \"" FMT_S_OS "\"\n", os_command););
+      logMessage(printf("cmdShell: os_command: \"" FMT_S_OS "\"\n",
+                        os_command););
       result = (intType) os_system(os_command);
       logErrorIfTrue(result != 0,
-                     printf("cmdShell(\"%s\", ", striAsUnquotedCStri(command));
-                     printf("\"%s\") failed:\n", striAsUnquotedCStri(parameters));
-                     printf("errno=%d\nerror: %s\n", errno, strerror(errno));
+                     printf("cmdShell(\"%s\", ",
+                            striAsUnquotedCStri(command));
+                     printf("\"%s\"):\n",
+                            striAsUnquotedCStri(parameters));
+                     printf("system(\"" FMT_S_OS "\") failed:\n",
+                            os_command);
+                     printf("errno=%d\nerror: %s\n",
+                            errno, strerror(errno));
                      printf("result=" FMT_D "\n", result););
       FREE_OS_STRI(os_command);
     } /* if */
@@ -4461,13 +4468,18 @@ striType cmdShellEscape (const const_striType stri)
     striType result;
 
   /* cmdShellEscape */
-    logFunction(printf("cmdShellEscape(\"%s\")", striAsUnquotedCStri(stri));
+    logFunction(printf("cmdShellEscape(\"%s\")\n",
+                       striAsUnquotedCStri(stri));
                 fflush(stdout););
     result = shellEscape(stri, &err_info);
     if (unlikely(result == NULL)) {
+      logError(printf("cmdShellEscape: shellEscape(\"%s\") failed:\n"
+                      "err_info=%d\n",
+                      striAsUnquotedCStri(stri), err_info););
       raise_error(err_info);
     } /* if */
-    logFunctionResult(printf("\"%s\"\n", striAsUnquotedCStri(result)););
+    logFunction(printf("cmdShellEscape --> \"%s\"\n",
+                       striAsUnquotedCStri(result)););
     return result;
   } /* cmdShellEscape */
 
