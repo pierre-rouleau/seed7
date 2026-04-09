@@ -4613,7 +4613,7 @@ striType cmdToOsPath (const const_striType standardPath)
     if (unlikely(result == NULL)) {
       logError(printf("cmdToOsPath: toOsPath(\"%s\") failed:\n"
                       "err_info=%d\n",
-                      striAsUnquotedCStri(stri), err_info););
+                      striAsUnquotedCStri(standardPath), err_info););
       raise_error(err_info);
     } /* if */
     logFunction(printf("cmdToOsPath --> \"%s\"\n",
