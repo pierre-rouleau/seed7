@@ -282,6 +282,4 @@ os_striType cp_to_os_path (const_striType std_path, int *path_info,
 os_striType temp_name_in_dir (const const_os_striType path);
 os_striType cp_to_command (const const_striType command,
     const const_striType parameters, errInfoType *err_info);
-striType toOsPath (const const_striType standardPath,
-    errInfoType *err_info);
 striType shellEscape (const const_striType stri, errInfoType *err_info);
