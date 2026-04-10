@@ -77,7 +77,7 @@ fileType filOpen (const const_striType path, const const_striType mode);
 fileType filOpenNullDevice (void);
 void filPclose (const fileType aPipe);
 fileType filPopen (const const_striType command,
-    const const_striType parameters, const const_striType mode);
+    const const_rtlArrayType parameters, const const_striType mode);
 void filPrint (const const_striType stri);
 void filSeek (const const_fileType aFile, intType file_position);
 boolType filSeekable (const const_fileType aFile);

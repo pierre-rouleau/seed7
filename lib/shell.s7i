@@ -301,7 +301,7 @@ const func string: shellParameters (in array string: paramList) is func
 
 
 const func clib_file: popenClibFile (in string: command,
-    in string: parameters, in string: mode)       is action "FIL_POPEN";
+    in array string: parameters, in string: mode) is action "FIL_POPEN";
 const proc: pclose (in clib_file: fileToClose)    is action "FIL_PCLOSE";
 
 
@@ -317,19 +317,18 @@ type_implements_interface(popenFile, file);
 (**
  *  Open a pipe to a shell ''command'' with ''parameters''.
  *  The command reads, respectively writes with Latin-1 encoding.
- *  Parameters which contain a space must be enclosed in double
- *  quotes (E.g.: popen("aCommand", "\"par 1\" par2", "r"); ). The
- *  function [[#shellEscape(in_string)|shellEscape]] converts a
- *  [[string]], such that it can be used as parameter for ''popen''
- *  (E.g.: popen("aCmd", shellEscape("par 1") & " par2", "r"); ). The
- *  commands supported and the format of the ''parameters'' are not
- *  covered by the description of the ''popen'' function. Due to the
- *  usage of the operating system shell and external programs, it is
- *  hard to write portable programs, which use the ''popen'' function.
+ *  Escape characters and quotations are added to the ''command'' and
+ *  all ''parameters'' before they are forwarded to the operating
+ *  system shell. This way it is not possible to inject a command in
+ *  a parameter. The commands supported and the format of the
+ *  ''parameters'' are not covered by the description of the ''popen''
+ *  function. Due to the usage of the operating system shell and
+ *  external programs, it is hard to write portable programs, which
+ *  use the ''popen'' function.
  *  @param command Name of the command to be executed. A path must
  *         use the standard path representation.
- *  @param parameters Space separated list of parameters for
- *         the ''command'', or "" if there are no parameters.
+ *  @param parameters Array of argument strings passed to the shell
+ *         command.
  *  @param mode A pipe can be opened with the binary modes
  *         "r" (read) and "w" (write) or with the text modes
  *         "rt" (read) and "wt" (write).
@@ -338,7 +337,7 @@ type_implements_interface(popenFile, file);
  *  @exception RANGE_ERROR ''command'' is not representable as
  *             operating system path, or ''mode'' is illegal.
  *)
-const func file: popen (in string: command, in string: parameters,
+const func file: popen (in string: command, in array string: parameters,
     in string: mode) is func
   result
     var file: newPipe is STD_NULL;
@@ -356,18 +355,72 @@ const func file: popen (in string: command, in string: parameters,
 
 
 (**
+ *  Open a pipe to a shell ''command'' with ''parameters''.
+ *  The command reads, respectively writes with Latin-1 encoding.
+ *  Parameters which contain a space must be either enclosed in
+ *  double quotes (E.g.: popen("aCommand", "\"do it\" par2", "r"); )
+ *  or the spaces in the parameter must be preceded by a backslash
+ *  (E.g.: popen("aCommand", "do\\ it par2", "r"); ). Escape
+ *  characters and quotations are added to the ''command'' and all
+ *  ''parameters'' before they are forwarded to the operating system
+ *  shell. This way it is not possible to inject a command in a
+ *  parameter. The commands supported and the format of the
+ *  ''parameters'' are not covered by the description of the
+ *  ''popen'' function. Due to the usage of the operating system
+ *  shell and external programs, it is hard to write portable
+ *  programs, which use the ''popen'' function.
+ *  @param command Name of the command to be executed. A path must
+ *         use the standard path representation.
+ *  @param parameters Space separated list of parameters for
+ *         the ''command'', or "" if there are no parameters.
+ *  @param mode A pipe can be opened with the binary modes
+ *         "r" (read) and "w" (write) or with the text modes
+ *         "rt" (read) and "wt" (write).
+ *  @return the pipe file opened, or [[null_file#STD_NULL|STD_NULL]]
+ *          if it could not be opened.
+ *  @exception RANGE_ERROR ''command'' is not representable as
+ *             operating system path, or ''mode'' is illegal.
+ *)
+const func file: popen (in string: command, in var string: parameters,
+    in string: mode) is func
+  result
+    var file: newPipe is STD_NULL;
+  local
+    var string: parameter is "";
+    var array string: parameterArray is 0 times "";
+    var clib_file: open_file is CLIB_NULL_FILE;
+    var popenFile: new_file is popenFile.value;
+  begin
+    parameter := getCommandLineWord(parameters);
+    while parameter <> "" do
+      parameterArray &:= parameter;
+      parameter := getCommandLineWord(parameters);
+    end while;
+    open_file := popenClibFile(command, parameterArray, mode);
+    if open_file <> CLIB_NULL_FILE then
+      new_file.ext_file := open_file;
+      new_file.name := command;
+      newPipe := toInterface(new_file);
+    end if;
+  end func;
+
+
+(**
  *  Open a pipe to a shell command.
  *  The command reads, respectively writes with Latin-1 encoding.
- *  Spaces in the command must be preceded by a backslash
- *  (E.g.: popen("do\\ it"); ). Alternatively the command can
- *  be enclosed in double quotes (E.g.: popen("\"do it\""); ).
- *  Command parameters containing a space must be enclosed in
- *  double quotes (E.g.: popen("do_it \"par 1\" par2"); ).
- *  The commands supported and the format of the ''parameters''
- *  are not covered by the description of the ''popen'' function.
- *  Due to the usage of the operating system shell and external
- *  programs, it is hard to write portable programs, which use the
- *  ''popen'' function.
+ *  The command path must use the standard path representation.
+ *  If the command or a parameter contains a space it must be either
+ *  enclosed in double quotes (E.g.: popen("aCmd \"do it\" x", "r"); )
+ *  or the spaces in the command or parameter must be preceded by a
+ *  backslash (E.g.: popen("aCommand do\\ it x", "r"); ). Escape
+ *  characters and quotations are added to the command and all
+ *  parameters before they are forwarded to the operating system
+ *  shell. This way it is not possible to inject a command in a
+ *  parameter. The commands supported and the format of the
+ *  parameters are not covered by the description of the ''popen''
+ *  function. Due to the usage of the operating system shell and
+ *  external programs, it is hard to write portable programs, which
+ *  use the ''popen'' function.
  *  @param cmdAndParams Command to be executed and optional space
  *         separated list of parameters. Command and parameters
  *         must be space separated.
@@ -388,40 +441,6 @@ const func file: popen (in string: cmdAndParams, in string: mode) is func
   begin
     parameters := cmdAndParams;
     command := getCommandLineWord(parameters);
-    newPipe := popen(command, parameters, mode);
-  end func;
-
-
-(**
- *  Open a pipe to a shell ''command'' with a ''paramList''.
- *  The command reads, respectively writes with Latin-1 encoding.
- *  @param command Name of the command to be executed. A path must
- *         use the standard path representation.
- *  @param paramList Array of argument strings passed to the command.
- *         It is not necessary to quote the parameters, since this
- *         function takes care of that.
- *  @param mode A pipe can be opened with the binary modes
- *         "r" (read) and "w" (write) or with the text modes
- *         "rt" (read) and "wt" (write).
- *  @return the pipe file opened, or [[null_file#STD_NULL|STD_NULL]]
- *          if it could not be opened.
- *  @exception RANGE_ERROR ''command'' is not representable as
- *             operating system path, or ''mode'' is illegal.
- *)
-const func file: popen (in string: command, in array string: paramList,
-    in string: mode) is func
-  result
-    var file: newPipe is STD_NULL;
-  local
-    var string: parameter is "";
-    var string: parameters is "";
-  begin
-    for parameter range paramList do
-      if parameters <> "" then
-        parameters &:= " ";
-      end if;
-      parameters &:= shellEscape(parameter);
-    end for;
     newPipe := popen(command, parameters, mode);
   end func;
 
@@ -449,19 +468,18 @@ type_implements_interface(popen8File, file);
 (**
  *  Open an UTF-8 encoded pipe to a shell ''command'' with ''parameters''.
  *  The command reads, respectively writes with UTF-8 encoding.
- *  Parameters which contain a space must be enclosed in double
- *  quotes (E.g.: popen8("aCommand", "\"par 1\" par2", "r"); ). The
- *  function [[#shellEscape(in_string)|shellEscape]] converts a
- *  [[string]], such that it can be used as parameter for ''popen''
- *  (E.g.: popen8("aCmd", shellEscape("par 1") & " par2", "r"); ). The
- *  commands supported and the format of the ''parameters'' are not
- *  covered by the description of the ''popen8'' function. Due to the
- *  usage of the operating system shell and external programs, it is
- *  hard to write portable programs, which use the ''popen8'' function.
+ *  Escape characters and quotations are added to the ''command'' and
+ *  all ''parameters'' before they are forwarded to the operating
+ *  system shell. This way it is not possible to inject a command in
+ *  a parameter. The commands supported and the format of the
+ *  ''parameters'' are not covered by the description of the ''popen8''
+ *  function. Due to the usage of the operating system shell and
+ *  external programs, it is hard to write portable programs, which
+ *  use the ''popen8'' function.
  *  @param command Name of the command to be executed. A path must
  *         use the standard path representation.
- *  @param parameters Space separated list of parameters for
- *         the ''command'', or "" if there are no parameters.
+ *  @param parameters Array of argument strings passed to the shell
+ *         command.
  *  @param mode A pipe can be opened with the binary modes
  *         "r" (read) and "w" (write) or with the text modes
  *         "rt" (read) and "wt" (write).
@@ -470,7 +488,7 @@ type_implements_interface(popen8File, file);
  *  @exception RANGE_ERROR ''command'' is not representable as
  *             operating system path, or ''mode'' is illegal.
  *)
-const func file: popen8 (in string: command, in string: parameters,
+const func file: popen8 (in string: command, in array string: parameters,
     in string: mode) is func
   result
     var file: newPipe is STD_NULL;
@@ -490,16 +508,70 @@ const func file: popen8 (in string: command, in string: parameters,
 (**
  *  Open an UTF-8 encoded pipe to a shell command.
  *  The command reads, respectively writes with UTF-8 encoding.
- *  Spaces in the command must be preceded by a backslash
- *  (E.g.: popen8("do\\ it"); ). Alternatively the command can
- *  be enclosed in double quotes (E.g.: popen8("\"do it\""); ).
- *  Command parameters containing a space must be enclosed in
- *  double quotes (E.g.: popen8("do_it \"par 1\" par2"); ).
- *  The commands supported and the format of the ''parameters''
- *  are not covered by the description of the ''popen8'' function.
- *  Due to the usage of the operating system shell and external
- *  programs, it is hard to write portable programs, which use the
- *  ''popen8'' function.
+ *  Parameters which contain a space must be either enclosed in
+ *  double quotes (E.g.: popen8("aCommand", "\"do it\" par2", "r"); )
+ *  or the spaces in the parameter must be preceded by a backslash
+ *  (E.g.: popen8("aCommand", "do\\ it par2", "r"); ). Escape
+ *  characters and quotations are added to the ''command'' and all
+ *  ''parameters'' before they are forwarded to the operating system
+ *  shell. This way it is not possible to inject a command in a
+ *  parameter. The commands supported and the format of the
+ *  ''parameters'' are not covered by the description of the
+ *  ''popen8'' function. Due to the usage of the operating system
+ *  shell and external programs, it is hard to write portable
+ *  programs, which use the ''popen8'' function.
+ *  @param command Name of the command to be executed. A path must
+ *         use the standard path representation.
+ *  @param parameters Space separated list of parameters for
+ *         the ''command'', or "" if there are no parameters.
+ *  @param mode A pipe can be opened with the binary modes
+ *         "r" (read) and "w" (write) or with the text modes
+ *         "rt" (read) and "wt" (write).
+ *  @return the pipe file opened, or [[null_file#STD_NULL|STD_NULL]]
+ *          if it could not be opened.
+ *  @exception RANGE_ERROR ''command'' is not representable as
+ *             operating system path, or ''mode'' is illegal.
+ *)
+const func file: popen8 (in string: command, in var string: parameters,
+    in string: mode) is func
+  result
+    var file: newPipe is STD_NULL;
+  local
+    var string: parameter is "";
+    var array string: parameterArray is 0 times "";
+    var clib_file: open_file is CLIB_NULL_FILE;
+    var popen8File: new_file is popen8File.value;
+  begin
+    parameter := getCommandLineWord(parameters);
+    while parameter <> "" do
+      parameterArray &:= parameter;
+      parameter := getCommandLineWord(parameters);
+    end while;
+    open_file := popenClibFile(command, parameterArray, mode);
+    if open_file <> CLIB_NULL_FILE then
+      new_file.ext_file := open_file;
+      new_file.name := command;
+      newPipe := toInterface(new_file);
+    end if;
+  end func;
+
+
+(**
+ *  Open an UTF-8 encoded pipe to a shell command.
+ *  The command reads, respectively writes with UTF-8 encoding.
+ *  The command path must use the standard path representation.
+ *  If the command or a parameter contains a space it must be either
+ *  enclosed in double quotes (E.g.: popen8("aCmd \"do it\" x", "r"); )
+ *  or the spaces in the command or parameter must be preceded by a
+ *  backslash (E.g.: popen8("aCommand do\\ it x", "r"); ). Escape
+ *  characters and quotations are added to the command and all
+ *  parameters before they are forwarded to the operating system
+ *  shell. This way it is not possible to inject a command in a
+ *  parameter. The commands supported and the format of the
+ *  parameters are not covered by the description of the ''popen8''
+ *  function. Due to the usage of the operating system shell and
+ *  external programs, it is hard to write portable programs, which
+ *  use the ''popen8'' function.
  *  @param cmdAndParams Command to be executed and optional space
  *         separated list of parameters. Command and parameters
  *         must be space separated.
@@ -520,40 +592,6 @@ const func file: popen8 (in string: cmdAndParams, in string: mode) is func
   begin
     parameters := cmdAndParams;
     command := getCommandLineWord(parameters);
-    newPipe := popen8(command, parameters, mode);
-  end func;
-
-
-(**
- *  Open an UTF-8 encoded pipe to a shell ''command'' with a ''paramList''.
- *  The command reads, respectively writes with UTF-8 encoding.
- *  @param command Name of the command to be executed. A path must
- *         use the standard path representation.
- *  @param paramList Array of argument strings passed to the command.
- *         It is not necessary to quote the parameters, since this
- *         function takes care of that.
- *  @param mode A pipe can be opened with the binary modes
- *         "r" (read) and "w" (write) or with the text modes
- *         "rt" (read) and "wt" (write).
- *  @return the pipe file opened, or [[null_file#STD_NULL|STD_NULL]]
- *          if it could not be opened.
- *  @exception RANGE_ERROR ''command'' is not representable as
- *             operating system path, or ''mode'' is illegal.
- *)
-const func file: popen8 (in string: command, in array string: paramList,
-    in string: mode) is func
-  result
-    var file: newPipe is STD_NULL;
-  local
-    var string: parameter is "";
-    var string: parameters is "";
-  begin
-    for parameter range paramList do
-      if parameters <> "" then
-        parameters &:= " ";
-      end if;
-      parameters &:= shellEscape(parameter);
-    end for;
     newPipe := popen8(command, parameters, mode);
   end func;
 

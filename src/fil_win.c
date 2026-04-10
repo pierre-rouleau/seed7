@@ -53,6 +53,7 @@
 #include "errno.h"
 
 #include "common.h"
+#include "data_rtl.h"
 #include "os_decls.h"
 #include "heaputl.h"
 #include "stat_drv.h"

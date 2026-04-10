@@ -2145,10 +2145,11 @@ void filPclose (const fileType aPipe)
  *             operating system path, or 'mode' is illegal.
  */
 fileType filPopen (const const_striType command,
-    const const_striType parameters, const const_striType mode)
+    const const_rtlArrayType parameters, const const_striType mode)
 
   {
 #if HAS_POPEN
+    striType commandLine;
     os_striType os_command;
     os_charType os_mode[MAX_MODE_LEN];
     boolType readingAllowed = FALSE;
@@ -2157,91 +2158,111 @@ fileType filPopen (const const_striType command,
     errInfoType err_info = OKAY_NO_ERROR;
     cFileType cFile;
 #endif
-    fileType fileOpened;
+    fileType pipeOpened;
 
   /* filPopen */
-    logFunction(printf("filPopen(\"%s\", ", striAsUnquotedCStri(command));
-                printf("\"%s\", ", striAsUnquotedCStri(parameters));
-                printf("\"%s\")\n", striAsUnquotedCStri(mode)););
+    logFunction(printf("filPopen(\"%s\", array[" FMT_D "]",
+                       striAsUnquotedCStri(command),
+                       parameters->max_position);
+                printf(", \"%s\")\n", striAsUnquotedCStri(mode)););
 #if HAS_POPEN
-    os_command = cp_to_command(command, parameters, &err_info);
-    if (unlikely(os_command == NULL)) {
-      logError(printf("filPopen: cp_to_command(\"%s\", ",
-                      striAsUnquotedCStri(command));
-               printf("\"%s\", *) failed:\n"
-                      "err_info=%d\n",
-                      striAsUnquotedCStri(parameters), err_info););
+    commandLine = createCommandLine(command, parameters,
+                                    NULL, NULL, NULL, &err_info);
+    if (unlikely(commandLine == NULL)) {
+      logError(printf("filPopen: createCommandLine(\"%s\""
+                      ", array[" FMT_D "]",
+                      striAsUnquotedCStri(command),
+                      parameters->max_position);
+               printf(", NULL, NULL, NULL, *) failed:\n"
+                      "err_info=%d\n", err_info););
       raise_error(err_info);
-      fileOpened = NULL;
+      pipeOpened = NULL;
     } else {
-      if (mode->size == 1 &&
-          (mode->mem[0] == 'r' ||
-           mode->mem[0] == 'w')) {
-        os_mode[mode_pos++] = (os_charType) mode->mem[0];
-#if POPEN_SUPPORTS_BINARY_MODE
-        os_mode[mode_pos++] = 'b';
-#endif
-        readingAllowed = mode->mem[0] == 'r';
-        writingAllowed = mode->mem[0] == 'w';
-      } else if (mode->size == 2 &&
-          (mode->mem[0] == 'r' ||
-           mode->mem[0] == 'w') &&
-           mode->mem[1] == 't') {
-        os_mode[mode_pos++] = (os_charType) mode->mem[0];
-#if POPEN_SUPPORTS_TEXT_MODE
-        os_mode[mode_pos++] = 't';
-#endif
-        readingAllowed = mode->mem[0] == 'r';
-        writingAllowed = mode->mem[0] == 'w';
-      } /* if */
-      if (unlikely(mode_pos == 0)) {
-        logError(printf("filPopen: Illegal mode: \"%s\".\n",
-                        striAsUnquotedCStri(mode)););
-        raise_error(RANGE_ERROR);
-        fileOpened = NULL;
+      os_command = stri_to_os_stri(commandLine, &err_info);
+      if (unlikely(os_command == NULL)) {
+        logError(printf("filPopen: "
+                        "stri_to_os_stri(\"%s\") failed:\n"
+                        "err_info=%d\n",
+                        striAsUnquotedCStri(commandLine), err_info););
+        FREE_STRI(commandLine);
+        raise_error(err_info);
+        pipeOpened = NULL;
       } else {
-#if POPEN_SUPPORTS_CLOEXEC_MODE
-        os_mode[mode_pos++] = 'e';
+        FREE_STRI(commandLine);
+        if (mode->size == 1 &&
+            (mode->mem[0] == 'r' ||
+             mode->mem[0] == 'w')) {
+          os_mode[mode_pos++] = (os_charType) mode->mem[0];
+#if POPEN_SUPPORTS_BINARY_MODE
+          os_mode[mode_pos++] = 'b';
 #endif
-        os_mode[mode_pos] = '\0';
-#if defined USE_EXTENDED_LENGTH_PATH && USE_EXTENDED_LENGTH_PATH
-        adjustCwdForShell(&err_info);
+          readingAllowed = mode->mem[0] == 'r';
+          writingAllowed = mode->mem[0] == 'w';
+        } else if (mode->size == 2 &&
+            (mode->mem[0] == 'r' ||
+             mode->mem[0] == 'w') &&
+             mode->mem[1] == 't') {
+          os_mode[mode_pos++] = (os_charType) mode->mem[0];
+#if POPEN_SUPPORTS_TEXT_MODE
+          os_mode[mode_pos++] = 't';
 #endif
-        logMessage(printf("os_popen(\"" FMT_S_OS "\", \"" FMT_S_OS "\")\n",
-                          os_command, os_mode););
-        cFile = os_popen(os_command, os_mode);
-        if (unlikely(cFile == NULL)) {
-          logError(printf("filPopen: os_popen(\"" FMT_S_OS "\","
-                          " \"" FMT_S_OS "\") failed:\n"
-                          "errno=%d\nerror: %s\n",
-                          os_command, os_mode,
-                          errno, strerror(errno)););
-          fileOpened = &nullFileRecord;
+          readingAllowed = mode->mem[0] == 'r';
+          writingAllowed = mode->mem[0] == 'w';
+        } /* if */
+        if (unlikely(mode_pos == 0)) {
+          logError(printf("filPopen: Illegal mode: \"%s\".\n",
+                          striAsUnquotedCStri(mode)););
+          os_stri_free(os_command);
+          raise_error(RANGE_ERROR);
+          pipeOpened = NULL;
         } else {
-          FREE_OS_STRI(os_command);
-          if (unlikely(!ALLOC_RECORD(fileOpened, fileRecord, count.files))) {
-            os_pclose(cFile);
-            raise_error(MEMORY_ERROR);
-            fileOpened = NULL;
+#if POPEN_SUPPORTS_CLOEXEC_MODE
+          os_mode[mode_pos++] = 'e';
+#endif
+          os_mode[mode_pos] = '\0';
+#if defined USE_EXTENDED_LENGTH_PATH && USE_EXTENDED_LENGTH_PATH
+          adjustCwdForShell(&err_info);
+#endif
+          logMessage(printf("filPopen: os_popen(\"" FMT_S_OS "\","
+	                    " \"" FMT_S_OS "\")\n",
+                            os_command, os_mode););
+          cFile = os_popen(os_command, os_mode);
+          if (unlikely(cFile == NULL)) {
+            logError(printf("filPopen: os_popen(\"" FMT_S_OS "\","
+                            " \"" FMT_S_OS "\") failed:\n"
+                            "errno=%d\nerror: %s\n",
+                            os_command, os_mode,
+                            errno, strerror(errno)););
+            os_stri_free(os_command);
+            pipeOpened = &nullFileRecord;
           } else {
-            initFileType(fileOpened, readingAllowed, writingAllowed);
-            fileOpened->cFile = cFile;
+            os_stri_free(os_command);
+            if (unlikely(!ALLOC_RECORD(pipeOpened, fileRecord, count.files))) {
+              os_pclose(cFile);
+              raise_error(MEMORY_ERROR);
+              pipeOpened = NULL;
+            } else {
+              initFileType(pipeOpened, readingAllowed, writingAllowed);
+              pipeOpened->cFile = cFile;
+            } /* if */
           } /* if */
         } /* if */
       } /* if */
     } /* if */
 #else
-    fileOpened = &nullFileRecord;
+    pipeOpened = &nullFileRecord;
 #endif
-    logFunction(printf("filPopen(\"%s\", ", striAsUnquotedCStri(command));
-                printf("\"%s\", ", striAsUnquotedCStri(parameters));
-                printf("\"%s\") --> " FMT_U_MEM " %s%d (usage=" FMT_U ")\n",
+    logFunction(printf("filPopen(\"%s\", array[" FMT_D "]",
+                       striAsUnquotedCStri(command),
+                       parameters->max_position);
+                printf(", \"%s\") --> " FMT_U_MEM " %s%d"
+                       " (usage=" FMT_U ")\n",
                        striAsUnquotedCStri(mode),
-                       (memSizeType) fileOpened,
-                       fileOpened == NULL ? "NULL " : "",
-                       fileOpened != NULL ? safe_fileno(fileOpened->cFile) : 0,
-                       fileOpened != NULL ? fileOpened->usage_count : (uintType) 0););
-    return fileOpened;
+                       (memSizeType) pipeOpened,
+                       pipeOpened == NULL ? "NULL " : "",
+                       pipeOpened != NULL ? safe_fileno(pipeOpened->cFile) : 0,
+                       pipeOpened != NULL ? pipeOpened->usage_count : (uintType) 0););
+    return pipeOpened;
   } /* filPopen */
 
 
