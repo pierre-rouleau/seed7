@@ -32,27 +32,136 @@ include "scanstri.s7i";
 
 (**
  *  Use the shell to execute a ''command'' with ''parameters''.
- *  Parameters which contain a space must be enclosed in double
- *  quotes (E.g.: shell("aCommand", "\"par 1\" par2"); ). The
- *  commands supported and the format of the ''parameters'' are not
- *  covered by the description of the ''shell'' function. Due to the
- *  usage of the operating system shell and external programs, it is
- *  hard to write portable programs, which use the ''shell'' function.
+ *  Escape characters and quotations are added to the ''command'' and
+ *  all ''parameters'' before they are forwarded to the operating
+ *  system shell. This way it is not possible to inject a command in
+ *  a parameter. The commands supported and the format of the
+ *  ''parameters'' are not covered by the description of the ''shell''
+ *  function. Due to the usage of the operating system shell and
+ *  external programs, it is hard to write portable programs, which
+ *  use the ''shell'' function.
  *  @param command Name of the command to be executed. A path must
  *         use the standard path representation.
- *  @param parameters Space separated list of parameters for the
- *         ''command'', or "" if there are no parameters.
+ *  @param parameters Array of argument strings passed to the shell
+ *         command.
+ *  @param redirectStdin Name of a file to be used as standard input
+ *         of the shell command. Use "" to do no redirection.
+ *  @param redirectStdout Name of a file to be used as standard output
+ *         of the shell command. Use "" to do no redirection.
+ *  @param redirectStderr Name of a file to be used as standard error
+ *         output of the shell command. Use "" to do no redirection.
  *  @return the return code of the executed command or of the shell.
  *)
-const func integer: shell (in string: command,
-                           in string: parameters) is action "CMD_SHELL";
-
-
 const func integer: shell (in string: command,
                            in array string: parameters,
                            in string: redirectStdin,
                            in string: redirectStdout,
                            in string: redirectStderr) is action "CMD_SHELL_EXECUTE";
+
+
+(**
+ *  Use the shell to execute a ''command'' with ''parameters''.
+ *  Parameters which contain a space must be either enclosed in
+ *  double quotes (E.g.: shell("aCmd", "\"do it\" x", "", "", ""); )
+ *  or the spaces in the parameter must be preceded by a backslash
+ *  (E.g.: shell("aCmd", "do\\ it x", "", "", ""); ). Escape
+ *  characters and quotations are added to the ''command'' and all
+ *  ''parameters'' before they are forwarded to the operating system
+ *  shell. This way it is not possible to inject a command in a
+ *  parameter. The commands supported and the format of the
+ *  ''parameters'' are not covered by the description of the
+ *  ''shell'' function. Due to the usage of the operating system
+ *  shell and external programs, it is hard to write portable
+ *  programs, which use the ''shell'' function.
+ *  @param command Name of the command to be executed. A path must
+ *         use the standard path representation.
+ *  @param parameters Space separated list of parameters for the
+ *         ''command'', or "" if there are no parameters.
+ *  @param redirectStdin Name of a file to be used as standard input
+ *         of the shell command. Use "" to do no redirection.
+ *  @param redirectStdout Name of a file to be used as standard output
+ *         of the shell command. Use "" to do no redirection.
+ *  @param redirectStderr Name of a file to be used as standard error
+ *         output of the shell command. Use "" to do no redirection.
+ *  @exception FILE_ERROR The shell command returns an error.
+ *)
+const func integer: shell (in string: command,
+                           in var string: parameters,
+                           in string: redirectStdin,
+                           in string: redirectStdout,
+                           in string: redirectStderr) is func
+  result
+    var integer: returnCode is 0;
+  local
+    var string: parameter is "";
+    var array string: parameterArray is 0 times "";
+  begin
+    parameter := getCommandLineWord(parameters);
+    while parameter <> "" do
+      parameterArray &:= parameter;
+      parameter := getCommandLineWord(parameters);
+    end while;
+    returnCode := shell(command, parameterArray, redirectStdin,
+                        redirectStdin, redirectStdin);
+  end func;
+
+
+(**
+ *  Use the shell to execute a ''command'' with ''parameters''.
+ *  Parameters which contain a space must be either enclosed in
+ *  double quotes (E.g.: shell("aCommand", "\"do it\" param2"); )
+ *  or the spaces in the parameter must be preceded by a backslash
+ *  (E.g.: shell("aCommand", "do\\ it param2"); ). Escape
+ *  characters and quotations are added to the ''command'' and all
+ *  ''parameters'' before they are forwarded to the operating system
+ *  shell. This way it is not possible to inject a command in a
+ *  parameter. The commands supported and the format of the
+ *  ''parameters'' are not covered by the description of the
+ *  ''shell'' function. Due to the usage of the operating system
+ *  shell and external programs, it is hard to write portable
+ *  programs, which use the ''shell'' function.
+ *  @param command Name of the command to be executed. A path must
+ *         use the standard path representation.
+ *  @param parameters Space separated list of parameters for the
+ *         ''command'', or "" if there are no parameters.
+ *  @exception FILE_ERROR The shell command returns an error.
+ *)
+const func integer: shell (in string: command,
+                           in var string: parameters) is
+  return shell(command, parameters, "", "", "");
+
+
+(**
+ *  Executes a command using the shell of the operating system.
+ *  The command path must use the standard path representation.
+ *  If the command or a parameter contains a space it must be either
+ *  enclosed in double quotes (E.g.: shell("aCmd \"do it\" par2"); )
+ *  or the spaces in the command or parameter must be preceded by a
+ *  backslash (E.g.: shell("aCommand do\\ it param2"); ). Escape
+ *  characters and quotations are added to the command and all
+ *  parameters before they are forwarded to the operating system
+ *  shell. This way it is not possible to inject a command in a
+ *  parameter. The commands supported and the format of the
+ *  parameters are not covered by the description of the ''shell''
+ *  function. Due to the usage of the operating system shell and
+ *  external programs, it is hard to write portable programs, which
+ *  use the ''shell'' function.
+ *  @param cmdAndParams Command to be executed and optional space
+ *         separated list of parameters. Command and parameters
+ *         must be space separated.
+ *  @return the return code of the executed command or of the shell.
+ *)
+const func integer: shell (in string: cmdAndParams) is func
+  result
+    var integer: returnCode is 0;
+  local
+    var string: command is "";
+    var string: parameters is "";
+  begin
+    parameters := cmdAndParams;
+    command := getCommandLineWord(parameters);
+    returnCode := shell(command, parameters);
+  end func;
 
 
 (**
@@ -81,36 +190,6 @@ const proc: shellCmd (in string: command, in string: parameters) is func
 const proc: cmd_sh (in string: command, in string: parameters) is func
   begin
     ignore(shell(command, parameters));
-  end func;
-
-
-(**
- *  Executes a command using the shell of the operating system.
- *  The command path must use the standard path representation.
- *  Spaces in the command must be preceded by a backslash
- *  (E.g.: shell("do\\ it"); ). Alternatively the command can
- *  be enclosed in double quotes (E.g.: shell("\"do it\""); ).
- *  Command parameters containing a space must be enclosed in double
- *  quotes (E.g.: shell("do_it \"par 1\" par2"); ). The commands
- *  supported and the format of the ''parameters'' are not covered
- *  by the description of the ''shell'' function. Due to the usage
- *  of the operating system shell and external programs, it is hard
- *  to write portable programs, which use the ''shell'' function.
- *  @param cmdAndParams Command to be executed and optional space
- *         separated list of parameters. Command and parameters
- *         must be space separated.
- *  @return the return code of the executed command or of the shell.
- *)
-const func integer: shell (in string: cmdAndParams) is func
-  result
-    var integer: returnCode is 0;
-  local
-    var string: command is "";
-    var string: parameters is "";
-  begin
-    parameters := cmdAndParams;
-    command := getCommandLineWord(parameters);
-    returnCode := shell(command, parameters);
   end func;
 
 
