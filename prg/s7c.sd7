@@ -6985,7 +6985,11 @@ const proc: write_str_table (in stri_index_hash: stri_index,
           c_expr.expr &:= ",";
         end if;
         if stri = "" then
-          c_expr.expr &:= "striChars";
+          if length(constTable.stri_const) > 1 then
+            c_expr.expr &:= "striChars";
+          else
+            c_expr.expr &:= "NULL";
+          end if;
         else
           c_expr.expr &:= "&striChars[";
           c_expr.expr &:= str(pred(stringPosition[number]));
@@ -7236,7 +7240,11 @@ const proc: write_bst_table (in bstri_index_hash: bstri_index,
         c_expr.expr &:= str(length(stri));
         c_expr.expr &:= ",";
         if stri = "" then
-          c_expr.expr &:= "bstriChars";
+          if length(constTable.bstri_const) > 1 then
+            c_expr.expr &:= "bstriChars";
+          else
+            c_expr.expr &:= "NULL";
+          end if;
         else
           c_expr.expr &:= "&bstriChars[";
           c_expr.expr &:= str(pred(stringPosition[number]));
