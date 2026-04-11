@@ -2166,60 +2166,59 @@ fileType filPopen (const const_striType command,
                        parameters->max_position);
                 printf(", \"%s\")\n", striAsUnquotedCStri(mode)););
 #if HAS_POPEN
-    commandLine = createCommandLine(command, parameters,
-                                    NULL, NULL, NULL, &err_info);
-    if (unlikely(commandLine == NULL)) {
-      logError(printf("filPopen: createCommandLine(\"%s\""
-                      ", array[" FMT_D "]",
-                      striAsUnquotedCStri(command),
-                      parameters->max_position);
-               printf(", NULL, NULL, NULL, *) failed:\n"
-                      "err_info=%d\n", err_info););
-      raise_error(err_info);
+    if (mode->size == 1 &&
+        (mode->mem[0] == 'r' ||
+         mode->mem[0] == 'w')) {
+      os_mode[mode_pos++] = (os_charType) mode->mem[0];
+#if POPEN_SUPPORTS_BINARY_MODE
+      os_mode[mode_pos++] = 'b';
+#endif
+      readingAllowed = mode->mem[0] == 'r';
+      writingAllowed = mode->mem[0] == 'w';
+    } else if (mode->size == 2 &&
+        (mode->mem[0] == 'r' ||
+         mode->mem[0] == 'w') &&
+         mode->mem[1] == 't') {
+      os_mode[mode_pos++] = (os_charType) mode->mem[0];
+#if POPEN_SUPPORTS_TEXT_MODE
+      os_mode[mode_pos++] = 't';
+#endif
+      readingAllowed = mode->mem[0] == 'r';
+      writingAllowed = mode->mem[0] == 'w';
+    } /* if */
+    if (unlikely(mode_pos == 0)) {
+      logError(printf("filPopen: Illegal mode: \"%s\".\n",
+                      striAsUnquotedCStri(mode)););
+      raise_error(RANGE_ERROR);
       pipeOpened = NULL;
     } else {
-      os_command = stri_to_os_stri(commandLine, &err_info);
-      if (unlikely(os_command == NULL)) {
-        logError(printf("filPopen: "
-                        "stri_to_os_stri(\"%s\") failed:\n"
-                        "err_info=%d\n",
-                        striAsUnquotedCStri(commandLine), err_info););
-        FREE_STRI(commandLine);
+#if POPEN_SUPPORTS_CLOEXEC_MODE
+      os_mode[mode_pos++] = 'e';
+#endif
+      os_mode[mode_pos] = '\0';
+      commandLine = createCommandLine(command, parameters,
+                                      NULL, NULL, NULL, &err_info);
+      if (unlikely(commandLine == NULL)) {
+        logError(printf("filPopen: createCommandLine(\"%s\""
+                        ", array[" FMT_D "]",
+                        striAsUnquotedCStri(command),
+                        parameters->max_position);
+                 printf(", NULL, NULL, NULL, *) failed:\n"
+                        "err_info=%d\n", err_info););
         raise_error(err_info);
         pipeOpened = NULL;
       } else {
-        FREE_STRI(commandLine);
-        if (mode->size == 1 &&
-            (mode->mem[0] == 'r' ||
-             mode->mem[0] == 'w')) {
-          os_mode[mode_pos++] = (os_charType) mode->mem[0];
-#if POPEN_SUPPORTS_BINARY_MODE
-          os_mode[mode_pos++] = 'b';
-#endif
-          readingAllowed = mode->mem[0] == 'r';
-          writingAllowed = mode->mem[0] == 'w';
-        } else if (mode->size == 2 &&
-            (mode->mem[0] == 'r' ||
-             mode->mem[0] == 'w') &&
-             mode->mem[1] == 't') {
-          os_mode[mode_pos++] = (os_charType) mode->mem[0];
-#if POPEN_SUPPORTS_TEXT_MODE
-          os_mode[mode_pos++] = 't';
-#endif
-          readingAllowed = mode->mem[0] == 'r';
-          writingAllowed = mode->mem[0] == 'w';
-        } /* if */
-        if (unlikely(mode_pos == 0)) {
-          logError(printf("filPopen: Illegal mode: \"%s\".\n",
-                          striAsUnquotedCStri(mode)););
-          os_stri_free(os_command);
-          raise_error(RANGE_ERROR);
+        os_command = stri_to_os_stri(commandLine, &err_info);
+        if (unlikely(os_command == NULL)) {
+          logError(printf("filPopen: "
+                          "stri_to_os_stri(\"%s\") failed:\n"
+                          "err_info=%d\n",
+                          striAsUnquotedCStri(commandLine), err_info););
+          FREE_STRI(commandLine);
+          raise_error(err_info);
           pipeOpened = NULL;
         } else {
-#if POPEN_SUPPORTS_CLOEXEC_MODE
-          os_mode[mode_pos++] = 'e';
-#endif
-          os_mode[mode_pos] = '\0';
+          FREE_STRI(commandLine);
           if (unlikely(!ALLOC_RECORD(pipeOpened, fileRecord, count.files))) {
             os_stri_free(os_command);
             raise_error(MEMORY_ERROR);
