@@ -2220,28 +2220,28 @@ fileType filPopen (const const_striType command,
           os_mode[mode_pos++] = 'e';
 #endif
           os_mode[mode_pos] = '\0';
-#if defined USE_EXTENDED_LENGTH_PATH && USE_EXTENDED_LENGTH_PATH
-          adjustCwdForShell(&err_info);
-#endif
-          logMessage(printf("filPopen: os_popen(\"" FMT_S_OS "\","
-	                    " \"" FMT_S_OS "\")\n",
-                            os_command, os_mode););
-          cFile = os_popen(os_command, os_mode);
-          if (unlikely(cFile == NULL)) {
-            logError(printf("filPopen: os_popen(\"" FMT_S_OS "\","
-                            " \"" FMT_S_OS "\") failed:\n"
-                            "errno=%d\nerror: %s\n",
-                            os_command, os_mode,
-                            errno, strerror(errno)););
+          if (unlikely(!ALLOC_RECORD(pipeOpened, fileRecord, count.files))) {
             os_stri_free(os_command);
-            pipeOpened = &nullFileRecord;
+            raise_error(MEMORY_ERROR);
           } else {
-            os_stri_free(os_command);
-            if (unlikely(!ALLOC_RECORD(pipeOpened, fileRecord, count.files))) {
-              os_pclose(cFile);
-              raise_error(MEMORY_ERROR);
-              pipeOpened = NULL;
+#if defined USE_EXTENDED_LENGTH_PATH && USE_EXTENDED_LENGTH_PATH
+            adjustCwdForShell(&err_info);
+#endif
+            logMessage(printf("filPopen: os_popen(\"" FMT_S_OS "\","
+                              " \"" FMT_S_OS "\")\n",
+                              os_command, os_mode););
+            cFile = os_popen(os_command, os_mode);
+            if (unlikely(cFile == NULL)) {
+              logError(printf("filPopen: os_popen(\"" FMT_S_OS "\","
+                              " \"" FMT_S_OS "\") failed:\n"
+                              "errno=%d\nerror: %s\n",
+                              os_command, os_mode,
+                              errno, strerror(errno)););
+              os_stri_free(os_command);
+              FREE_RECORD(pipeOpened, fileRecord, count.files);
+              pipeOpened = &nullFileRecord;
             } else {
+              os_stri_free(os_command);
               initFileType(pipeOpened, readingAllowed, writingAllowed);
               pipeOpened->cFile = cFile;
             } /* if */
