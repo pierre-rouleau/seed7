@@ -728,8 +728,11 @@ static void copy_any_file (const const_os_striType from_name,
                                        (size_t) from_stat.st_size);
             if (unlikely(readlink_result != -1)) {
               link_destination[readlink_result] = '\0';
-              /* printf("readlink_result=%lu\n", readlink_result);
-                 printf("link=" FMT_S_OS "\n", link_destination); */
+              logMessage(printf("readlink(\"%s\", \"%s\", " FMT_U_MEM ")"
+                                " returned " FMT_U_MEM "\n",
+                                from_name, link_destination,
+                                (memSizeType) from_stat.st_size,
+                                (memSizeType) readlink_result););
               if (os_symlink(link_destination, to_name) != 0) {
                 *err_info = FILE_ERROR;
               } /* if */
@@ -849,8 +852,8 @@ static boolType devices_differ (const const_os_striType from_name,
           dir_name[dir_name_length] = '\0';
           logMessage(printf("os_stat(\"" FMT_S_OS "\", *)\n", dir_name););
           if (os_stat(dir_name, &dir_stat) == 0) {
-            /* printf("from device: %ld, to device: %ld\n",
-               from_stat.st_dev, dir_stat.st_dev); */
+            logMessage(printf("from device: %ld, to device: %ld\n",
+                              from_stat.st_dev, dir_stat.st_dev););
             differs = from_stat.st_dev != dir_stat.st_dev;
           } /* if */
           os_stri_free(dir_name);
@@ -884,17 +887,19 @@ static void move_any_file (const const_os_striType from_name,
         switch (errno) {
 #ifdef EXDEV
           case EXDEV:
-            /* printf("move_any_file: "
-                "os_rename(\"" FMT_S_OS "\", \"" FMT_S_OS "\") triggers EXDEV\n",
-                from_name, to_name); */
+            logMessage(printf("move_any_file: "
+                              "os_rename(\"" FMT_S_OS "\", "
+                              "\"" FMT_S_OS "\") triggers EXDEV\n",
+                              from_name, to_name););
             move_with_copy(from_name, to_name, err_info);
             break;
 #endif
 #ifdef USE_EACCES_INSTEAD_OF_EXDEV
           case EACCES:
-            /* printf("move_any_file: "
-                "os_rename(\"" FMT_S_OS "\", \"" FMT_S_OS "\") triggers EACCES\n",
-                from_name, to_name); */
+            logMessage(printf("move_any_file: "
+                              "os_rename(\"" FMT_S_OS "\", "
+                              "\"" FMT_S_OS "\") triggers EACCES\n",
+                              from_name, to_name););
             if (devices_differ(from_name, to_name)) {
               move_with_copy(from_name, to_name, err_info);
             } else {
@@ -1348,8 +1353,8 @@ static intType getFileTypeSL (const const_striType filePath, errInfoType *err_in
     } else {
       stat_result = os_lstat(os_path, &stat_buf);
       saved_errno = errno;
-      /* printf("lstat(\"" FMT_S_OS "\") returns: %d, errno=%d\n",
-          os_path, stat_result, saved_errno); */
+      logMessage(printf("lstat(\"" FMT_S_OS "\") returns: %d, errno=%d\n",
+                        os_path, stat_result, saved_errno););
       if (stat_result == 0) {
         if (S_ISREG(stat_buf.st_mode)) {
           type_of_file = FILE_REGULAR;
@@ -3057,8 +3062,8 @@ intType cmdFileType (const const_striType filePath)
     } else {
       stat_result = os_stat(os_path, &stat_buf);
       saved_errno = errno;
-      /* printf("stat(\"" FMT_S_OS "\") returns: %d, errno=%d\n",
-         os_path, stat_result, saved_errno); */
+      logMessage(printf("stat(\"" FMT_S_OS "\") returns: %d, errno=%d\n",
+                        os_path, stat_result, saved_errno););
       if (stat_result == 0) {
         if (S_ISREG(stat_buf.st_mode)) {
           type_of_file = FILE_REGULAR;
@@ -3873,8 +3878,8 @@ striType cmdHomeDir (void)
     } /* if */
 #endif
     os_home_dir = os_getenv(home_dir_env_var);
-    /* printf("os_getenv(\"" FMT_S_OS "\") returns: " FMT_S_OS "\n",
-        home_dir_env_var, os_home_dir); */
+    logMessage(printf("os_getenv(\"" FMT_S_OS "\") returns: " FMT_S_OS "\n",
+                      home_dir_env_var, os_home_dir););
     if (unlikely(os_home_dir == NULL)) {
 #ifdef DEFAULT_HOME_DIR
       home_dir = cp_from_os_path(default_home_dir, &err_info);
