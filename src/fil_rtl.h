@@ -30,10 +30,10 @@
 /********************************************************************/
 
 #ifdef DO_INIT
-fileRecord nullFileRecord = {NULL, 0, TRUE, TRUE};
-fileRecord stdinFileRecord = {NULL, 0, TRUE, FALSE};
-fileRecord stdoutFileRecord = {NULL, 0, FALSE, TRUE};
-fileRecord stderrFileRecord = {NULL, 0, FALSE, TRUE};
+fileRecord nullFileRecord = {NULL, 0, TRUE, TRUE, FALSE};
+fileRecord stdinFileRecord = {NULL, 0, TRUE, FALSE, FALSE};
+fileRecord stdoutFileRecord = {NULL, 0, FALSE, TRUE, FALSE};
+fileRecord stderrFileRecord = {NULL, 0, FALSE, TRUE, FALSE};
 #else
 EXTERN fileRecord nullFileRecord;
 EXTERN fileRecord stdinFileRecord;
@@ -44,7 +44,14 @@ EXTERN fileRecord stderrFileRecord;
 #define initFileType(aFile, readingOkay, writingOkay) \
     (aFile)->usage_count = 1; \
     (aFile)->readingAllowed = (readingOkay); \
-    (aFile)->writingAllowed = (writingOkay);
+    (aFile)->writingAllowed = (writingOkay); \
+    (aFile)->isPipe = FALSE;
+
+#define initPipeType(aFile, readingOkay, writingOkay) \
+    (aFile)->usage_count = 1; \
+    (aFile)->readingAllowed = (readingOkay); \
+    (aFile)->writingAllowed = (writingOkay); \
+    (aFile)->isPipe = TRUE;
 
 int offsetSeek (cFileType aFile, const os_off_t anOffset,
                 const int origin);

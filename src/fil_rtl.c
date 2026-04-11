@@ -1060,6 +1060,17 @@ void filClose (const fileType aFile)
     if (unlikely(aFile->cFile == NULL)) {
       logError(printf("filClose: Called with a closed file.\n"););
       raise_error(FILE_ERROR);
+    } else if (aFile->isPipe) {
+      if (unlikely(os_pclose(aFile->cFile) == -1)) {
+        logError(printf("filClose: pclose(%d) failed:\n"
+                        "errno=%d\nerror: %s\n",
+                        safe_fileno(aFile->cFile),
+                        errno, strerror(errno)););
+        aFile->cFile = NULL;
+        raise_error(FILE_ERROR);
+      } else {
+        aFile->cFile = NULL;
+      } /* if */
     } else {
 #if FCLOSE_FAILS_AFTER_PREVIOUS_ERROR
       clearerr(aFile->cFile);
@@ -1323,7 +1334,11 @@ void filFree (const fileType oldFile)
                        oldFile != NULL ? oldFile->usage_count : (uintType) 0););
     assert_file_not_null(oldFile);
     if (oldFile->cFile != NULL) {
-      fclose(oldFile->cFile);
+      if (oldFile->isPipe) {
+        os_pclose(oldFile->cFile);
+      } else {
+        fclose(oldFile->cFile);
+      } /* if */
     } /* if */
     FREE_RECORD(oldFile, fileRecord, count.files);
   } /* filFree */
@@ -2113,6 +2128,7 @@ void filPclose (const fileType aPipe)
       logError(printf("filPclose: pclose(%d) failed:\n"
                       "errno=%d\nerror: %s\n",
                       safe_fileno(aPipe->cFile), errno, strerror(errno)););
+      aPipe->cFile = NULL;
       raise_error(FILE_ERROR);
     } else {
       aPipe->cFile = NULL;
@@ -2241,7 +2257,7 @@ fileType filPopen (const const_striType command,
               pipeOpened = &nullFileRecord;
             } else {
               os_stri_free(os_command);
-              initFileType(pipeOpened, readingAllowed, writingAllowed);
+              initPipeType(pipeOpened, readingAllowed, writingAllowed);
               pipeOpened->cFile = cFile;
             } /* if */
           } /* if */
