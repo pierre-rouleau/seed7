@@ -974,6 +974,20 @@ const proc: doCd (inout string: parameters) is func
   end func;
 
 
+const proc: appendToFile (in string: file_name, in string: stri) is func
+  local
+    var file: work_file is STD_NULL;
+  begin
+    if stri <> "" then
+      work_file := open(file_name, "a");
+      if work_file <> STD_NULL then
+        write(work_file, stri);
+        close(work_file);
+      end if;
+    end if;
+  end func;
+
+
 (**
  *  Act like the Unix make command.
  *  This library just contains a forward definition.
@@ -1056,20 +1070,6 @@ const func boolean: doOneCommand (inout string: command,
             commandOutput := "";
           end if;
       end case;
-    end if;
-  end func;
-
-
-const proc: appendToFile (in string: file_name, in string: stri) is func
-  local
-    var file: work_file is STD_NULL;
-  begin
-    if stri <> "" then
-      work_file := open(file_name, "a");
-      if work_file <> STD_NULL then
-        write(work_file, stri);
-        close(work_file);
-      end if;
     end if;
   end func;
 
