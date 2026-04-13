@@ -283,7 +283,7 @@ const proc: doMkdirCmd (in array string: fileList,
   end func;
 
 
-const func string: getCommandParameter (inout string: stri) is func
+const func string: getCommandParameter (inout string: parameters) is func
   result
     var string: symbol is "";
   local
@@ -294,14 +294,14 @@ const func string: getCommandParameter (inout string: stri) is func
     var string: quotedPart is "";
     var boolean: quoteMissing is FALSE;
   begin
-    leng := length(stri);
-    repeat
-      if stri[pos] = '"' or stri[pos] = ''' then
-        quotation := stri[pos];
+    leng := length(parameters);
+    while pos <= leng and parameters[pos] in parameter_char and not quoteMissing do
+      if parameters[pos] = '"' or parameters[pos] = ''' then
+        quotation := parameters[pos];
         quotedPos := succ(pos);
         quotedPart := "";
-        while quotedPos <= leng and stri[quotedPos] <> quotation do
-          quotedPart &:= stri[quotedPos];
+        while quotedPos <= leng and parameters[quotedPos] <> quotation do
+          quotedPart &:= parameters[quotedPos];
           incr(quotedPos);
         end while;
         if quotedPos <= leng then
@@ -312,13 +312,13 @@ const func string: getCommandParameter (inout string: stri) is func
         end if;
       else
         repeat
-          symbol &:= stri[pos];
+          symbol &:= parameters[pos];
           incr(pos);
-        until pos > leng or stri[pos] not in parameter_char or
-            stri[pos] = '"' or stri[pos] = ''';
+        until pos > leng or parameters[pos] not in parameter_char or
+            parameters[pos] = '"' or parameters[pos] = ''';
       end if;
-    until pos > leng or stri[pos] not in parameter_char or quoteMissing;
-    stri := stri[pos ..];
+    end while;
+    parameters := parameters[pos ..];
   end func;
 
 
