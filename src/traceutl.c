@@ -551,8 +551,12 @@ static void print_real_value (const_objectType anyobject)
         } /* if */
         break;
       case SOCKETOBJECT:
-        prot_cstri("socket ");
-        prot_int((intType) anyobject->value.socketValue);
+        if (anyobject->value.socketValue == NULL) {
+          prot_cstri(" *NULL_SOCKET* ");
+        } else {
+          prot_cstri("socket ");
+          prot_int((intType) anyobject->value.socketValue->socketNumber);
+        } /* if */
         break;
 #if WITH_FLOAT
       case FLOATOBJECT:
