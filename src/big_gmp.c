@@ -221,16 +221,16 @@ cstriType bigHexCStri (const const_bigIntType big1)
           if (sign == 0) {
             strcpy(result, "16#00");
           } else {
-            strcpy(result, "16#");
+            memcpy(result, "16#", 3);
             charIndex = 3;
             if (sign < 0) {
               if (buffer[0] <= BYTE_MAX) {
-                strcpy(&result[charIndex], "ff");
+                memcpy(&result[charIndex], "ff", 2);
                 charIndex += 2;
               } /* if */
             } else {
               if (buffer[0] > BYTE_MAX) {
-                strcpy(&result[charIndex], "00");
+                memcpy(&result[charIndex], "00", 2);
                 charIndex += 2;
               } /* if */
             } /* for */
@@ -238,6 +238,7 @@ cstriType bigHexCStri (const const_bigIntType big1)
               sprintf(&result[charIndex], "%02x", buffer[pos]);
               charIndex += 2;
             } /* for */
+            result[charIndex] = '\0';
           } /* if */
         } /* if */
         free(buffer);
