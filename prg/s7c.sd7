@@ -7992,6 +7992,7 @@ const proc: init_values (inout expr_type: c_expr) is func
     var reference: const_object is NIL;
     var integer: number is 0;
     var ref_list: elements_to_walk is ref_list.EMPTY;
+    var integer: oldOtherConstLength is 0;
     var integer: functionNumber is 1;
     var integer: functionBreakupLimit is 0;
     const integer: intendedFunctionSize is 100000;
@@ -8034,6 +8035,16 @@ const proc: init_values (inout expr_type: c_expr) is func
         prepare_func_literal(const_object, c_expr);
       end if;
     end for;
+
+    if length(constTable.other_const) > oldOtherConstLength then
+      const_index := flip(constTable.other_const);
+      for number range sort(keys(const_index)) do
+        if number >= oldOtherConstLength then
+          const_object := const_index[number][1];
+          sorted_list &:= make_list(const_object);
+        end if;
+      end for;
+    end if;
 
     init_bigint_constants;
     init_win_constants;
