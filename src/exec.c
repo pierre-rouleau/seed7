@@ -825,12 +825,10 @@ objectType exec_call (objectType object)
         /* result = exec_object(subroutine_object->value.objValue); */
         break;
       case MATCHOBJECT:
-/*        printf("\nsubroutine_object: ");
-        trace1(subroutine_object);
-        printf(" params ");
-        prot_list(actual_parameters);
-        printf("\n");
-        printf("\n"); */
+        result = evaluate(subroutine_object);
+        break;
+      case CALLOBJECT:
+        subroutine_object = exec_call(subroutine_object);
         result = evaluate(subroutine_object);
         break;
       case FORWARDOBJECT:
@@ -895,7 +893,9 @@ objectType evaluate (objectType object)
     objectType result;
 
   /* evaluate */
-    logFunction(printf("evaluate\n"););
+    logFunction(printf("evaluate(");
+                trace1(object);
+                printf(")\n"););
 #ifdef OUT_OF_ORDER
     if (fail_flag) {
       printf("evaluate fail_flag for ");

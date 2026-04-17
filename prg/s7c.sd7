@@ -1588,6 +1588,32 @@ const proc: process_func_call (in reference: function,
   end func;
 
 
+const proc: process_call (in reference: current_expression, inout expr_type: c_expr) is forward;
+
+
+const proc: process_indirect_func_call (in reference: function,
+    inout expr_type: c_expr) is func
+  begin
+    incr(c_expr.temp_num);
+    c_expr.temp_decls &:= type_name(resultType(getType(function)));
+    c_expr.temp_decls &:= " o_";
+    c_expr.temp_decls &:= str(c_expr.temp_num);
+    c_expr.temp_decls &:= ";\n";
+    c_expr.expr &:= "(o_";
+    c_expr.expr &:= str(c_expr.temp_num);
+    c_expr.expr &:= "=";
+    process_call(function, c_expr);
+    c_expr.expr &:= ",o_";
+    c_expr.expr &:= str(c_expr.temp_num);
+    c_expr.expr &:= "->func(o_";
+    c_expr.expr &:= str(c_expr.temp_num);
+    c_expr.expr &:= "))";
+    if resultType(getType(function)) = typeData.proctype then
+      c_expr.expr &:= ";\n";
+    end if;
+  end func;
+
+
 const proc: process_call (in reference: current_expression, inout expr_type: c_expr) is func
 
   local
@@ -1690,6 +1716,8 @@ const proc: process_call (in reference: current_expression, inout expr_type: c_e
           functionCategory = REFLISTOBJECT then
       c_expr.expr &:= "o_";
       create_name(function, c_expr.expr);
+    elsif functionCategory = CALLOBJECT then
+      process_indirect_func_call(function, c_expr);
     elsif functionCategory = FORWARDOBJECT then
       error(FORWARD_CALLED, current_expression, function);
     else
@@ -2126,6 +2154,7 @@ const proc: process_call_by_name_expr (in var reference: current_expression, ino
 
   local
     var category: exprCategory is category.value;
+    var type: resultType is void;
   begin
     exprCategory := category(current_expression);
     if exprCategory = MATCHOBJECT then
@@ -2151,6 +2180,18 @@ const proc: process_call_by_name_expr (in var reference: current_expression, ino
       c_expr.expr &:= str(getValue(current_expression, ACTION));
       c_expr.expr &:= " */";
       process_action(current_expression, ref_list.EMPTY, c_expr);
+    elsif exprCategory = CALLOBJECT then
+      if isFunc(getType(current_expression)) or
+          isVarfunc(getType(current_expression)) then
+        resultType := resultType(getType(current_expression));
+        if isFunc(resultType) then
+          process_indirect_func_call(current_expression, c_expr);
+        else
+          process_call(current_expression, c_expr);
+        end if;
+      else
+        process_call(current_expression, c_expr);
+      end if;
     else
       process_expr(current_expression, c_expr);
     end if;
@@ -5734,6 +5775,7 @@ const proc: write_file_head is func
                     \typedef struct listStruct *listType;\n\
                     \typedef const struct listStruct *const_listType;\n\
                     \typedef objRefType (*actType) (listType);\n\
+                    \typedef void *rtlPtrType;\n\
                     \typedef struct {\n\
                     \  const_cstriType name;\n\
                     \  actType action;\n\
@@ -5767,6 +5809,7 @@ const proc: write_file_head is func
                     \  interfaceType interfaceValue;\n\
                     \  objRefType    objRefValue;\n\
                     \  listType      listValue;\n\
+                    \  rtlPtrType    ptrValue;\n\
                     \  const_actEntryType actEntryValue;\n\
                     \  actType       actValue;\n\
                     \  ustriType     ustriValue;\n\
@@ -6448,7 +6491,7 @@ const proc: init_const_value (in reference: current_object, inout expr_type: c_e
       c_expr.expr &:= "])";
     elsif objectCategory = MATCHOBJECT or objectCategory = ACTOBJECT or
         objectCategory = BLOCKOBJECT then
-      c_expr.expr &:= ".value.genericValue=";
+      c_expr.expr &:= ".value.ptrValue=(rtlPtrType)";
       process_func_literal(current_object, c_expr);
     elsif objectCategory = DATABASEOBJECT then
       c_expr.expr &:= ".value.databaseValue=NULL";

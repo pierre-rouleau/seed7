@@ -1461,7 +1461,8 @@ const proc: process (PRC_CPY, in reference: function, in ref_list: params,
     if isVar(params[3]) then
       c_expr.expr &:= "o_";
       create_name(params[3], c_expr.expr);
-    elsif getType(params[1]) = resultType(getType(params[3])) then
+    elsif getType(params[1]) = resultType(getType(params[3])) or
+        resultType(getType(params[1])) = resultType(getType(params[3])) then
       process_expr(params[3], c_expr);
     elsif getType(params[1]) = getType(params[3]) then
       create_name(params[3], objNumber(params[3]), valueName);

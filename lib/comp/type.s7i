@@ -241,6 +241,7 @@ const func string: raw_type_value (in type: object_type) is func
         when {REFLISTOBJECT}:    valueName := "listValue";
         when {TYPEOBJECT}:       valueName := "typeValue";
         when {ACTENTRYOBJECT}:   valueName := "actEntryValue";
+        when {BLOCKOBJECT}:      valueName := "ptrValue";
         otherwise:               valueName := "genericValue";
        end case;
     else
