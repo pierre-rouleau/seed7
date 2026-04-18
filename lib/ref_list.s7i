@@ -208,6 +208,24 @@ const proc: for (inout reference: forVar) range (in ref_list: aRefList) do
 
 
 (**
+ *  For-loop which loops over the keys (indices) of ''aRefList''.
+ *)
+const proc: for key (inout integer: keyVar) range (in ref_list: aRefList) do
+              (in proc: statements)
+            end for is func
+  local
+    var integer: upperLimit is 0;
+  begin
+    upperLimit := length(aRefList);
+    keyVar := 1;
+    while keyVar <= upperLimit do
+      statements;
+      incr(keyVar);
+    end while;
+  end func;
+
+
+(**
  *  For-loop which loops over the elements and keys (indices) of ''aRefList''.
  *)
 const proc: for (inout reference: forVar) key (inout integer: keyVar) range (in ref_list: aRefList) do
