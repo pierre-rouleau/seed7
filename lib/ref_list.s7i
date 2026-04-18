@@ -208,6 +208,14 @@ const proc: for (inout reference: forVar) range (in ref_list: aRefList) do
 
 
 (**
+ *  For-loop which loops over the elements and keys (indices) of ''aRefList''.
+ *)
+const proc: for (inout reference: forVar) key (inout integer: keyVar) range (in ref_list: aRefList) do
+              (in proc: statement)
+            end for                                                      is action "RFL_FOR_VAR_KEY";
+
+
+(**
  *  For-loop where ''forVar'' loops over the elements of ''aRefList''.
  *  Additionally a ''condition'' is checked before the statements in
  *  the loop body are executed.
