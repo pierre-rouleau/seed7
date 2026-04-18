@@ -1562,6 +1562,8 @@ const proc: process_action (in reference: function, in ref_list: params,
         process(RFL_FOR, function, params, c_expr);
       when {"RFL_FOR_UNTIL"}:
         process(RFL_FOR_UNTIL, function, params, c_expr);
+      when {"RFL_FOR_VAR_KEY"}:
+        process(RFL_FOR_VAR_KEY, function, params, c_expr);
       when {"RFL_HEAD"}:
         process(RFL_HEAD, function, params, c_expr);
       when {"RFL_IDX"}:
