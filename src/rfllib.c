@@ -544,6 +544,53 @@ objectType rfl_for_until (listType arguments)
 
 
 /**
+ *  For-loop which loops over the elements and keys (indices) of 'aRefList/arg_6'.
+ */
+objectType rfl_for_var_key (listType arguments)
+
+  {
+    objectType forVar;
+    objectType keyVar;
+    objectType aRefList;
+    objectType statement;
+    listType helpList;
+    listType listElement;
+    memSizeType pos;
+    errInfoType err_info = OKAY_NO_ERROR;
+    objectType result;
+
+  /* rfl_for_var_key */
+    forVar = arg_2(arguments);
+    keyVar = arg_4(arguments);
+    aRefList = arg_6(arguments);
+    statement = arg_8(arguments);
+    isit_reference(forVar);
+    is_variable(forVar);
+    isit_int(keyVar);
+    is_variable(keyVar);
+    isit_reflist(aRefList);
+    helpList = copy_list(take_list(aRefList), &err_info);
+    if (err_info != OKAY_NO_ERROR) {
+      return raise_exception(SYS_MEM_EXCEPTION);
+    } else {
+      listElement = helpList;
+      pos = 1;
+      result = SYS_EMPTY_OBJECT;
+      while (listElement != NULL && result != NULL) {
+        forVar->value.objValue = listElement->obj;
+        keyVar->value.intValue = (intType) (pos);
+        result = evaluate(statement);
+        listElement = listElement->next;
+        pos++;
+      } /* while */
+      free_list(helpList);
+      return result;
+    } /* if */
+  } /* rfl_for_var_key */
+
+
+
+/**
  *  Get a sublist from 'list/arg_1' ending at the 'stop/arg_4' position.
  *  The first element in a 'ref_list' has the position 1.
  *  @return the substring ending at the 'stop/arg_4' position.

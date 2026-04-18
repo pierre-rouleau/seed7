@@ -832,6 +832,7 @@ static const actEntryRecord actEntryTable[] = {
     { "RFL_EXPR",                     rfl_expr,                     },
     { "RFL_FOR",                      rfl_for,                      },
     { "RFL_FOR_UNTIL",                rfl_for_until,                },
+    { "RFL_FOR_VAR_KEY",              rfl_for_var_key,              },
     { "RFL_HEAD",                     rfl_head,                     },
     { "RFL_IDX",                      rfl_idx,                      },
     { "RFL_INCL",                     rfl_incl,                     },
