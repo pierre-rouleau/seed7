@@ -1840,313 +1840,313 @@ const proc: process_expr (in var reference: current_expression, inout expr_type:
   begin
     optimize_constant_expressions(current_expression, c_expr);
     exprCategory := category(current_expression);
-    if exprCategory = MATCHOBJECT then
-      process_match(current_expression, c_expr);
-    elsif exprCategory = CALLOBJECT then
-      process_call(current_expression, c_expr);
-    elsif exprCategory = BLOCKOBJECT then
-      c_expr.expr &:= "o_";
-      create_name(current_expression, c_expr.expr);
-      if not isVar(current_expression) then
-        c_expr.expr &:= "()";
-        if resultType(getType(current_expression)) = typeData.voidtype then
-          c_expr.expr &:= ";\n";
-        end if;
-      end if;
-    elsif exprCategory = LOCALVOBJECT then
-      if current_expression in funcparam_data then
-        c_expr.expr &:= funcparam_data[current_expression];
-      else
+    case exprCategory of
+      when {MATCHOBJECT}:
+        process_match(current_expression, c_expr);
+      when {CALLOBJECT}:
+        process_call(current_expression, c_expr);
+      when {BLOCKOBJECT}:
         c_expr.expr &:= "o_";
         create_name(current_expression, c_expr.expr);
-      end if;
-    elsif exprCategory = VALUEPARAMOBJECT then
-      if current_expression in funcparam_data then
-        c_expr.expr &:= funcparam_data[current_expression];
-      elsif current_expression in inlineParam and
-          inlineParam[current_expression][1].paramValue <> NIL then
-        process_expr(inlineParam[current_expression][1].paramValue, c_expr);
-      else
-        if current_expression in inlineParam and
-            inlineParam[current_expression][1].paramNum <> 0 then
-          c_expr.expr &:= "par_";
-          c_expr.expr &:= str(inlineParam[current_expression][1].paramNum);
-          c_expr.expr &:= "_";
-        end if;
-        c_expr.expr &:= "o_";
-        create_name(current_expression, c_expr.expr);
-      end if;
-    elsif exprCategory = REFPARAMOBJECT then
-      if current_expression in funcparam_data then
-        c_expr.expr &:= funcparam_data[current_expression];
-      elsif isFunc(getType(current_expression)) or
-          isVarfunc(getType(current_expression)) then
-        if current_expression in inlineParam then
-          process_inline_param(current_expression, c_expr);
-        else
-          if getType(current_expression) = typeData.proctype then
-            setDiagnosticLine(c_expr);
-          end if;
-          c_expr.expr &:= "o_";
-          create_name(current_expression, c_expr.expr);
-          c_expr.expr &:= "->func(o_";
-          create_name(current_expression, c_expr.expr);
-          c_expr.expr &:= ")";
-          if getType(current_expression) = typeData.proctype then
+        if not isVar(current_expression) then
+          c_expr.expr &:= "()";
+          if resultType(getType(current_expression)) = typeData.voidtype then
             c_expr.expr &:= ";\n";
           end if;
         end if;
-      elsif current_expression in inlineParam and
-          inlineParam[current_expression][1].paramValue <> NIL then
-        process_expr(inlineParam[current_expression][1].paramValue, c_expr);
-      else
-        if isPointerParam(current_expression) then
-          c_expr.expr &:= "*";
-        end if;
-        if current_expression in inlineParam and
-            inlineParam[current_expression][1].paramNum <> 0 then
-          c_expr.expr &:= "par_";
-          c_expr.expr &:= str(inlineParam[current_expression][1].paramNum);
-          c_expr.expr &:= "_";
-        end if;
-        c_expr.expr &:= "o_";
-        create_name(current_expression, c_expr.expr);
-      end if;
-    elsif exprCategory = RESULTOBJECT then
-      if current_expression in funcparam_data then
-        c_expr.expr &:= funcparam_data[current_expression];
-      else
-        c_expr.expr &:= "o_";
-        create_name(current_expression, c_expr.expr);
-      end if;
-    elsif exprCategory = TYPEOBJECT then
-      if isVar(current_expression) then
-        c_expr.expr &:= "o_";
-        create_name(current_expression, c_expr.expr);
-      else
-        c_expr.expr &:= typeLiteral(getValue(current_expression, type));
-      end if;
-    elsif exprCategory = INTOBJECT then
-      if isVar(current_expression) then
-        c_expr.expr &:= "o_";
-        create_name(current_expression, c_expr.expr);
-      else
-        c_expr.expr &:= integerLiteral(getValue(current_expression, integer));
-      end if;
-    elsif exprCategory = BIGINTOBJECT then
-      if isVar(current_expression) then
-        c_expr.expr &:= "o_";
-        create_name(current_expression, c_expr.expr);
-      else
-        c_expr.expr &:= bigIntegerLiteral(getValue(current_expression, bigInteger));
-      end if;
-    elsif exprCategory = FLOATOBJECT then
-      if isVar(current_expression) then
-        c_expr.expr &:= "o_";
-        create_name(current_expression, c_expr.expr);
-      else
-        c_expr.expr &:= floatLiteral(getValue(current_expression, float));
-      end if;
-    elsif exprCategory = CHAROBJECT then
-      if isVar(current_expression) then
-        c_expr.expr &:= "o_";
-        create_name(current_expression, c_expr.expr);
-      else
-        c_expr.expr &:= charLiteral(getValue(current_expression, char));
-      end if;
-    elsif exprCategory = STRIOBJECT then
-      if isVar(current_expression) then
-        c_expr.expr &:= "o_";
-        create_name(current_expression, c_expr.expr);
-      else
-        c_expr.expr &:= stringLiteral(getValue(current_expression, string));
-      end if;
-    elsif exprCategory = BSTRIOBJECT then
-      if isVar(current_expression) then
-        c_expr.expr &:= "o_";
-        create_name(current_expression, c_expr.expr);
-      else
-        c_expr.expr &:= bstriLiteral(getValue(current_expression, bstring));
-      end if;
-    elsif exprCategory = SETOBJECT then
-      if isVar(current_expression) then
-        c_expr.expr &:= "o_";
-        create_name(current_expression, c_expr.expr);
-      else
-        c_expr.expr &:= "(";
-        if isFunc(getType(current_expression)) then
-          c_expr.expr &:= type_name(resultType(getType(current_expression)));
-        else
-          c_expr.expr &:= type_name(getType(current_expression));
-        end if;
-        c_expr.expr &:= ")(";
-        c_expr.expr &:= bitsetLiteral(getValue(current_expression, bitset));
-        c_expr.expr &:= ")";
-      end if;
-    elsif exprCategory = REFOBJECT or
-          exprCategory = STRUCTELEMOBJECT then
-      if isVar(current_expression) then
-        c_expr.expr &:= "o_";
-        create_name(current_expression, c_expr.expr);
-      else
-        c_expr.expr &:= referenceLiteral(getValue(current_expression, reference));
-      end if;
-    elsif exprCategory = REFLISTOBJECT then
-      c_expr.expr &:= "o_";
-      create_name(current_expression, c_expr.expr);
-    elsif exprCategory = ARRAYOBJECT then
-      if isVar(current_expression) then
-        c_expr.expr &:= "o_";
-        create_name(current_expression, c_expr.expr);
-      else
-        if current_expression not in constTable.other_const then
-          constTable.other_const @:= [current_expression] length(constTable.other_const);
-        end if;
-        c_expr.expr &:= "arr[";
-        c_expr.expr &:= str(constTable.other_const[current_expression]);
-        c_expr.expr &:= "]";
-      end if;
-    elsif exprCategory = STRUCTOBJECT then
-      if isVar(current_expression) then
-        c_expr.expr &:= "o_";
-        create_name(current_expression, c_expr.expr);
-      else
-        if current_expression not in constTable.other_const then
-          constTable.other_const @:= [current_expression] length(constTable.other_const);
-        end if;
-        c_expr.expr &:= "sct[";
-        c_expr.expr &:= str(constTable.other_const[current_expression]);
-        c_expr.expr &:= "]";
-      end if;
-    elsif exprCategory = HASHOBJECT then
-      if isVar(current_expression) then
-        c_expr.expr &:= "o_";
-        create_name(current_expression, c_expr.expr);
-      else
-        if current_expression not in constTable.other_const then
-          constTable.other_const @:= [current_expression] length(constTable.other_const);
-        end if;
-        c_expr.expr &:= "hsh[";
-        c_expr.expr &:= str(constTable.other_const[current_expression]);
-        c_expr.expr &:= "]";
-      end if;
-    elsif exprCategory = INTERFACEOBJECT then
-      if isVar(current_expression) then
-        c_expr.expr &:= "o_";
-        create_name(current_expression, c_expr.expr);
-      else
-        if current_expression not in constTable.other_const then
-          constTable.other_const @:= [current_expression] length(constTable.other_const);
-        end if;
-        c_expr.expr &:= "itf[";
-        c_expr.expr &:= str(constTable.other_const[current_expression]);
-        c_expr.expr &:= "]";
-      end if;
-    elsif exprCategory = FILEOBJECT then
-      c_expr.expr &:= "o_";
-      create_name(current_expression, c_expr.expr);
-    elsif exprCategory = SOCKETOBJECT then
-      c_expr.expr &:= "o_";
-      create_name(current_expression, c_expr.expr);
-    elsif exprCategory = POLLOBJECT then
-      c_expr.expr &:= "o_";
-      create_name(current_expression, c_expr.expr);
-    elsif exprCategory = WINOBJECT then
-      if isVar(current_expression) then
-        c_expr.expr &:= "o_";
-        create_name(current_expression, c_expr.expr);
-      else
-        c_expr.expr &:= windowLiteral(getValue(current_expression, PRIMITIVE_WINDOW));
-      end if;
-    elsif exprCategory = POINTLISTOBJECT then
-      if isVar(current_expression) then
-        c_expr.expr &:= "o_";
-        create_name(current_expression, c_expr.expr);
-      else
-        c_expr.expr &:= pointListLiteral(getValue(current_expression, pointList));
-      end if;
-    elsif exprCategory = PROCESSOBJECT then
-      if isVar(current_expression) then
-        c_expr.expr &:= "o_";
-        create_name(current_expression, c_expr.expr);
-      else
-        if getValue(current_expression, process) = process.EMPTY then
-          c_expr.expr &:= "/*process.EMPTY*/NULL";
+      when {LOCALVOBJECT}:
+        if current_expression in funcparam_data then
+          c_expr.expr &:= funcparam_data[current_expression];
         else
           c_expr.expr &:= "o_";
           create_name(current_expression, c_expr.expr);
         end if;
-      end if;
-    elsif exprCategory = PROGOBJECT then
-      if isVar(current_expression) then
-        c_expr.expr &:= "o_";
-        create_name(current_expression, c_expr.expr);
-      else
-        if getValue(current_expression, program) = program.EMPTY then
-          c_expr.expr &:= "/*program.EMPTY*/NULL";
+      when {VALUEPARAMOBJECT}:
+        if current_expression in funcparam_data then
+          c_expr.expr &:= funcparam_data[current_expression];
+        elsif current_expression in inlineParam and
+            inlineParam[current_expression][1].paramValue <> NIL then
+          process_expr(inlineParam[current_expression][1].paramValue, c_expr);
+        else
+          if current_expression in inlineParam and
+              inlineParam[current_expression][1].paramNum <> 0 then
+            c_expr.expr &:= "par_";
+            c_expr.expr &:= str(inlineParam[current_expression][1].paramNum);
+            c_expr.expr &:= "_";
+          end if;
+          c_expr.expr &:= "o_";
+          create_name(current_expression, c_expr.expr);
+        end if;
+      when {REFPARAMOBJECT}:
+        if current_expression in funcparam_data then
+          c_expr.expr &:= funcparam_data[current_expression];
+        elsif isFunc(getType(current_expression)) or
+            isVarfunc(getType(current_expression)) then
+          if current_expression in inlineParam then
+            process_inline_param(current_expression, c_expr);
+          else
+            if getType(current_expression) = typeData.proctype then
+              setDiagnosticLine(c_expr);
+            end if;
+            c_expr.expr &:= "o_";
+            create_name(current_expression, c_expr.expr);
+            c_expr.expr &:= "->func(o_";
+            create_name(current_expression, c_expr.expr);
+            c_expr.expr &:= ")";
+            if getType(current_expression) = typeData.proctype then
+              c_expr.expr &:= ";\n";
+            end if;
+          end if;
+        elsif current_expression in inlineParam and
+            inlineParam[current_expression][1].paramValue <> NIL then
+          process_expr(inlineParam[current_expression][1].paramValue, c_expr);
+        else
+          if isPointerParam(current_expression) then
+            c_expr.expr &:= "*";
+          end if;
+          if current_expression in inlineParam and
+              inlineParam[current_expression][1].paramNum <> 0 then
+            c_expr.expr &:= "par_";
+            c_expr.expr &:= str(inlineParam[current_expression][1].paramNum);
+            c_expr.expr &:= "_";
+          end if;
+          c_expr.expr &:= "o_";
+          create_name(current_expression, c_expr.expr);
+        end if;
+      when {RESULTOBJECT}:
+        if current_expression in funcparam_data then
+          c_expr.expr &:= funcparam_data[current_expression];
         else
           c_expr.expr &:= "o_";
           create_name(current_expression, c_expr.expr);
         end if;
-      end if;
-    elsif exprCategory = DATABASEOBJECT then
-      if isVar(current_expression) then
+      when {TYPEOBJECT}:
+        if isVar(current_expression) then
+          c_expr.expr &:= "o_";
+          create_name(current_expression, c_expr.expr);
+        else
+          c_expr.expr &:= typeLiteral(getValue(current_expression, type));
+        end if;
+      when {INTOBJECT}:
+        if isVar(current_expression) then
+          c_expr.expr &:= "o_";
+          create_name(current_expression, c_expr.expr);
+        else
+          c_expr.expr &:= integerLiteral(getValue(current_expression, integer));
+        end if;
+      when {BIGINTOBJECT}:
+        if isVar(current_expression) then
+          c_expr.expr &:= "o_";
+          create_name(current_expression, c_expr.expr);
+        else
+          c_expr.expr &:= bigIntegerLiteral(getValue(current_expression, bigInteger));
+        end if;
+      when {FLOATOBJECT}:
+        if isVar(current_expression) then
+          c_expr.expr &:= "o_";
+          create_name(current_expression, c_expr.expr);
+        else
+          c_expr.expr &:= floatLiteral(getValue(current_expression, float));
+        end if;
+      when {CHAROBJECT}:
+        if isVar(current_expression) then
+          c_expr.expr &:= "o_";
+          create_name(current_expression, c_expr.expr);
+        else
+          c_expr.expr &:= charLiteral(getValue(current_expression, char));
+        end if;
+      when {STRIOBJECT}:
+        if isVar(current_expression) then
+          c_expr.expr &:= "o_";
+          create_name(current_expression, c_expr.expr);
+        else
+          c_expr.expr &:= stringLiteral(getValue(current_expression, string));
+        end if;
+      when {BSTRIOBJECT}:
+        if isVar(current_expression) then
+          c_expr.expr &:= "o_";
+          create_name(current_expression, c_expr.expr);
+        else
+          c_expr.expr &:= bstriLiteral(getValue(current_expression, bstring));
+        end if;
+      when {SETOBJECT}:
+        if isVar(current_expression) then
+          c_expr.expr &:= "o_";
+          create_name(current_expression, c_expr.expr);
+        else
+          c_expr.expr &:= "(";
+          if isFunc(getType(current_expression)) then
+            c_expr.expr &:= type_name(resultType(getType(current_expression)));
+          else
+            c_expr.expr &:= type_name(getType(current_expression));
+          end if;
+          c_expr.expr &:= ")(";
+          c_expr.expr &:= bitsetLiteral(getValue(current_expression, bitset));
+          c_expr.expr &:= ")";
+        end if;
+      when {REFOBJECT, STRUCTELEMOBJECT}:
+        if isVar(current_expression) then
+          c_expr.expr &:= "o_";
+          create_name(current_expression, c_expr.expr);
+        else
+          c_expr.expr &:= referenceLiteral(getValue(current_expression, reference));
+        end if;
+      when {REFLISTOBJECT}:
         c_expr.expr &:= "o_";
         create_name(current_expression, c_expr.expr);
-      else
-        c_expr.expr &:= "/*database.value*/NULL";
-      end if;
-    elsif exprCategory = SQLSTMTOBJECT then
-      if isVar(current_expression) then
+      when {ARRAYOBJECT}:
+        if isVar(current_expression) then
+          c_expr.expr &:= "o_";
+          create_name(current_expression, c_expr.expr);
+        else
+          if current_expression not in constTable.other_const then
+            constTable.other_const @:= [current_expression] length(constTable.other_const);
+          end if;
+          c_expr.expr &:= "arr[";
+          c_expr.expr &:= str(constTable.other_const[current_expression]);
+          c_expr.expr &:= "]";
+        end if;
+      when {STRUCTOBJECT}:
+        if isVar(current_expression) then
+          c_expr.expr &:= "o_";
+          create_name(current_expression, c_expr.expr);
+        else
+          if current_expression not in constTable.other_const then
+            constTable.other_const @:= [current_expression] length(constTable.other_const);
+          end if;
+          c_expr.expr &:= "sct[";
+          c_expr.expr &:= str(constTable.other_const[current_expression]);
+          c_expr.expr &:= "]";
+        end if;
+      when {HASHOBJECT}:
+        if isVar(current_expression) then
+          c_expr.expr &:= "o_";
+          create_name(current_expression, c_expr.expr);
+        else
+          if current_expression not in constTable.other_const then
+            constTable.other_const @:= [current_expression] length(constTable.other_const);
+          end if;
+          c_expr.expr &:= "hsh[";
+          c_expr.expr &:= str(constTable.other_const[current_expression]);
+          c_expr.expr &:= "]";
+        end if;
+      when {INTERFACEOBJECT}:
+        if isVar(current_expression) then
+          c_expr.expr &:= "o_";
+          create_name(current_expression, c_expr.expr);
+        else
+          if current_expression not in constTable.other_const then
+            constTable.other_const @:= [current_expression] length(constTable.other_const);
+          end if;
+          c_expr.expr &:= "itf[";
+          c_expr.expr &:= str(constTable.other_const[current_expression]);
+          c_expr.expr &:= "]";
+        end if;
+      when {FILEOBJECT}:
         c_expr.expr &:= "o_";
         create_name(current_expression, c_expr.expr);
-      else
-        c_expr.expr &:= "/*sqlStatement.value*/NULL";
-      end if;
-    elsif exprCategory = CONSTENUMOBJECT then
-      if isVar(current_expression) then
+      when {SOCKETOBJECT}:
         c_expr.expr &:= "o_";
         create_name(current_expression, c_expr.expr);
-      else
-        c_expr.expr &:= enum_value(getValue(current_expression, reference));
-      end if;
-    elsif exprCategory = VARENUMOBJECT then
-      if current_expression in funcparam_data then
-        c_expr.expr &:= funcparam_data[current_expression];
-      else
+      when {POLLOBJECT}:
         c_expr.expr &:= "o_";
         create_name(current_expression, c_expr.expr);
-      end if;
-    elsif exprCategory = ENUMLITERALOBJECT then
-      if getType(current_expression) = typeData.voidtype then
-        c_expr.expr &:= "/* empty */\n";
-      else
+      when {WINOBJECT}:
+        if isVar(current_expression) then
+          c_expr.expr &:= "o_";
+          create_name(current_expression, c_expr.expr);
+        else
+          c_expr.expr &:= windowLiteral(getValue(current_expression, PRIMITIVE_WINDOW));
+        end if;
+      when {POINTLISTOBJECT}:
+        if isVar(current_expression) then
+          c_expr.expr &:= "o_";
+          create_name(current_expression, c_expr.expr);
+        else
+          c_expr.expr &:= pointListLiteral(getValue(current_expression, pointList));
+        end if;
+      when {PROCESSOBJECT}:
+        if isVar(current_expression) then
+          c_expr.expr &:= "o_";
+          create_name(current_expression, c_expr.expr);
+        else
+          if getValue(current_expression, process) = process.EMPTY then
+            c_expr.expr &:= "/*process.EMPTY*/NULL";
+          else
+            c_expr.expr &:= "o_";
+            create_name(current_expression, c_expr.expr);
+          end if;
+        end if;
+      when {PROGOBJECT}:
+        if isVar(current_expression) then
+          c_expr.expr &:= "o_";
+          create_name(current_expression, c_expr.expr);
+        else
+          if getValue(current_expression, program) = program.EMPTY then
+            c_expr.expr &:= "/*program.EMPTY*/NULL";
+          else
+            c_expr.expr &:= "o_";
+            create_name(current_expression, c_expr.expr);
+          end if;
+        end if;
+      when {DATABASEOBJECT}:
+        if isVar(current_expression) then
+          c_expr.expr &:= "o_";
+          create_name(current_expression, c_expr.expr);
+        else
+          c_expr.expr &:= "/*database.value*/NULL";
+        end if;
+      when {SQLSTMTOBJECT}:
+        if isVar(current_expression) then
+          c_expr.expr &:= "o_";
+          create_name(current_expression, c_expr.expr);
+        else
+          c_expr.expr &:= "/*sqlStatement.value*/NULL";
+        end if;
+      when {CONSTENUMOBJECT}:
+        if isVar(current_expression) then
+          c_expr.expr &:= "o_";
+          create_name(current_expression, c_expr.expr);
+        else
+          c_expr.expr &:= enum_value(getValue(current_expression, reference));
+        end if;
+      when {VARENUMOBJECT}:
+        if current_expression in funcparam_data then
+          c_expr.expr &:= funcparam_data[current_expression];
+        else
+          c_expr.expr &:= "o_";
+          create_name(current_expression, c_expr.expr);
+        end if;
+      when {ENUMLITERALOBJECT}:
+        if getType(current_expression) = typeData.voidtype then
+          c_expr.expr &:= "/* empty */\n";
+        else
+          c_expr.expr &:= "o_";
+          create_name(current_expression, c_expr.expr);
+        end if;
+      when {EXPROBJECT}:
         c_expr.expr &:= "o_";
         create_name(current_expression, c_expr.expr);
-      end if;
-    elsif exprCategory = EXPROBJECT then
-      c_expr.expr &:= "o_";
-      create_name(current_expression, c_expr.expr);
-    elsif exprCategory = ACTENTRYOBJECT then
-      if isVar(current_expression) then
-        c_expr.expr &:= "o_";
-        create_name(current_expression, c_expr.expr);
-      else
-        c_expr.expr &:= "aceIConv(";
-        c_expr.expr &:= integerLiteral(ord(getValue(current_expression, ACTION)));
-        c_expr.expr &:= " /* ";
-        c_expr.expr &:= str(getValue(current_expression, ACTION));
-        c_expr.expr &:= " */)";
-      end if;
-    elsif exprCategory = SYMBOLOBJECT then
-      c_expr.expr &:= "/* SYMBOLOBJECT ";
-      c_expr.expr &:= str(current_expression);
-      c_expr.expr &:= " */";
-    else
-      c_expr.expr &:= "/* ";
-      c_expr.expr &:= str(exprCategory);
-      c_expr.expr &:= " */";
-    end if;
+      when {ACTENTRYOBJECT}:
+        if isVar(current_expression) then
+          c_expr.expr &:= "o_";
+          create_name(current_expression, c_expr.expr);
+        else
+          c_expr.expr &:= "aceIConv(";
+          c_expr.expr &:= integerLiteral(ord(getValue(current_expression, ACTION)));
+          c_expr.expr &:= " /* ";
+          c_expr.expr &:= str(getValue(current_expression, ACTION));
+          c_expr.expr &:= " */)";
+        end if;
+      when {SYMBOLOBJECT}:
+        c_expr.expr &:= "/* SYMBOLOBJECT ";
+        c_expr.expr &:= str(current_expression);
+        c_expr.expr &:= " */";
+      otherwise:
+        c_expr.expr &:= "/* ";
+        c_expr.expr &:= str(exprCategory);
+        c_expr.expr &:= " */";
+    end case;
   end func;
 
 
