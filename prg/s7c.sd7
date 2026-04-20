@@ -2157,44 +2157,45 @@ const proc: process_call_by_name_expr (in var reference: current_expression, ino
     var type: resultType is void;
   begin
     exprCategory := category(current_expression);
-    if exprCategory = MATCHOBJECT then
-      process_call(current_expression, c_expr);
-    elsif exprCategory = LOCALVOBJECT then
-      if isFunc(getType(current_expression)) or
-          isVarfunc(getType(current_expression)) then
-        process_func_call(current_expression, ref_list.EMPTY, c_expr);
-      else
-        process_expr(current_expression, c_expr);
-      end if;
-    elsif exprCategory = BLOCKOBJECT then
-      c_expr.expr &:= "o_";
-      create_name(current_expression, c_expr.expr);
-      if not isVar(current_expression) then
-        c_expr.expr &:= "()";
-        if resultType(getType(current_expression)) = typeData.voidtype then
-          c_expr.expr &:= ";\n";
+    case exprCategory of
+      when {MATCHOBJECT}:
+        process_call(current_expression, c_expr);
+      when {LOCALVOBJECT}:
+        if isFunc(getType(current_expression)) or
+            isVarfunc(getType(current_expression)) then
+          process_func_call(current_expression, ref_list.EMPTY, c_expr);
+        else
+          process_expr(current_expression, c_expr);
         end if;
-      end if;
-    elsif exprCategory = ACTOBJECT then
-      c_expr.expr &:= "/* process_call_by_name_expr ACTOBJECT ";
-      c_expr.expr &:= str(getValue(current_expression, ACTION));
-      c_expr.expr &:= " */";
-      process_action(current_expression, ref_list.EMPTY, c_expr);
-    elsif exprCategory = CALLOBJECT then
-      if isFunc(getType(current_expression)) or
-          isVarfunc(getType(current_expression)) then
-        resultType := resultType(getType(current_expression));
-        if isFunc(resultType) then
-          process_indirect_func_call(current_expression, c_expr);
+      when {BLOCKOBJECT}:
+        c_expr.expr &:= "o_";
+        create_name(current_expression, c_expr.expr);
+        if not isVar(current_expression) then
+          c_expr.expr &:= "()";
+          if resultType(getType(current_expression)) = typeData.voidtype then
+            c_expr.expr &:= ";\n";
+          end if;
+        end if;
+      when {ACTOBJECT}:
+        c_expr.expr &:= "/* process_call_by_name_expr ACTOBJECT ";
+        c_expr.expr &:= str(getValue(current_expression, ACTION));
+        c_expr.expr &:= " */";
+        process_action(current_expression, ref_list.EMPTY, c_expr);
+      when {CALLOBJECT}:
+        if isFunc(getType(current_expression)) or
+            isVarfunc(getType(current_expression)) then
+          resultType := resultType(getType(current_expression));
+          if isFunc(resultType) then
+            process_indirect_func_call(current_expression, c_expr);
+          else
+            process_call(current_expression, c_expr);
+          end if;
         else
           process_call(current_expression, c_expr);
         end if;
-      else
-        process_call(current_expression, c_expr);
-      end if;
-    else
-      process_expr(current_expression, c_expr);
-    end if;
+      otherwise:
+        process_expr(current_expression, c_expr);
+    end case;
   end func;
 
 
