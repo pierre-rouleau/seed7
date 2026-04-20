@@ -1054,7 +1054,7 @@ const proc: process_local_declaration (in reference: current_object, in var refe
           c_declaration.temp_assigns &:= " /* ";
           c_declaration.temp_assigns &:= str(getValue(object_value, ACTION));
           c_declaration.temp_assigns &:= " */);\n";
-        else
+        otherwise:
           c_declaration.temp_decls &:= "/* ";
           c_declaration.temp_decls &:= str(valueCategory);
           c_declaration.temp_decls &:= " */";
