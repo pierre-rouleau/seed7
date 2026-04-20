@@ -1634,111 +1634,93 @@ const proc: process_call (in reference: current_expression, inout expr_type: c_e
     # c_expr.expr &:= " ";
     # c_expr.expr &:= str(function);
     # c_expr.expr &:= " */";
-    if functionCategory = ACTOBJECT then
-      process_action(function, params, c_expr);
-    elsif functionCategory = BLOCKOBJECT then
-      if function in functionInlineDepth and
-          functionInlineDepth[function] > maximumInlineDepth then
-        incl(failed_function_inlining, function);
-        if function not in prototype_declared and
-            function not in function_declared then
-          process_prototype_declaration(function, global_c_expr);
-          prototype_declared @:= [function] TRUE;
-        end if;
-        process_func_call(function, params, c_expr);
-      elsif function in inline_function or
-          (function not in prototype_declared and
-           isFunctionCallingSpecialAction(function)) then
-        process_inline(function, params, c_expr);
-      elsif function in function_with_dcl_actions then
-        write_object_declaration := FALSE;
-        calls_dcl_actions := TRUE;
-      else
-        if function not in prototype_declared then
-          process_prototype_declaration(function, global_c_expr);
-          prototype_declared @:= [function] TRUE;
-        end if;
-        process_func_call(function, params, c_expr);
-      end if;
-    elsif functionCategory = LOCALVOBJECT then
-      process_func_call(function, params, c_expr);
-    elsif functionCategory = CONSTENUMOBJECT then
-      (* process_constenumobject(function, params, c_expr); *)
-      process_expr(function, c_expr);
-    elsif functionCategory = REFPARAMOBJECT then
-      if isFunc(getType(function)) or
-          isVarfunc(getType(function)) then
-        if function in inlineParam then
-          process_inline_param(function, c_expr);
+    case functionCategory of
+      when {ACTOBJECT}:
+        process_action(function, params, c_expr);
+      when {BLOCKOBJECT}:
+        if function in functionInlineDepth and
+            functionInlineDepth[function] > maximumInlineDepth then
+          incl(failed_function_inlining, function);
+          if function not in prototype_declared and
+              function not in function_declared then
+            process_prototype_declaration(function, global_c_expr);
+            prototype_declared @:= [function] TRUE;
+          end if;
+          process_func_call(function, params, c_expr);
+        elsif function in inline_function or
+            (function not in prototype_declared and
+             isFunctionCallingSpecialAction(function)) then
+          process_inline(function, params, c_expr);
+        elsif function in function_with_dcl_actions then
+          write_object_declaration := FALSE;
+          calls_dcl_actions := TRUE;
         else
-          if getType(function) = typeData.proctype then
-            setDiagnosticLine(c_expr);
+          if function not in prototype_declared then
+            process_prototype_declaration(function, global_c_expr);
+            prototype_declared @:= [function] TRUE;
           end if;
-          c_expr.expr &:= "o_";
-          create_name(function, c_expr.expr);
-          c_expr.expr &:= "->func(o_";
-          create_name(function, c_expr.expr);
-          c_expr.expr &:= ")";
-          if getType(function) = typeData.proctype then
-            c_expr.expr &:= ";\n";
-          end if;
+          process_func_call(function, params, c_expr);
         end if;
-      else
+      when {LOCALVOBJECT}:
+        process_func_call(function, params, c_expr);
+      when {CONSTENUMOBJECT}:
+        (* process_constenumobject(function, params, c_expr); *)
         process_expr(function, c_expr);
-      end if;
-    elsif functionCategory = VALUEPARAMOBJECT or
-          functionCategory = INTOBJECT or
-          functionCategory = BIGINTOBJECT or
-          functionCategory = FLOATOBJECT or
-          functionCategory = CHAROBJECT or
-          functionCategory = STRIOBJECT or
-          functionCategory = BSTRIOBJECT or
-          functionCategory = ARRAYOBJECT or
-          functionCategory = HASHOBJECT or
-          functionCategory = SETOBJECT or
-          functionCategory = STRUCTOBJECT or
-          functionCategory = STRUCTELEMOBJECT or
-          functionCategory = INTERFACEOBJECT or
-          functionCategory = FILEOBJECT or
-          functionCategory = SOCKETOBJECT or
-          functionCategory = POLLOBJECT or
-          functionCategory = WINOBJECT or
-          functionCategory = POINTLISTOBJECT or
-          functionCategory = PROCESSOBJECT or
-          functionCategory = PROGOBJECT or
-          functionCategory = DATABASEOBJECT or
-          functionCategory = SQLSTMTOBJECT or
-          functionCategory = ENUMLITERALOBJECT or
-          functionCategory = ACTENTRYOBJECT or
-          functionCategory = TYPEOBJECT then
-      process_expr(function, c_expr);
-    elsif functionCategory = REFOBJECT or
-          functionCategory = REFLISTOBJECT then
-      c_expr.expr &:= "o_";
-      create_name(function, c_expr.expr);
-    elsif functionCategory = CALLOBJECT then
-      process_indirect_func_call(function, c_expr);
-    elsif functionCategory = FORWARDOBJECT then
-      error(FORWARD_CALLED, current_expression, function);
-    else
-      c_expr.expr &:= "/*[ ";
-      c_expr.expr &:= str(functionCategory);
-      c_expr.expr &:= " ]*/";
-      c_expr.expr &:= "o_";
-      create_name(function, c_expr.expr);
-      c_expr.expr &:= "(";
-      for obj range params do
-        if category(obj) <> SYMBOLOBJECT then
-          if first_element then
-            first_element := FALSE;
+      when {REFPARAMOBJECT}:
+        if isFunc(getType(function)) or
+            isVarfunc(getType(function)) then
+          if function in inlineParam then
+            process_inline_param(function, c_expr);
           else
-            c_expr.expr &:= ", ";
+            if getType(function) = typeData.proctype then
+              setDiagnosticLine(c_expr);
+            end if;
+            c_expr.expr &:= "o_";
+            create_name(function, c_expr.expr);
+            c_expr.expr &:= "->func(o_";
+            create_name(function, c_expr.expr);
+            c_expr.expr &:= ")";
+            if getType(function) = typeData.proctype then
+              c_expr.expr &:= ";\n";
+            end if;
           end if;
-          process_expr(obj, c_expr);
+        else
+          process_expr(function, c_expr);
         end if;
-      end for;
-      c_expr.expr &:= ")";
-    end if;
+      when {VALUEPARAMOBJECT, INTOBJECT, BIGINTOBJECT, FLOATOBJECT,
+            CHAROBJECT, STRIOBJECT, BSTRIOBJECT, ARRAYOBJECT,
+            HASHOBJECT, SETOBJECT, STRUCTOBJECT, STRUCTELEMOBJECT,
+            INTERFACEOBJECT, FILEOBJECT, SOCKETOBJECT, POLLOBJECT,
+            WINOBJECT, POINTLISTOBJECT, PROCESSOBJECT, PROGOBJECT,
+            DATABASEOBJECT, SQLSTMTOBJECT, ENUMLITERALOBJECT,
+            ACTENTRYOBJECT, TYPEOBJECT}:
+        process_expr(function, c_expr);
+      when {REFOBJECT, REFLISTOBJECT}:
+        c_expr.expr &:= "o_";
+        create_name(function, c_expr.expr);
+      when {CALLOBJECT}:
+        process_indirect_func_call(function, c_expr);
+      when {FORWARDOBJECT}:
+        error(FORWARD_CALLED, current_expression, function);
+      otherwise:
+        c_expr.expr &:= "/*[ ";
+        c_expr.expr &:= str(functionCategory);
+        c_expr.expr &:= " ]*/";
+        c_expr.expr &:= "o_";
+        create_name(function, c_expr.expr);
+        c_expr.expr &:= "(";
+        for obj range params do
+          if category(obj) <> SYMBOLOBJECT then
+            if first_element then
+              first_element := FALSE;
+            else
+              c_expr.expr &:= ", ";
+            end if;
+            process_expr(obj, c_expr);
+          end if;
+        end for;
+        c_expr.expr &:= ")";
+    end case;
   end func;
 
 
