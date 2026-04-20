@@ -814,249 +814,251 @@ const proc: process_local_declaration (in reference: current_object, in var refe
       param_name := "o_";
       create_name(current_object, param_name);
       process_destr_call(objectType, param_name, c_declaration.temp_frees);
-    elsif valueCategory = TYPEOBJECT then
-      c_declaration.temp_decls &:= "=";
-      c_declaration.temp_decls &:= typeLiteral(getValue(object_value, type));
-    elsif valueCategory = INTOBJECT then
-      c_declaration.temp_decls &:= "=";
-      c_declaration.temp_decls &:= integerLiteral(getValue(object_value, integer));
-    elsif valueCategory = BIGINTOBJECT then
-      c_declaration.temp_assigns &:= diagnosticLine(current_object);
-      c_declaration.temp_assigns &:= "o_";
-      create_name(current_object, c_declaration.temp_assigns);
-      c_declaration.temp_assigns &:= "=";
-      process_big_create_call(getValue(object_value, bigInteger), c_declaration.temp_assigns);
-      c_declaration.temp_frees &:= "bigDestr(o_";
-      create_name(current_object, c_declaration.temp_frees);
-      c_declaration.temp_frees &:= ");\n";
-    elsif valueCategory = CHAROBJECT then
-      c_declaration.temp_decls &:= "=";
-      c_declaration.temp_decls &:= charLiteral(getValue(object_value, char));
-    elsif valueCategory = FLOATOBJECT then
-      c_declaration.temp_decls &:= "=";
-      c_declaration.temp_decls &:= floatLiteral(getValue(object_value, float));
-    elsif valueCategory = STRIOBJECT then
-      c_declaration.temp_assigns &:= diagnosticLine(current_object);
-      c_declaration.temp_assigns &:= "o_";
-      create_name(current_object, c_declaration.temp_assigns);
-      c_declaration.temp_assigns &:= "=";
-      process_str_create_call(getValue(object_value, string), c_declaration.temp_assigns);
-      c_declaration.temp_frees &:= "strDestr(o_";
-      create_name(current_object, c_declaration.temp_frees);
-      c_declaration.temp_frees &:= ");\n";
-    elsif valueCategory = BSTRIOBJECT then
-      c_declaration.temp_assigns &:= diagnosticLine(current_object);
-      c_declaration.temp_assigns &:= "o_";
-      create_name(current_object, c_declaration.temp_assigns);
-      c_declaration.temp_assigns &:= "=bstCreate(";
-      c_declaration.temp_assigns &:= bstriLiteral(getValue(object_value, bstring));
-      c_declaration.temp_assigns &:= ");\n";
-      c_declaration.temp_frees &:= "bstDestr(o_";
-      create_name(current_object, c_declaration.temp_frees);
-      c_declaration.temp_frees &:= ");\n";
-    elsif valueCategory = SETOBJECT then
-      c_declaration.temp_assigns &:= diagnosticLine(current_object);
-      c_declaration.temp_assigns &:= "o_";
-      create_name(current_object, c_declaration.temp_assigns);
-      c_declaration.temp_assigns &:= "=setCreate(";
-      c_declaration.temp_assigns &:= bitsetLiteral(getValue(object_value, bitset));
-      c_declaration.temp_assigns &:= ");\n";
-      c_declaration.temp_frees &:= "setDestr(o_";
-      create_name(current_object, c_declaration.temp_frees);
-      c_declaration.temp_frees &:= ");\n";
-    elsif valueCategory = REFOBJECT or
-          valueCategory = STRUCTELEMOBJECT then
-      c_declaration.temp_decls &:= "=";
-      c_declaration.temp_decls &:= referenceLiteral(getValue(object_value, reference));
-    elsif valueCategory = REFLISTOBJECT then
-      c_declaration.temp_decls &:= "=";
-      ref_list_value(getValue(object_value, ref_list), c_value);
-      c_declaration.temp_decls &:= c_value.expr;
-      c_declaration.temp_frees &:= "rflDestr(o_";
-      create_name(current_object, c_declaration.temp_frees);
-      c_declaration.temp_frees &:= ");\n";
-    elsif valueCategory = FILEOBJECT then
-      c_declaration.temp_decls &:= "=&";
-      c_declaration.temp_decls &:= lower(literal(getValue(object_value, clib_file)));
-      c_declaration.temp_decls &:= "FileRecord";
-      c_declaration.temp_frees &:= "filDestr(o_";
-      create_name(current_object, c_declaration.temp_frees);
-      c_declaration.temp_frees &:= ");\n";
-    elsif valueCategory = SOCKETOBJECT then
-      c_declaration.temp_decls &:= "=&emptySocketRecord";
-    elsif valueCategory = POLLOBJECT then
-      c_declaration.temp_assigns &:= diagnosticLine(current_object);
-      c_declaration.temp_assigns &:= "o_";
-      create_name(current_object, c_declaration.temp_assigns);
-      c_declaration.temp_assigns &:= "=polEmpty();\n";
-      c_declaration.temp_frees &:= "polDestr(o_";
-      create_name(current_object, c_declaration.temp_frees);
-      c_declaration.temp_frees &:= ");\n";
-    elsif valueCategory = ARRAYOBJECT then
-      c_declaration.temp_assigns &:= diagnosticLine(current_object);
-      c_declaration.temp_assigns &:= "o_";
-      create_name(current_object, c_declaration.temp_assigns);
-      c_declaration.temp_assigns &:= "=";
-      assignArrayValue(objectType, object_value, c_declaration);
-      process_destr_declaration(objectType, global_c_expr);
-      param_name := "o_";
-      create_name(current_object, param_name);
-      process_destr_call(objectType, param_name, c_declaration.temp_frees);
-    elsif valueCategory = STRUCTOBJECT then
-      if object_value not in constTable.other_const then
-        constTable.other_const @:= [object_value] length(constTable.other_const);
-      end if;
-      process_create_declaration(objectType, global_c_expr);
-      process_destr_declaration(objectType, global_c_expr);
-      c_declaration.temp_assigns &:= diagnosticLine(current_object);
-      c_declaration.temp_assigns &:= "o_";
-      create_name(current_object, c_declaration.temp_assigns);
-      c_declaration.temp_assigns &:= "=";
-      param_value := "sct[";
-      param_value &:= str(constTable.other_const[object_value]);
-      param_value &:= "]";
-      process_create_call(objectType,
-          param_value, c_declaration.temp_assigns);
-      c_declaration.temp_assigns &:= ";\n";
-      param_name := "o_";
-      create_name(current_object, param_name);
-      process_destr_call(objectType, param_name, c_declaration.temp_frees);
-    elsif valueCategory = HASHOBJECT then
-      if length(hashKeysToList(object_value)) = 0 then
-        process_destr_declaration(objectType, global_c_expr);
-        incr(count.optimizations);
-        c_declaration.temp_assigns &:= diagnosticLine(current_object);
-        c_declaration.temp_assigns &:= "o_";
-        create_name(current_object, c_declaration.temp_assigns);
-        c_declaration.temp_assigns &:= "=hshEmpty();\n";
-      else
-        if object_value not in constTable.other_const then
-          constTable.other_const @:= [object_value] length(constTable.other_const);
-        end if;
-        process_create_declaration(objectType, global_c_expr);
-        process_destr_declaration(objectType, global_c_expr);
-        c_declaration.temp_assigns &:= diagnosticLine(current_object);
-        c_declaration.temp_assigns &:= "o_";
-        create_name(current_object, c_declaration.temp_assigns);
-        c_declaration.temp_assigns &:= "=";
-        param_value := "hsh[";
-        param_value &:= str(constTable.other_const[object_value]);
-        param_value &:= "]";
-        process_create_call(objectType,
-            param_value, c_declaration.temp_assigns);
-        c_declaration.temp_assigns &:= ";\n";
-      end if;
-      param_name := "o_";
-      create_name(current_object, param_name);
-      process_destr_call(objectType, param_name, c_declaration.temp_frees);
-    elsif valueCategory = INTERFACEOBJECT then
-      if object_value not in constTable.other_const then
-        constTable.other_const @:= [object_value] length(constTable.other_const);
-      end if;
-      c_declaration.temp_assigns &:= diagnosticLine(current_object);
-      c_declaration.temp_assigns &:= "o_";
-      create_name(current_object, c_declaration.temp_assigns);
-      c_declaration.temp_assigns &:= "=itf[";
-      c_declaration.temp_assigns &:= str(constTable.other_const[object_value]);
-      c_declaration.temp_assigns &:= "];\n";
-      process_destr_declaration(objectType, global_c_expr);
-      param_name := "o_";
-      create_name(current_object, param_name);
-      process_destr_call(objectType, param_name, c_declaration.temp_frees);
-    elsif valueCategory = WINOBJECT then
-      c_declaration.temp_assigns &:= diagnosticLine(current_object);
-      c_declaration.temp_assigns &:= "o_";
-      create_name(current_object, c_declaration.temp_assigns);
-      c_declaration.temp_assigns &:= "=drwCreate(";
-      c_declaration.temp_assigns &:= windowLiteral(getValue(object_value, PRIMITIVE_WINDOW));
-      c_declaration.temp_assigns &:= ");\n";
-      c_declaration.temp_frees &:= "drwDestr(o_";
-      create_name(current_object, c_declaration.temp_frees);
-      c_declaration.temp_frees &:= ");\n";
-    elsif valueCategory = POINTLISTOBJECT then
-      c_declaration.temp_assigns &:= diagnosticLine(current_object);
-      c_declaration.temp_assigns &:= "o_";
-      create_name(current_object, c_declaration.temp_assigns);
-      c_declaration.temp_assigns &:= "=bstCreate(";
-      c_declaration.temp_assigns &:= pointListLiteral(getValue(object_value, pointList));
-      c_declaration.temp_assigns &:= ");\n";
-      c_declaration.temp_frees &:= "bstDestr(o_";
-      create_name(current_object, c_declaration.temp_frees);
-      c_declaration.temp_frees &:= ");\n";
-    elsif valueCategory = PROCESSOBJECT then
-      c_declaration.temp_decls &:= "=NULL";
-      c_declaration.temp_frees &:= "pcsDestr(o_";
-      create_name(current_object, c_declaration.temp_frees);
-      c_declaration.temp_frees &:= ");\n";
-    elsif valueCategory = PROGOBJECT then
-      c_declaration.temp_decls &:= "=NULL";
-      c_declaration.temp_frees &:= "prgDestr(o_";
-      create_name(current_object, c_declaration.temp_frees);
-      c_declaration.temp_frees &:= ");\n";
-    elsif valueCategory = DATABASEOBJECT then
-      c_declaration.temp_decls &:= "=NULL";
-      c_declaration.temp_frees &:= "sqlDestrDb(o_";
-      create_name(current_object, c_declaration.temp_frees);
-      c_declaration.temp_frees &:= ");\n";
-    elsif valueCategory = SQLSTMTOBJECT then
-      c_declaration.temp_decls &:= "=NULL";
-      c_declaration.temp_frees &:= "sqlDestrStmt(o_";
-      create_name(current_object, c_declaration.temp_frees);
-      c_declaration.temp_frees &:= ");\n";
-    elsif valueCategory = CONSTENUMOBJECT then
-      c_declaration.temp_decls &:= "=";
-      c_declaration.temp_decls &:= enum_value(getValue(object_value, reference));
-    elsif valueCategory = VARENUMOBJECT then
-      c_declaration.temp_decls &:= "=";
-      c_declaration.temp_decls &:= enum_value(getValue(object_value, reference));
-    elsif valueCategory = ENUMLITERALOBJECT then
-      c_declaration.temp_decls &:= "=o_";
-      create_name(object_value, c_declaration.temp_decls);
-    elsif valueCategory = CALLOBJECT then
-      param_name := "o_";
-      create_name(current_object, param_name);
-      c_value.temp_num := c_declaration.temp_num;
-      getTemporaryToResultExpr(object_value, c_value);
-      c_declaration.temp_num := c_value.temp_num;
-      c_expr.temp_decls   &:= c_value.temp_decls;
-      c_expr.temp_assigns &:= c_value.temp_assigns;
-      c_expr.temp_frees   &:= c_value.temp_frees;
-      c_expr.temp_to_null &:= c_value.temp_to_null;
-      c_declaration.temp_assigns &:= diagnosticLine(current_object);
-      c_declaration.temp_assigns &:= param_name;
-      c_declaration.temp_assigns &:= "=(";
-      c_declaration.temp_assigns &:= type_name(objectType);
-      c_declaration.temp_assigns &:= ")(";
-      c_declaration.temp_assigns &:= c_value.result_expr;
-      c_declaration.temp_assigns &:= ");\n";
-      process_destr_declaration(objectType, global_c_expr);
-      process_destr_call(objectType, param_name, c_declaration.temp_frees);
-    elsif valueCategory = BLOCKOBJECT then
-      create_name(object_value, objNumber(object_value), param_name);
-      c_value.temp_num := c_declaration.temp_num;
-      processFuncValue(param_name, objectType, object_value, c_value);
-      c_declaration.temp_num := c_value.temp_num;
-      c_declaration.temp_decls &:= "=";
-      c_declaration.temp_decls &:= c_value.expr;
-      c_expr.temp_decls   &:= c_value.temp_decls;
-      c_expr.temp_assigns &:= c_value.temp_assigns;
-      c_expr.temp_frees   &:= c_value.temp_frees;
-      c_expr.temp_to_null &:= c_value.temp_to_null;
-      function_declared @:= [object_value] TRUE;
-      function_var_declared @:= [current_object] TRUE;
-    elsif valueCategory = ACTENTRYOBJECT then
-      c_declaration.temp_assigns &:= diagnosticLine(current_object);
-      c_declaration.temp_assigns &:= "o_";
-      create_name(current_object, c_declaration.temp_assigns);
-      c_declaration.temp_assigns &:= "=aceIConv(";
-      c_declaration.temp_assigns &:= integerLiteral(ord(getValue(object_value, ACTION)));
-      c_declaration.temp_assigns &:= " /* ";
-      c_declaration.temp_assigns &:= str(getValue(object_value, ACTION));
-      c_declaration.temp_assigns &:= " */);\n";
     else
-      c_declaration.temp_decls &:= "/* ";
-      c_declaration.temp_decls &:= str(valueCategory);
-      c_declaration.temp_decls &:= " */";
+      case valueCategory of
+        when {TYPEOBJECT}:
+          c_declaration.temp_decls &:= "=";
+          c_declaration.temp_decls &:= typeLiteral(getValue(object_value, type));
+        when {INTOBJECT}:
+          c_declaration.temp_decls &:= "=";
+          c_declaration.temp_decls &:= integerLiteral(getValue(object_value, integer));
+        when {BIGINTOBJECT}:
+          c_declaration.temp_assigns &:= diagnosticLine(current_object);
+          c_declaration.temp_assigns &:= "o_";
+          create_name(current_object, c_declaration.temp_assigns);
+          c_declaration.temp_assigns &:= "=";
+          process_big_create_call(getValue(object_value, bigInteger), c_declaration.temp_assigns);
+          c_declaration.temp_frees &:= "bigDestr(o_";
+          create_name(current_object, c_declaration.temp_frees);
+          c_declaration.temp_frees &:= ");\n";
+        when {CHAROBJECT}:
+          c_declaration.temp_decls &:= "=";
+          c_declaration.temp_decls &:= charLiteral(getValue(object_value, char));
+        when {FLOATOBJECT}:
+          c_declaration.temp_decls &:= "=";
+          c_declaration.temp_decls &:= floatLiteral(getValue(object_value, float));
+        when {STRIOBJECT}:
+          c_declaration.temp_assigns &:= diagnosticLine(current_object);
+          c_declaration.temp_assigns &:= "o_";
+          create_name(current_object, c_declaration.temp_assigns);
+          c_declaration.temp_assigns &:= "=";
+          process_str_create_call(getValue(object_value, string), c_declaration.temp_assigns);
+          c_declaration.temp_frees &:= "strDestr(o_";
+          create_name(current_object, c_declaration.temp_frees);
+          c_declaration.temp_frees &:= ");\n";
+        when {BSTRIOBJECT}:
+          c_declaration.temp_assigns &:= diagnosticLine(current_object);
+          c_declaration.temp_assigns &:= "o_";
+          create_name(current_object, c_declaration.temp_assigns);
+          c_declaration.temp_assigns &:= "=bstCreate(";
+          c_declaration.temp_assigns &:= bstriLiteral(getValue(object_value, bstring));
+          c_declaration.temp_assigns &:= ");\n";
+          c_declaration.temp_frees &:= "bstDestr(o_";
+          create_name(current_object, c_declaration.temp_frees);
+          c_declaration.temp_frees &:= ");\n";
+        when {SETOBJECT}:
+          c_declaration.temp_assigns &:= diagnosticLine(current_object);
+          c_declaration.temp_assigns &:= "o_";
+          create_name(current_object, c_declaration.temp_assigns);
+          c_declaration.temp_assigns &:= "=setCreate(";
+          c_declaration.temp_assigns &:= bitsetLiteral(getValue(object_value, bitset));
+          c_declaration.temp_assigns &:= ");\n";
+          c_declaration.temp_frees &:= "setDestr(o_";
+          create_name(current_object, c_declaration.temp_frees);
+          c_declaration.temp_frees &:= ");\n";
+        when {REFOBJECT, STRUCTELEMOBJECT}:
+          c_declaration.temp_decls &:= "=";
+          c_declaration.temp_decls &:= referenceLiteral(getValue(object_value, reference));
+        when {REFLISTOBJECT}:
+          c_declaration.temp_decls &:= "=";
+          ref_list_value(getValue(object_value, ref_list), c_value);
+          c_declaration.temp_decls &:= c_value.expr;
+          c_declaration.temp_frees &:= "rflDestr(o_";
+          create_name(current_object, c_declaration.temp_frees);
+          c_declaration.temp_frees &:= ");\n";
+        when {FILEOBJECT}:
+          c_declaration.temp_decls &:= "=&";
+          c_declaration.temp_decls &:= lower(literal(getValue(object_value, clib_file)));
+          c_declaration.temp_decls &:= "FileRecord";
+          c_declaration.temp_frees &:= "filDestr(o_";
+          create_name(current_object, c_declaration.temp_frees);
+          c_declaration.temp_frees &:= ");\n";
+        when {SOCKETOBJECT}:
+          c_declaration.temp_decls &:= "=&emptySocketRecord";
+        when {POLLOBJECT}:
+          c_declaration.temp_assigns &:= diagnosticLine(current_object);
+          c_declaration.temp_assigns &:= "o_";
+          create_name(current_object, c_declaration.temp_assigns);
+          c_declaration.temp_assigns &:= "=polEmpty();\n";
+          c_declaration.temp_frees &:= "polDestr(o_";
+          create_name(current_object, c_declaration.temp_frees);
+          c_declaration.temp_frees &:= ");\n";
+        when {ARRAYOBJECT}:
+          c_declaration.temp_assigns &:= diagnosticLine(current_object);
+          c_declaration.temp_assigns &:= "o_";
+          create_name(current_object, c_declaration.temp_assigns);
+          c_declaration.temp_assigns &:= "=";
+          assignArrayValue(objectType, object_value, c_declaration);
+          process_destr_declaration(objectType, global_c_expr);
+          param_name := "o_";
+          create_name(current_object, param_name);
+          process_destr_call(objectType, param_name, c_declaration.temp_frees);
+        when {STRUCTOBJECT}:
+          if object_value not in constTable.other_const then
+            constTable.other_const @:= [object_value] length(constTable.other_const);
+          end if;
+          process_create_declaration(objectType, global_c_expr);
+          process_destr_declaration(objectType, global_c_expr);
+          c_declaration.temp_assigns &:= diagnosticLine(current_object);
+          c_declaration.temp_assigns &:= "o_";
+          create_name(current_object, c_declaration.temp_assigns);
+          c_declaration.temp_assigns &:= "=";
+          param_value := "sct[";
+          param_value &:= str(constTable.other_const[object_value]);
+          param_value &:= "]";
+          process_create_call(objectType,
+              param_value, c_declaration.temp_assigns);
+          c_declaration.temp_assigns &:= ";\n";
+          param_name := "o_";
+          create_name(current_object, param_name);
+          process_destr_call(objectType, param_name, c_declaration.temp_frees);
+        when {HASHOBJECT}:
+          if length(hashKeysToList(object_value)) = 0 then
+            process_destr_declaration(objectType, global_c_expr);
+            incr(count.optimizations);
+            c_declaration.temp_assigns &:= diagnosticLine(current_object);
+            c_declaration.temp_assigns &:= "o_";
+            create_name(current_object, c_declaration.temp_assigns);
+            c_declaration.temp_assigns &:= "=hshEmpty();\n";
+          else
+            if object_value not in constTable.other_const then
+              constTable.other_const @:= [object_value] length(constTable.other_const);
+            end if;
+            process_create_declaration(objectType, global_c_expr);
+            process_destr_declaration(objectType, global_c_expr);
+            c_declaration.temp_assigns &:= diagnosticLine(current_object);
+            c_declaration.temp_assigns &:= "o_";
+            create_name(current_object, c_declaration.temp_assigns);
+            c_declaration.temp_assigns &:= "=";
+            param_value := "hsh[";
+            param_value &:= str(constTable.other_const[object_value]);
+            param_value &:= "]";
+            process_create_call(objectType,
+                param_value, c_declaration.temp_assigns);
+            c_declaration.temp_assigns &:= ";\n";
+          end if;
+          param_name := "o_";
+          create_name(current_object, param_name);
+          process_destr_call(objectType, param_name, c_declaration.temp_frees);
+        when {INTERFACEOBJECT}:
+          if object_value not in constTable.other_const then
+            constTable.other_const @:= [object_value] length(constTable.other_const);
+          end if;
+          c_declaration.temp_assigns &:= diagnosticLine(current_object);
+          c_declaration.temp_assigns &:= "o_";
+          create_name(current_object, c_declaration.temp_assigns);
+          c_declaration.temp_assigns &:= "=itf[";
+          c_declaration.temp_assigns &:= str(constTable.other_const[object_value]);
+          c_declaration.temp_assigns &:= "];\n";
+          process_destr_declaration(objectType, global_c_expr);
+          param_name := "o_";
+          create_name(current_object, param_name);
+          process_destr_call(objectType, param_name, c_declaration.temp_frees);
+        when {WINOBJECT}:
+          c_declaration.temp_assigns &:= diagnosticLine(current_object);
+          c_declaration.temp_assigns &:= "o_";
+          create_name(current_object, c_declaration.temp_assigns);
+          c_declaration.temp_assigns &:= "=drwCreate(";
+          c_declaration.temp_assigns &:= windowLiteral(getValue(object_value, PRIMITIVE_WINDOW));
+          c_declaration.temp_assigns &:= ");\n";
+          c_declaration.temp_frees &:= "drwDestr(o_";
+          create_name(current_object, c_declaration.temp_frees);
+          c_declaration.temp_frees &:= ");\n";
+        when {POINTLISTOBJECT}:
+          c_declaration.temp_assigns &:= diagnosticLine(current_object);
+          c_declaration.temp_assigns &:= "o_";
+          create_name(current_object, c_declaration.temp_assigns);
+          c_declaration.temp_assigns &:= "=bstCreate(";
+          c_declaration.temp_assigns &:= pointListLiteral(getValue(object_value, pointList));
+          c_declaration.temp_assigns &:= ");\n";
+          c_declaration.temp_frees &:= "bstDestr(o_";
+          create_name(current_object, c_declaration.temp_frees);
+          c_declaration.temp_frees &:= ");\n";
+        when {PROCESSOBJECT}:
+          c_declaration.temp_decls &:= "=NULL";
+          c_declaration.temp_frees &:= "pcsDestr(o_";
+          create_name(current_object, c_declaration.temp_frees);
+          c_declaration.temp_frees &:= ");\n";
+        when {PROGOBJECT}:
+          c_declaration.temp_decls &:= "=NULL";
+          c_declaration.temp_frees &:= "prgDestr(o_";
+          create_name(current_object, c_declaration.temp_frees);
+          c_declaration.temp_frees &:= ");\n";
+        when {DATABASEOBJECT}:
+          c_declaration.temp_decls &:= "=NULL";
+          c_declaration.temp_frees &:= "sqlDestrDb(o_";
+          create_name(current_object, c_declaration.temp_frees);
+          c_declaration.temp_frees &:= ");\n";
+        when {SQLSTMTOBJECT}:
+          c_declaration.temp_decls &:= "=NULL";
+          c_declaration.temp_frees &:= "sqlDestrStmt(o_";
+          create_name(current_object, c_declaration.temp_frees);
+          c_declaration.temp_frees &:= ");\n";
+        when {CONSTENUMOBJECT}:
+          c_declaration.temp_decls &:= "=";
+          c_declaration.temp_decls &:= enum_value(getValue(object_value, reference));
+        when {VARENUMOBJECT}:
+          c_declaration.temp_decls &:= "=";
+          c_declaration.temp_decls &:= enum_value(getValue(object_value, reference));
+        when {ENUMLITERALOBJECT}:
+          c_declaration.temp_decls &:= "=o_";
+          create_name(object_value, c_declaration.temp_decls);
+        when {CALLOBJECT}:
+          param_name := "o_";
+          create_name(current_object, param_name);
+          c_value.temp_num := c_declaration.temp_num;
+          getTemporaryToResultExpr(object_value, c_value);
+          c_declaration.temp_num := c_value.temp_num;
+          c_expr.temp_decls   &:= c_value.temp_decls;
+          c_expr.temp_assigns &:= c_value.temp_assigns;
+          c_expr.temp_frees   &:= c_value.temp_frees;
+          c_expr.temp_to_null &:= c_value.temp_to_null;
+          c_declaration.temp_assigns &:= diagnosticLine(current_object);
+          c_declaration.temp_assigns &:= param_name;
+          c_declaration.temp_assigns &:= "=(";
+          c_declaration.temp_assigns &:= type_name(objectType);
+          c_declaration.temp_assigns &:= ")(";
+          c_declaration.temp_assigns &:= c_value.result_expr;
+          c_declaration.temp_assigns &:= ");\n";
+          process_destr_declaration(objectType, global_c_expr);
+          process_destr_call(objectType, param_name, c_declaration.temp_frees);
+        when {BLOCKOBJECT}:
+          create_name(object_value, objNumber(object_value), param_name);
+          c_value.temp_num := c_declaration.temp_num;
+          processFuncValue(param_name, objectType, object_value, c_value);
+          c_declaration.temp_num := c_value.temp_num;
+          c_declaration.temp_decls &:= "=";
+          c_declaration.temp_decls &:= c_value.expr;
+          c_expr.temp_decls   &:= c_value.temp_decls;
+          c_expr.temp_assigns &:= c_value.temp_assigns;
+          c_expr.temp_frees   &:= c_value.temp_frees;
+          c_expr.temp_to_null &:= c_value.temp_to_null;
+          function_declared @:= [object_value] TRUE;
+          function_var_declared @:= [current_object] TRUE;
+        when {ACTENTRYOBJECT}:
+          c_declaration.temp_assigns &:= diagnosticLine(current_object);
+          c_declaration.temp_assigns &:= "o_";
+          create_name(current_object, c_declaration.temp_assigns);
+          c_declaration.temp_assigns &:= "=aceIConv(";
+          c_declaration.temp_assigns &:= integerLiteral(ord(getValue(object_value, ACTION)));
+          c_declaration.temp_assigns &:= " /* ";
+          c_declaration.temp_assigns &:= str(getValue(object_value, ACTION));
+          c_declaration.temp_assigns &:= " */);\n";
+        else
+          c_declaration.temp_decls &:= "/* ";
+          c_declaration.temp_decls &:= str(valueCategory);
+          c_declaration.temp_decls &:= " */";
+      end case;
     end if;
     c_declaration.temp_decls &:= ";\n";
     c_expr.temp_num := c_declaration.temp_num;
