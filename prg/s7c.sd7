@@ -6394,106 +6394,105 @@ const proc: init_const_value (in reference: current_object, inout expr_type: c_e
     var category: objectCategory is category.value;
   begin
     objectCategory := category(current_object);
-    if objectCategory = INTOBJECT then
-      c_expr.expr &:= ".value.intValue=";
-      c_expr.expr &:= integerLiteral(getValue(current_object, integer));
-    elsif objectCategory = BIGINTOBJECT then
-      c_expr.expr &:= ".value.bigIntValue=";
-      c_expr.expr &:= bigIntegerLiteral(getValue(current_object, bigInteger));
-    elsif objectCategory = CHAROBJECT then
-      c_expr.expr &:= ".value.charValue=";
-      c_expr.expr &:= charLiteral(getValue(current_object, char));
-    elsif objectCategory = STRIOBJECT then
-      c_expr.expr &:= ".value.striValue=";
-      c_expr.expr &:= stringLiteral(getValue(current_object, string));
-    elsif objectCategory = BSTRIOBJECT then
-      c_expr.expr &:= ".value.bstriValue=";
-      c_expr.expr &:= bstriLiteral(getValue(current_object, bstring));
-    elsif objectCategory = SETOBJECT then
-      c_expr.expr &:= ".value.setValue=";
-      c_expr.expr &:= bitsetLiteral(getValue(current_object, bitset));
-    elsif objectCategory = FLOATOBJECT then
-      c_expr.expr &:= ".value.floatValue=";
-      c_expr.expr &:= floatLiteral(getValue(current_object, float));
-    elsif objectCategory = REFOBJECT or
-          objectCategory = STRUCTELEMOBJECT then
-      c_expr.expr &:= ".value.objRefValue=";
-      c_expr.expr &:= referenceLiteral(getValue(current_object, reference));
-    elsif objectCategory = REFLISTOBJECT then
-      c_expr.expr &:= ".value.listValue=NULL";
-    elsif objectCategory = FILEOBJECT then
-      c_expr.expr &:= ".value.fileValue=&";
-      c_expr.expr &:= lower(literal(getValue(current_object, clib_file)));
-      c_expr.expr &:= "FileRecord";
-    elsif objectCategory = SOCKETOBJECT then
-      c_expr.expr &:= ".value.socketValue=&emptySocketRecord";
-    elsif objectCategory = POLLOBJECT then
-      c_expr.expr &:= ".value.pollValue=";
-      process_pollData_literal(getValue(current_object, pollData), c_expr);
-    elsif objectCategory = WINOBJECT then
-      c_expr.expr &:= ".value.winValue=drwCreate(";
-      c_expr.expr &:= windowLiteral(getValue(current_object, PRIMITIVE_WINDOW));
-      c_expr.expr &:= ")";
-    elsif objectCategory = POINTLISTOBJECT then
-      c_expr.expr &:= ".value.bstriValue=";
-      c_expr.expr &:= pointListLiteral(getValue(current_object, pointList));
-    elsif objectCategory = PROCESSOBJECT then
-      c_expr.expr &:= ".value.processValue=";
-      c_expr.expr &:= "NULL";
-    elsif objectCategory = PROGOBJECT then
-      c_expr.expr &:= ".value.progValue=";
-      c_expr.expr &:= "NULL";
-    elsif objectCategory = TYPEOBJECT then
-      c_expr.expr &:= ".value.typeValue=";
-      c_expr.expr &:= typeLiteral(getValue(current_object, type));
-    elsif objectCategory = CONSTENUMOBJECT then
-      c_expr.expr &:= select_value_from_rtlObjectStruct(
-          getType(getValue(current_object, reference)));
-      c_expr.expr &:= "=";
-      c_expr.expr &:= enum_value(getValue(current_object, reference));
-    elsif objectCategory = VARENUMOBJECT then
-      c_expr.expr &:= select_value_from_rtlObjectStruct(
-          getType(getValue(current_object, reference)));
-      c_expr.expr &:= "=";
-      c_expr.expr &:= enum_value(getValue(current_object, reference));
-    elsif objectCategory = ARRAYOBJECT then
-      c_expr.expr &:= ".value.arrayValue=";
-      c_expr.expr &:= "arr[";
-      c_expr.expr &:= str(constTable.other_const[current_object]);
-      c_expr.expr &:= "]";
-    elsif objectCategory = STRUCTOBJECT then
-      c_expr.expr &:= ".value.structValue=";
-      c_expr.expr &:= "sct[";
-      c_expr.expr &:= str(constTable.other_const[current_object]);
-      c_expr.expr &:= "]";
-    elsif objectCategory = HASHOBJECT then
-      c_expr.expr &:= ".value.hashValue=";
-      c_expr.expr &:= "hsh[";
-      c_expr.expr &:= str(constTable.other_const[current_object]);
-      c_expr.expr &:= "]";
-    elsif objectCategory = INTERFACEOBJECT then
-      c_expr.expr &:= ".value.interfaceValue=itfCreate(itf[";
-      c_expr.expr &:= str(constTable.other_const[current_object]);
-      c_expr.expr &:= "])";
-    elsif objectCategory = MATCHOBJECT or objectCategory = ACTOBJECT or
-        objectCategory = BLOCKOBJECT then
-      c_expr.expr &:= ".value.ptrValue=(rtlPtrType)";
-      process_func_literal(current_object, c_expr);
-    elsif objectCategory = DATABASEOBJECT then
-      c_expr.expr &:= ".value.databaseValue=NULL";
-    elsif objectCategory = SQLSTMTOBJECT then
-      c_expr.expr &:= ".value.sqlStmtValue=NULL";
-    elsif objectCategory = ACTENTRYOBJECT then
-      c_expr.expr &:= ".value.actEntryValue=aceIConv(";
-      c_expr.expr &:= integerLiteral(ord(getValue(current_object, ACTION)));
-      c_expr.expr &:= " /* ";
-      c_expr.expr &:= str(getValue(current_object, ACTION));
-      c_expr.expr &:= " */)";
-    else
-      c_expr.expr &:= "/* ";
-      c_expr.expr &:= str(objectCategory);
-      c_expr.expr &:= " */";
-    end if;
+    case objectCategory of
+      when {INTOBJECT}:
+        c_expr.expr &:= ".value.intValue=";
+        c_expr.expr &:= integerLiteral(getValue(current_object, integer));
+      when {BIGINTOBJECT}:
+        c_expr.expr &:= ".value.bigIntValue=";
+        c_expr.expr &:= bigIntegerLiteral(getValue(current_object, bigInteger));
+      when {CHAROBJECT}:
+        c_expr.expr &:= ".value.charValue=";
+        c_expr.expr &:= charLiteral(getValue(current_object, char));
+      when {STRIOBJECT}:
+        c_expr.expr &:= ".value.striValue=";
+        c_expr.expr &:= stringLiteral(getValue(current_object, string));
+      when {BSTRIOBJECT}:
+        c_expr.expr &:= ".value.bstriValue=";
+        c_expr.expr &:= bstriLiteral(getValue(current_object, bstring));
+      when {SETOBJECT}:
+        c_expr.expr &:= ".value.setValue=";
+        c_expr.expr &:= bitsetLiteral(getValue(current_object, bitset));
+      when {FLOATOBJECT}:
+        c_expr.expr &:= ".value.floatValue=";
+        c_expr.expr &:= floatLiteral(getValue(current_object, float));
+      when {REFOBJECT, STRUCTELEMOBJECT}:
+        c_expr.expr &:= ".value.objRefValue=";
+        c_expr.expr &:= referenceLiteral(getValue(current_object, reference));
+      when {REFLISTOBJECT}:
+        c_expr.expr &:= ".value.listValue=NULL";
+      when {FILEOBJECT}:
+        c_expr.expr &:= ".value.fileValue=&";
+        c_expr.expr &:= lower(literal(getValue(current_object, clib_file)));
+        c_expr.expr &:= "FileRecord";
+      when {SOCKETOBJECT}:
+        c_expr.expr &:= ".value.socketValue=&emptySocketRecord";
+      when {POLLOBJECT}:
+        c_expr.expr &:= ".value.pollValue=";
+        process_pollData_literal(getValue(current_object, pollData), c_expr);
+      when {WINOBJECT}:
+        c_expr.expr &:= ".value.winValue=drwCreate(";
+        c_expr.expr &:= windowLiteral(getValue(current_object, PRIMITIVE_WINDOW));
+        c_expr.expr &:= ")";
+      when {POINTLISTOBJECT}:
+        c_expr.expr &:= ".value.bstriValue=";
+        c_expr.expr &:= pointListLiteral(getValue(current_object, pointList));
+      when {PROCESSOBJECT}:
+        c_expr.expr &:= ".value.processValue=";
+        c_expr.expr &:= "NULL";
+      when {PROGOBJECT}:
+        c_expr.expr &:= ".value.progValue=";
+        c_expr.expr &:= "NULL";
+      when {TYPEOBJECT}:
+        c_expr.expr &:= ".value.typeValue=";
+        c_expr.expr &:= typeLiteral(getValue(current_object, type));
+      when {CONSTENUMOBJECT}:
+        c_expr.expr &:= select_value_from_rtlObjectStruct(
+            getType(getValue(current_object, reference)));
+        c_expr.expr &:= "=";
+        c_expr.expr &:= enum_value(getValue(current_object, reference));
+      when {VARENUMOBJECT}:
+        c_expr.expr &:= select_value_from_rtlObjectStruct(
+            getType(getValue(current_object, reference)));
+        c_expr.expr &:= "=";
+        c_expr.expr &:= enum_value(getValue(current_object, reference));
+      when {ARRAYOBJECT}:
+        c_expr.expr &:= ".value.arrayValue=";
+        c_expr.expr &:= "arr[";
+        c_expr.expr &:= str(constTable.other_const[current_object]);
+        c_expr.expr &:= "]";
+      when {STRUCTOBJECT}:
+        c_expr.expr &:= ".value.structValue=";
+        c_expr.expr &:= "sct[";
+        c_expr.expr &:= str(constTable.other_const[current_object]);
+        c_expr.expr &:= "]";
+      when {HASHOBJECT}:
+        c_expr.expr &:= ".value.hashValue=";
+        c_expr.expr &:= "hsh[";
+        c_expr.expr &:= str(constTable.other_const[current_object]);
+        c_expr.expr &:= "]";
+      when {INTERFACEOBJECT}:
+        c_expr.expr &:= ".value.interfaceValue=itfCreate(itf[";
+        c_expr.expr &:= str(constTable.other_const[current_object]);
+        c_expr.expr &:= "])";
+      when {MATCHOBJECT, ACTOBJECT, BLOCKOBJECT}:
+        c_expr.expr &:= ".value.ptrValue=(rtlPtrType)";
+        process_func_literal(current_object, c_expr);
+      when {DATABASEOBJECT}:
+        c_expr.expr &:= ".value.databaseValue=NULL";
+      when {SQLSTMTOBJECT}:
+        c_expr.expr &:= ".value.sqlStmtValue=NULL";
+      when {ACTENTRYOBJECT}:
+        c_expr.expr &:= ".value.actEntryValue=aceIConv(";
+        c_expr.expr &:= integerLiteral(ord(getValue(current_object, ACTION)));
+        c_expr.expr &:= " /* ";
+        c_expr.expr &:= str(getValue(current_object, ACTION));
+        c_expr.expr &:= " */)";
+      otherwise:
+        c_expr.expr &:= "/* ";
+        c_expr.expr &:= str(objectCategory);
+        c_expr.expr &:= " */";
+    end case;
   end func;
 
 
