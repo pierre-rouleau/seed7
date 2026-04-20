@@ -6268,87 +6268,86 @@ const proc: walk_const_list (in ref_list: const_list, inout ref_list: sorted_lis
   begin
     for current_object range const_list do
       objectCategory := category(current_object);
-      if objectCategory = BIGINTOBJECT then
-        if getValue(current_object, bigInteger) not in constTable.bigint_const then
-          constTable.bigint_const @:= [getValue(current_object, bigInteger)] length(constTable.bigint_const);
-        end if;
-      elsif objectCategory = STRIOBJECT then
-        if getValue(current_object, string) not in constTable.stri_const then
-          constTable.stri_const @:= [getValue(current_object, string)] length(constTable.stri_const);
-        end if;
-      elsif objectCategory = BSTRIOBJECT then
-        if getValue(current_object, bstring) not in constTable.bstri_const then
-          constTable.bstri_const @:= [getValue(current_object, bstring)] length(constTable.bstri_const);
-        end if;
-      elsif objectCategory = SETOBJECT then
-        if getValue(current_object, bitset) not in constTable.set_const then
-          constTable.set_const @:= [getValue(current_object, bitset)] length(constTable.set_const);
-        end if;
-      elsif objectCategory = TYPEOBJECT then
-        if getValue(current_object, type) not in constTable.type_const then
-          constTable.type_const @:= [getValue(current_object, type)] length(constTable.type_const);
-        end if;
-      elsif objectCategory = REFOBJECT or
-            objectCategory = STRUCTELEMOBJECT then
-        if getValue(current_object, reference) <> NIL then
-          if objNumber(getValue(current_object, reference)) <> 0 then
-            if getType(getValue(current_object, reference)) not in constTable.type_const then
-              constTable.type_const @:= [getType(getValue(current_object, reference))] length(constTable.type_const);
+      case objectCategory of
+        when {BIGINTOBJECT}:
+          if getValue(current_object, bigInteger) not in constTable.bigint_const then
+            constTable.bigint_const @:= [getValue(current_object, bigInteger)] length(constTable.bigint_const);
+          end if;
+        when {STRIOBJECT}:
+          if getValue(current_object, string) not in constTable.stri_const then
+            constTable.stri_const @:= [getValue(current_object, string)] length(constTable.stri_const);
+          end if;
+        when {BSTRIOBJECT}:
+          if getValue(current_object, bstring) not in constTable.bstri_const then
+            constTable.bstri_const @:= [getValue(current_object, bstring)] length(constTable.bstri_const);
+          end if;
+        when {SETOBJECT}:
+          if getValue(current_object, bitset) not in constTable.set_const then
+            constTable.set_const @:= [getValue(current_object, bitset)] length(constTable.set_const);
+          end if;
+        when {TYPEOBJECT}:
+          if getValue(current_object, type) not in constTable.type_const then
+            constTable.type_const @:= [getValue(current_object, type)] length(constTable.type_const);
+          end if;
+        when {REFOBJECT, STRUCTELEMOBJECT}:
+          if getValue(current_object, reference) <> NIL then
+            if objNumber(getValue(current_object, reference)) <> 0 then
+              if getType(getValue(current_object, reference)) not in constTable.type_const then
+                constTable.type_const @:= [getType(getValue(current_object, reference))] length(constTable.type_const);
+              end if;
+            end if;
+            if getValue(current_object, reference) not in constTable.ref_const then
+              constTable.ref_const @:= [getValue(current_object, reference)] length(constTable.ref_const);
             end if;
           end if;
-          if getValue(current_object, reference) not in constTable.ref_const then
-            constTable.ref_const @:= [getValue(current_object, reference)] length(constTable.ref_const);
+        when {WINOBJECT}:
+          if getValue(current_object, PRIMITIVE_WINDOW) not in constTable.win_const then
+            constTable.win_const @:= [getValue(current_object, PRIMITIVE_WINDOW)] length(constTable.win_const);
           end if;
-        end if;
-      elsif objectCategory = WINOBJECT then
-        if getValue(current_object, PRIMITIVE_WINDOW) not in constTable.win_const then
-          constTable.win_const @:= [getValue(current_object, PRIMITIVE_WINDOW)] length(constTable.win_const);
-        end if;
-      elsif objectCategory = POINTLISTOBJECT then
-        aPointList := getValue(current_object, pointList);
-        if aPointList not in constTable.plist_const then
-          constTable.plist_const @:= [aPointList] length(constTable.plist_const);
-        end if;
-      elsif objectCategory = ARRAYOBJECT then
-        if current_object not in constTable.other_const then
-          constTable.other_const @:= [current_object] length(constTable.other_const);
-        end if;
-        elements_to_walk := determine_multiple_array_elements(arrayToList(current_object));
-        walk_const_list(elements_to_walk, sorted_list);
-        sorted_list &:= make_list(current_object);
-      elsif objectCategory = STRUCTOBJECT then
-        if current_object not in constTable.other_const then
-          constTable.other_const @:= [current_object] length(constTable.other_const);
-        end if;
-        walk_const_list(structToList(current_object), sorted_list);
-        sorted_list &:= make_list(current_object);
-      elsif objectCategory = HASHOBJECT then
-        if current_object not in constTable.other_const then
-          constTable.other_const @:= [current_object] length(constTable.other_const);
-        end if;
-        walk_const_list(hashKeysToList(current_object), sorted_list);
-        walk_const_list(hashDataToList(current_object), sorted_list);
-        sorted_list &:= make_list(current_object);
-      elsif objectCategory = INTERFACEOBJECT then
-        if current_object not in constTable.other_const then
-          constTable.other_const @:= [current_object] length(constTable.other_const);
-        end if;
-        struct_of_interface := interfaceToStruct(current_object);
-        if struct_of_interface not in constTable.other_const then
-          constTable.other_const @:= [struct_of_interface] length(constTable.other_const);
-          walk_const_list(structToList(struct_of_interface), sorted_list);
-          sorted_list &:= make_list(struct_of_interface);
-        elsif constTable.other_const[struct_of_interface] >= constTable.other_const[current_object] then
-          sorted_list &:= make_list(struct_of_interface);
-        end if;
-        sorted_list &:= make_list(current_object);
-      elsif objectCategory = MATCHOBJECT or objectCategory = ACTOBJECT or
-          objectCategory = BLOCKOBJECT then
-        if current_object not in constTable.other_const then
-          constTable.other_const @:= [current_object] length(constTable.other_const);
-        end if;
-        sorted_list &:= make_list(current_object);
-      end if;
+        when {POINTLISTOBJECT}:
+          aPointList := getValue(current_object, pointList);
+          if aPointList not in constTable.plist_const then
+            constTable.plist_const @:= [aPointList] length(constTable.plist_const);
+          end if;
+        when {ARRAYOBJECT}:
+          if current_object not in constTable.other_const then
+            constTable.other_const @:= [current_object] length(constTable.other_const);
+          end if;
+          elements_to_walk := determine_multiple_array_elements(arrayToList(current_object));
+          walk_const_list(elements_to_walk, sorted_list);
+          sorted_list &:= make_list(current_object);
+        when {STRUCTOBJECT}:
+          if current_object not in constTable.other_const then
+            constTable.other_const @:= [current_object] length(constTable.other_const);
+          end if;
+          walk_const_list(structToList(current_object), sorted_list);
+          sorted_list &:= make_list(current_object);
+        when {HASHOBJECT}:
+          if current_object not in constTable.other_const then
+            constTable.other_const @:= [current_object] length(constTable.other_const);
+          end if;
+          walk_const_list(hashKeysToList(current_object), sorted_list);
+          walk_const_list(hashDataToList(current_object), sorted_list);
+          sorted_list &:= make_list(current_object);
+        when {INTERFACEOBJECT}:
+          if current_object not in constTable.other_const then
+            constTable.other_const @:= [current_object] length(constTable.other_const);
+          end if;
+          struct_of_interface := interfaceToStruct(current_object);
+          if struct_of_interface not in constTable.other_const then
+            constTable.other_const @:= [struct_of_interface] length(constTable.other_const);
+            walk_const_list(structToList(struct_of_interface), sorted_list);
+            sorted_list &:= make_list(struct_of_interface);
+          elsif constTable.other_const[struct_of_interface] >= constTable.other_const[current_object] then
+            sorted_list &:= make_list(struct_of_interface);
+          end if;
+          sorted_list &:= make_list(current_object);
+        when {MATCHOBJECT, ACTOBJECT, BLOCKOBJECT}:
+          if current_object not in constTable.other_const then
+            constTable.other_const @:= [current_object] length(constTable.other_const);
+          end if;
+          sorted_list &:= make_list(current_object);
+      end case;
     end for;
   end func;
 
