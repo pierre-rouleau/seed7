@@ -5270,74 +5270,76 @@ const proc: process_object_declaration (in reference: current_object,
   local
     var category: objectCategory is category.value;
   begin
-    objectCategory := category(current_object);
     if current_object = main_object then
       if category(current_object) = FORWARDOBJECT then
         process_library_initialisation(current_object, c_expr);
       else
         process_main_declaration(current_object, c_expr);
       end if;
-    elsif objectCategory = BLOCKOBJECT then
-      process_func_declaration(current_object, c_expr);
-    elsif objectCategory = TYPEOBJECT then
-      process_type_declaration(current_object, c_expr);
-    elsif objectCategory = INTOBJECT then
-      process_int_declaration(current_object, c_expr);
-    elsif objectCategory = BIGINTOBJECT then
-      process_bigint_declaration(current_object, c_expr);
-    elsif objectCategory = CHAROBJECT then
-      process_char_declaration(current_object, c_expr);
-    elsif objectCategory = STRIOBJECT then
-      process_stri_declaration(current_object, c_expr);
-    elsif objectCategory = BSTRIOBJECT then
-      process_bstri_declaration(current_object, c_expr);
-    elsif objectCategory = FLOATOBJECT then
-      process_float_declaration(current_object, c_expr);
-    elsif objectCategory = REFOBJECT or
-          objectCategory = STRUCTELEMOBJECT then
-      process_reference_declaration(current_object, c_expr);
-    elsif objectCategory = REFLISTOBJECT then
-      process_ref_list_declaration(current_object, c_expr);
-    elsif objectCategory = FILEOBJECT then
-      process_file_declaration(current_object, c_expr);
-    elsif objectCategory = SOCKETOBJECT then
-      process_socket_declaration(current_object, c_expr);
-    elsif objectCategory = POLLOBJECT then
-      process_poll_declaration(current_object, c_expr);
-    elsif objectCategory = ARRAYOBJECT then
-      process_array_declaration(current_object, c_expr);
-    elsif objectCategory = HASHOBJECT then
-      process_hash_declaration(current_object, c_expr);
-    elsif objectCategory = SETOBJECT then
-      process_set_declaration(current_object, c_expr);
-    elsif objectCategory = STRUCTOBJECT then
-      process_struct_declaration(current_object, c_expr);
-    elsif objectCategory = INTERFACEOBJECT then
-      process_interface_declaration(current_object, c_expr);
-    elsif objectCategory = WINOBJECT then
-      process_win_declaration(current_object, c_expr);
-    elsif objectCategory = POINTLISTOBJECT then
-      process_plist_declaration(current_object, c_expr);
-    elsif objectCategory = PROCESSOBJECT then
-      process_process_declaration(current_object, c_expr);
-    elsif objectCategory = PROGOBJECT then
-      process_prog_declaration(current_object, c_expr);
-    elsif objectCategory = CONSTENUMOBJECT then
-      process_enum_declaration(current_object, c_expr);
-    elsif objectCategory = VARENUMOBJECT then
-      process_enum_declaration(current_object, c_expr);
-    elsif objectCategory = ENUMLITERALOBJECT then
-      process_enum_literal_declaration(current_object, c_expr);
-    elsif objectCategory = ACTOBJECT then
-      process_action_declaration(current_object, c_expr);
-    elsif objectCategory = FWDREFOBJECT then
-      process_forward_declaration(current_object, c_expr);
     else
-      c_expr.expr &:= "/* ";
-      c_expr.expr &:= str(objectCategory);
-      c_expr.expr &:= ": ";
-      create_name2(current_object, c_expr.expr);
-      c_expr.expr &:= " */\n";
+      objectCategory := category(current_object);
+      case objectCategory of
+        when {BLOCKOBJECT}:
+          process_func_declaration(current_object, c_expr);
+        when {TYPEOBJECT}:
+          process_type_declaration(current_object, c_expr);
+        when {INTOBJECT}:
+          process_int_declaration(current_object, c_expr);
+        when {BIGINTOBJECT}:
+          process_bigint_declaration(current_object, c_expr);
+        when {CHAROBJECT}:
+          process_char_declaration(current_object, c_expr);
+        when {STRIOBJECT}:
+          process_stri_declaration(current_object, c_expr);
+        when {BSTRIOBJECT}:
+          process_bstri_declaration(current_object, c_expr);
+        when {FLOATOBJECT}:
+          process_float_declaration(current_object, c_expr);
+        when {REFOBJECT, STRUCTELEMOBJECT}:
+          process_reference_declaration(current_object, c_expr);
+        when {REFLISTOBJECT}:
+          process_ref_list_declaration(current_object, c_expr);
+        when {FILEOBJECT}:
+          process_file_declaration(current_object, c_expr);
+        when {SOCKETOBJECT}:
+          process_socket_declaration(current_object, c_expr);
+        when {POLLOBJECT}:
+          process_poll_declaration(current_object, c_expr);
+        when {ARRAYOBJECT}:
+          process_array_declaration(current_object, c_expr);
+        when {HASHOBJECT}:
+          process_hash_declaration(current_object, c_expr);
+        when {SETOBJECT}:
+          process_set_declaration(current_object, c_expr);
+        when {STRUCTOBJECT}:
+          process_struct_declaration(current_object, c_expr);
+        when {INTERFACEOBJECT}:
+          process_interface_declaration(current_object, c_expr);
+        when {WINOBJECT}:
+          process_win_declaration(current_object, c_expr);
+        when {POINTLISTOBJECT}:
+          process_plist_declaration(current_object, c_expr);
+        when {PROCESSOBJECT}:
+          process_process_declaration(current_object, c_expr);
+        when {PROGOBJECT}:
+          process_prog_declaration(current_object, c_expr);
+        when {CONSTENUMOBJECT}:
+          process_enum_declaration(current_object, c_expr);
+        when {VARENUMOBJECT}:
+          process_enum_declaration(current_object, c_expr);
+        when {ENUMLITERALOBJECT}:
+          process_enum_literal_declaration(current_object, c_expr);
+        when {ACTOBJECT}:
+          process_action_declaration(current_object, c_expr);
+        when {FWDREFOBJECT}:
+          process_forward_declaration(current_object, c_expr);
+        otherwise:
+          c_expr.expr &:= "/* ";
+          c_expr.expr &:= str(objectCategory);
+          c_expr.expr &:= ": ";
+          create_name2(current_object, c_expr.expr);
+          c_expr.expr &:= " */\n";
+      end case;
     end if;
   end func;
 
