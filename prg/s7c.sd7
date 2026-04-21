@@ -5263,27 +5263,25 @@ const proc: replaceLocalsFromOutside (in reference: local_function,
     for paramNum range 1 to length(params) do
       aParam := params[paramNum];
       paramCategory := category(aParam);
-      if paramCategory = MATCHOBJECT or paramCategory = CALLOBJECT then
-        replaceLocalsFromOutside(local_function, aParam, local_objects,
-            additional_act_params, additional_form_params);
-      elsif paramCategory = LOCALVOBJECT or
-            paramCategory = VALUEPARAMOBJECT or
-            paramCategory = REFPARAMOBJECT or
-            paramCategory = RESULTOBJECT then
-        if aParam not in local_objects then
-          if aParam in additional_act_params then
-            formalRefParam := additional_form_params[pos(additional_act_params, aParam)];
-          elsif local_function in params_added and
-              aParam in params_added[local_function] then
-            formalRefParam := params_added[local_function][aParam];
-          else
-            additional_act_params &:= make_list(aParam);
-            formalRefParam := alloc(REFPARAMOBJECT, aParam);
-            additional_form_params &:= make_list(formalRefParam);
+      case paramCategory of
+        when {MATCHOBJECT, CALLOBJECT}:
+          replaceLocalsFromOutside(local_function, aParam, local_objects,
+              additional_act_params, additional_form_params);
+        when {LOCALVOBJECT, VALUEPARAMOBJECT, REFPARAMOBJECT, RESULTOBJECT}:
+          if aParam not in local_objects then
+            if aParam in additional_act_params then
+              formalRefParam := additional_form_params[pos(additional_act_params, aParam)];
+            elsif local_function in params_added and
+                aParam in params_added[local_function] then
+              formalRefParam := params_added[local_function][aParam];
+            else
+              additional_act_params &:= make_list(aParam);
+              formalRefParam := alloc(REFPARAMOBJECT, aParam);
+              additional_form_params &:= make_list(formalRefParam);
+            end if;
+            params @:= [paramNum] formalRefParam;
           end if;
-          params @:= [paramNum] formalRefParam;
-        end if;
-      end if;
+      end case;
     end for;
     setValue(current_expression, params);
   end func;
