@@ -507,21 +507,22 @@ const func boolean: containsFunctionCall (in reference: function,
     var integer: paramNum is 0;
   begin
     exprCategory := category(current_expression);
-    if exprCategory = MATCHOBJECT or exprCategory = CALLOBJECT then
-      params := getValue(current_expression, ref_list);
-      currentFunction := params[1];
-      if currentFunction = function then
-        containsCall := TRUE;
-      else
-        paramNum := 2;
-        while paramNum <= length(params) and not containsCall do
-          containsCall := containsFunctionCall(function, params[paramNum]);
-          incr(paramNum);
-        end while;
-      end if;
-    elsif exprCategory = BLOCKOBJECT then
-      containsCall := current_expression = function;
-    end if;
+    case exprCategory of
+      when {MATCHOBJECT, CALLOBJECT}:
+        params := getValue(current_expression, ref_list);
+        currentFunction := params[1];
+        if currentFunction = function then
+          containsCall := TRUE;
+        else
+          paramNum := 2;
+          while paramNum <= length(params) and not containsCall do
+            containsCall := containsFunctionCall(function, params[paramNum]);
+            incr(paramNum);
+          end while;
+        end if;
+      when {BLOCKOBJECT}:
+        containsCall := current_expression = function;
+    end case;
   end func;
 
 
