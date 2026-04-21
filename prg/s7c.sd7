@@ -7978,23 +7978,25 @@ const proc: init_values (inout expr_type: c_expr) is func
         c_expr.expr &:= " (void)\n";
         c_expr.expr &:= "{\n";
       end if;
-      if category(const_object) = ARRAYOBJECT then
-        init_array_constants(const_object, c_expr);
-      elsif category(const_object) = STRUCTOBJECT then
-        init_struct_constants(const_object, c_expr);
-      elsif category(const_object) = HASHOBJECT then
-        init_hash_constants(const_object, c_expr);
-      elsif category(const_object) = INTERFACEOBJECT then
-        init_interface_constants(const_object, c_expr);
-      elsif category(const_object) <> MATCHOBJECT and
-            category(const_object) <> ACTOBJECT then
-        number := constTable.other_const[const_object];
-        c_expr.expr &:= "/* const ";
-        c_expr.expr &:= str(category(const_object));
-        c_expr.expr &:= " [";
-        c_expr.expr &:= str(number);
-        c_expr.expr &:= "] */\n";
-      end if;
+      case category(const_object) of
+        when {ARRAYOBJECT}:
+          init_array_constants(const_object, c_expr);
+        when {STRUCTOBJECT}:
+          init_struct_constants(const_object, c_expr);
+        when {HASHOBJECT}:
+          init_hash_constants(const_object, c_expr);
+        when {INTERFACEOBJECT}:
+          init_interface_constants(const_object, c_expr);
+        when {MATCHOBJECT, ACTOBJECT}:
+          noop;
+        otherwise:
+          number := constTable.other_const[const_object];
+          c_expr.expr &:= "/* const ";
+          c_expr.expr &:= str(category(const_object));
+          c_expr.expr &:= " [";
+          c_expr.expr &:= str(number);
+          c_expr.expr &:= "] */\n";
+      end case;
     end for;
     c_expr.expr &:= "}\n\n";
     c_expr.expr &:= "static void init_values (void)\n";
