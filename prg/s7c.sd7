@@ -5042,127 +5042,128 @@ const proc: process_action_declaration (in reference: current_object,
     else
       current_action := getValue(current_object, ACTION);
       action_name := str(current_action);
-      if action_name = "PRC_DYNAMIC" then
-        process_dynamic_declaration(current_object, c_expr);
-        count_declarations(c_expr);
-      elsif action_name = "ACE_CPY" then
-        defineParam1TypeCategory(current_object, ACTENTRYOBJECT);
-        count_declarations(c_expr);
-      elsif action_name = "ARR_CPY" then
-        process_arr_cpy_declaration(current_object);
-        count_declarations(c_expr);
-      elsif action_name = "ARR_CREATE" then
-        process_arr_create_declaration(current_object);
-        count_declarations(c_expr);
-      elsif action_name = "ARR_DESTR" then
-        process_arr_destr_declaration(current_object);
-        count_declarations(c_expr);
-      elsif action_name = "ARR_GEN" then
-        process_arr_gen_declaration(current_object, c_expr);
-        count_declarations(c_expr);
-      elsif action_name = "ARR_IDX" then
-        process_arr_idx_declaration(current_object, c_expr);
-        count_declarations(c_expr);
-      elsif action_name = "ARR_TIMES" then
-        process_arr_times_declaration(current_object, c_expr);
-        count_declarations(c_expr);
-      elsif action_name = "BIG_CPY" or action_name = "BIG_CREATE" then
-        defineParam1TypeCategory(current_object, BIGINTOBJECT);
-        count_declarations(c_expr);
-      elsif action_name = "BLN_CPY" then
-        defineParam1TypeCategory(current_object, BOOLOBJECT);
-        count_declarations(c_expr);
-      elsif action_name = "BST_CPY" or action_name = "BST_CREATE" then
-        defineParam1TypeCategory(current_object, BSTRIOBJECT);
-        count_declarations(c_expr);
-      elsif action_name = "DRW_CPY" or action_name = "DRW_CREATE" then
-        defineParam1TypeCategory(current_object, WINOBJECT);
-        count_declarations(c_expr);
-      elsif action_name = "PLT_CPY" or action_name = "PLT_CREATE" then
-        defineParam1TypeCategory(current_object, POINTLISTOBJECT);
-        count_declarations(c_expr);
-      elsif action_name = "PCS_CPY" or action_name = "PCS_CREATE" then
-        defineParam1TypeCategory(current_object, PROCESSOBJECT);
-        count_declarations(c_expr);
-      elsif action_name = "ENU_CPY" then
-        defineParam1TypeCategory(current_object, ENUMOBJECT);
-        count_declarations(c_expr);
-      elsif action_name = "FIL_CPY" or action_name = "FIL_CREATE" then
-        defineParam1TypeCategory(current_object, FILEOBJECT);
-        count_declarations(c_expr);
-      elsif action_name = "FLT_CPY" or action_name = "FLT_CREATE" then
-        defineParam1TypeCategory(current_object, FLOATOBJECT);
-        count_declarations(c_expr);
-      elsif action_name = "HSH_CONCAT_KEY_VALUE" then
-        defineParam1TypeCategory(current_object, HASHELEMOBJECT);
-        count_declarations(c_expr);
-      elsif action_name = "HSH_CPY" then
-        process_hsh_cpy_declaration(current_object);
-        count_declarations(c_expr);
-      elsif action_name = "HSH_CREATE" then
-        process_hsh_create_declaration(current_object);
-        count_declarations(c_expr);
-      elsif action_name = "HSH_DESTR" then
-        process_hsh_destr_declaration(current_object);
-        count_declarations(c_expr);
-      elsif action_name = "INT_CPY" or action_name = "INT_CREATE" then
-        defineParam1TypeCategory(current_object, INTOBJECT);
-        count_declarations(c_expr);
-      elsif action_name = "ITF_CPY" then
-        defineParam1TypeCategory(current_object, INTERFACEOBJECT);
-        count_declarations(c_expr);
-      elsif action_name = "ITF_CPY2" then
-        defineParam1TypeCategory(current_object, INTERFACEOBJECT);
-        count_declarations(c_expr);
-      elsif action_name = "POL_CPY" or action_name = "POL_CREATE" then
-        defineParam1TypeCategory(current_object, POLLOBJECT);
-        count_declarations(c_expr);
-      elsif action_name = "POL_NEXT_FILE" then
-        process_itf_next_file_declaration(current_object);
-        count_declarations(c_expr);
-      elsif action_name = "PRG_CPY" or action_name = "PRG_CREATE" then
-        defineParam1TypeCategory(current_object, PROGOBJECT);
-        count_declarations(c_expr);
-      elsif action_name = "REF_CPY" or action_name = "REF_CREATE" then
-        defineParam1TypeCategory(current_object, REFOBJECT);
-        count_declarations(c_expr);
-      elsif action_name = "RFL_CPY" or action_name = "RFL_CREATE" then
-        defineParam1TypeCategory(current_object, REFLISTOBJECT);
-        count_declarations(c_expr);
-      elsif action_name = "SCT_CPY" then
-        process_sct_cpy_declaration(current_object);
-        count_declarations(c_expr);
-      elsif action_name = "SCT_CREATE" then
-        process_sct_create_declaration(current_object);
-        count_declarations(c_expr);
-      elsif action_name = "SCT_DESTR" then
-        process_sct_destr_declaration(current_object);
-        count_declarations(c_expr);
-      elsif action_name = "SCT_SELECT" then
-        process_sct_select_declaration(current_object, c_expr);
-        count_declarations(c_expr);
-      elsif action_name = "SEL_CPY" or action_name = "SEL_CREATE" then
-        defineParam1TypeCategory(current_object, STRUCTELEMOBJECT);
-        count_declarations(c_expr);
-      elsif action_name = "SET_CPY" or action_name = "SET_CREATE" then
-        defineParam1TypeCategory(current_object, SETOBJECT);
-        count_declarations(c_expr);
-      elsif action_name = "SOC_CPY" or action_name = "SOC_CREATE" then
-        defineParam1TypeCategory(current_object, SOCKETOBJECT);
-        count_declarations(c_expr);
-      elsif action_name = "SQL_CPY_DB" or action_name = "SQL_CREATE_DB" then
-        defineParam1TypeCategory(current_object, DATABASEOBJECT);
-        count_declarations(c_expr);
-      elsif action_name = "SQL_CPY_STMT" or action_name = "SQL_CREATE_STMT" then
-        defineParam1TypeCategory(current_object, SQLSTMTOBJECT);
-        count_declarations(c_expr);
+      case action_name of
+        when {"PRC_DYNAMIC"}:
+          process_dynamic_declaration(current_object, c_expr);
+          count_declarations(c_expr);
+        when {"ACE_CPY"}:
+          defineParam1TypeCategory(current_object, ACTENTRYOBJECT);
+          count_declarations(c_expr);
+        when {"ARR_CPY"}:
+          process_arr_cpy_declaration(current_object);
+          count_declarations(c_expr);
+        when {"ARR_CREATE"}:
+          process_arr_create_declaration(current_object);
+          count_declarations(c_expr);
+        when {"ARR_DESTR"}:
+          process_arr_destr_declaration(current_object);
+          count_declarations(c_expr);
+        when {"ARR_GEN"}:
+          process_arr_gen_declaration(current_object, c_expr);
+          count_declarations(c_expr);
+        when {"ARR_IDX"}:
+          process_arr_idx_declaration(current_object, c_expr);
+          count_declarations(c_expr);
+        when {"ARR_TIMES"}:
+          process_arr_times_declaration(current_object, c_expr);
+          count_declarations(c_expr);
+        when {"BIG_CPY", "BIG_CREATE"}:
+          defineParam1TypeCategory(current_object, BIGINTOBJECT);
+          count_declarations(c_expr);
+        when {"BLN_CPY"}:
+          defineParam1TypeCategory(current_object, BOOLOBJECT);
+          count_declarations(c_expr);
+        when {"BST_CPY", "BST_CREATE"}:
+          defineParam1TypeCategory(current_object, BSTRIOBJECT);
+          count_declarations(c_expr);
+        when {"DRW_CPY", "DRW_CREATE"}:
+          defineParam1TypeCategory(current_object, WINOBJECT);
+          count_declarations(c_expr);
+        when {"PLT_CPY", "PLT_CREATE"}:
+          defineParam1TypeCategory(current_object, POINTLISTOBJECT);
+          count_declarations(c_expr);
+        when {"PCS_CPY", "PCS_CREATE"}:
+          defineParam1TypeCategory(current_object, PROCESSOBJECT);
+          count_declarations(c_expr);
+        when {"ENU_CPY"}:
+          defineParam1TypeCategory(current_object, ENUMOBJECT);
+          count_declarations(c_expr);
+        when {"FIL_CPY", "FIL_CREATE"}:
+          defineParam1TypeCategory(current_object, FILEOBJECT);
+          count_declarations(c_expr);
+        when {"FLT_CPY", "FLT_CREATE"}:
+          defineParam1TypeCategory(current_object, FLOATOBJECT);
+          count_declarations(c_expr);
+        when {"HSH_CONCAT_KEY_VALUE"}:
+          defineParam1TypeCategory(current_object, HASHELEMOBJECT);
+          count_declarations(c_expr);
+        when {"HSH_CPY"}:
+          process_hsh_cpy_declaration(current_object);
+          count_declarations(c_expr);
+        when {"HSH_CREATE"}:
+          process_hsh_create_declaration(current_object);
+          count_declarations(c_expr);
+        when {"HSH_DESTR"}:
+          process_hsh_destr_declaration(current_object);
+          count_declarations(c_expr);
+        when {"INT_CPY", "INT_CREATE"}:
+          defineParam1TypeCategory(current_object, INTOBJECT);
+          count_declarations(c_expr);
+        when {"ITF_CPY"}:
+          defineParam1TypeCategory(current_object, INTERFACEOBJECT);
+          count_declarations(c_expr);
+        when {"ITF_CPY2"}:
+          defineParam1TypeCategory(current_object, INTERFACEOBJECT);
+          count_declarations(c_expr);
+        when {"POL_CPY", "POL_CREATE"}:
+          defineParam1TypeCategory(current_object, POLLOBJECT);
+          count_declarations(c_expr);
+        when {"POL_NEXT_FILE"}:
+          process_itf_next_file_declaration(current_object);
+          count_declarations(c_expr);
+        when {"PRG_CPY", "PRG_CREATE"}:
+          defineParam1TypeCategory(current_object, PROGOBJECT);
+          count_declarations(c_expr);
+        when {"REF_CPY", "REF_CREATE"}:
+          defineParam1TypeCategory(current_object, REFOBJECT);
+          count_declarations(c_expr);
+        when {"RFL_CPY", "RFL_CREATE"}:
+          defineParam1TypeCategory(current_object, REFLISTOBJECT);
+          count_declarations(c_expr);
+        when {"SCT_CPY"}:
+          process_sct_cpy_declaration(current_object);
+          count_declarations(c_expr);
+        when {"SCT_CREATE"}:
+          process_sct_create_declaration(current_object);
+          count_declarations(c_expr);
+        when {"SCT_DESTR"}:
+          process_sct_destr_declaration(current_object);
+          count_declarations(c_expr);
+        when {"SCT_SELECT"}:
+          process_sct_select_declaration(current_object, c_expr);
+          count_declarations(c_expr);
+        when {"SEL_CPY", "SEL_CREATE"}:
+          defineParam1TypeCategory(current_object, STRUCTELEMOBJECT);
+          count_declarations(c_expr);
+        when {"SET_CPY", "SET_CREATE"}:
+          defineParam1TypeCategory(current_object, SETOBJECT);
+          count_declarations(c_expr);
+        when {"SOC_CPY", "SOC_CREATE"}:
+          defineParam1TypeCategory(current_object, SOCKETOBJECT);
+          count_declarations(c_expr);
+        when {"SQL_CPY_DB", "SQL_CREATE_DB"}:
+          defineParam1TypeCategory(current_object, DATABASEOBJECT);
+          count_declarations(c_expr);
+        when {"SQL_CPY_STMT", "SQL_CREATE_STMT"}:
+          defineParam1TypeCategory(current_object, SQLSTMTOBJECT);
+          count_declarations(c_expr);
 (*
-      else
-        c_expr.expr &:= "/* ACTION ";
-        c_expr.expr &:= action_name;
-        c_expr.expr &:= " */";
+        otherwise:
+          c_expr.expr &:= "/* ACTION ";
+          c_expr.expr &:= action_name;
+          c_expr.expr &:= " */";
 *)
-      end if;
+      end case;
     end if;
   end func;
 
