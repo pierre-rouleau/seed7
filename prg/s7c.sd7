@@ -7874,31 +7874,32 @@ const proc: walk_const_list (in reference: const_object, inout ref_list: sorted_
     var ref_list: elements_to_walk is ref_list.EMPTY;
     var reference: struct_of_interface is NIL;
   begin
-    if category(const_object) = ARRAYOBJECT then
-      elements_to_walk := determine_multiple_array_elements(arrayToList(const_object));
-      walk_const_list(elements_to_walk, sorted_list);
-      sorted_list &:= make_list(const_object);
-    elsif category(const_object) = STRUCTOBJECT then
-      walk_const_list(structToList(const_object), sorted_list);
-      sorted_list &:= make_list(const_object);
-    elsif category(const_object) = HASHOBJECT then
-      walk_const_list(hashKeysToList(const_object), sorted_list);
-      walk_const_list(hashDataToList(const_object), sorted_list);
-      sorted_list &:= make_list(const_object);
-    elsif category(const_object) = INTERFACEOBJECT then
-      if const_object not in constTable.other_const then
-        constTable.other_const @:= [const_object] length(constTable.other_const);
-      end if;
-      struct_of_interface := interfaceToStruct(const_object);
-      if struct_of_interface not in constTable.other_const then
-        constTable.other_const @:= [struct_of_interface] length(constTable.other_const);
-        walk_const_list(structToList(struct_of_interface), sorted_list);
-        sorted_list &:= make_list(struct_of_interface);
-      elsif constTable.other_const[struct_of_interface] >= constTable.other_const[const_object] then
-        sorted_list &:= make_list(struct_of_interface);
-      end if;
-      sorted_list &:= make_list(const_object);
-    end if;
+    case category(const_object) of
+      when {ARRAYOBJECT}:
+        elements_to_walk := determine_multiple_array_elements(arrayToList(const_object));
+        walk_const_list(elements_to_walk, sorted_list);
+        sorted_list &:= make_list(const_object);
+      when {STRUCTOBJECT}:
+        walk_const_list(structToList(const_object), sorted_list);
+        sorted_list &:= make_list(const_object);
+      when {HASHOBJECT}:
+        walk_const_list(hashKeysToList(const_object), sorted_list);
+        walk_const_list(hashDataToList(const_object), sorted_list);
+        sorted_list &:= make_list(const_object);
+      when {INTERFACEOBJECT}:
+        if const_object not in constTable.other_const then
+          constTable.other_const @:= [const_object] length(constTable.other_const);
+        end if;
+        struct_of_interface := interfaceToStruct(const_object);
+        if struct_of_interface not in constTable.other_const then
+          constTable.other_const @:= [struct_of_interface] length(constTable.other_const);
+          walk_const_list(structToList(struct_of_interface), sorted_list);
+          sorted_list &:= make_list(struct_of_interface);
+        elsif constTable.other_const[struct_of_interface] >= constTable.other_const[const_object] then
+          sorted_list &:= make_list(struct_of_interface);
+        end if;
+        sorted_list &:= make_list(const_object);
+    end case;
   end func;
 
 
