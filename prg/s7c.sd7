@@ -1092,19 +1092,17 @@ const proc: determineDataForActualFuncParam (in reference: current_expression,
     var reference: aParam is NIL;
   begin
     paramCategory := category(current_expression);
-    if paramCategory = MATCHOBJECT or paramCategory = CALLOBJECT then
-      params := getValue(current_expression, ref_list);
-      for aParam range params do
-        determineDataForActualFuncParam(aParam, data_list);
-      end for;
-    elsif paramCategory = LOCALVOBJECT or
-          paramCategory = VALUEPARAMOBJECT or
-          paramCategory = REFPARAMOBJECT or
-          paramCategory = RESULTOBJECT then
-      if current_expression not in data_list then
-        data_list &:= make_list(current_expression);
-      end if;
-    end if;
+    case paramCategory of
+      when {MATCHOBJECT, CALLOBJECT}:
+        params := getValue(current_expression, ref_list);
+        for aParam range params do
+          determineDataForActualFuncParam(aParam, data_list);
+        end for;
+      when {LOCALVOBJECT, VALUEPARAMOBJECT, REFPARAMOBJECT, RESULTOBJECT}:
+        if current_expression not in data_list then
+          data_list &:= make_list(current_expression);
+        end if;
+    end case;
   end func;
 
 
