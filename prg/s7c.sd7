@@ -3147,14 +3147,10 @@ const proc: action_address (in reference: function, inout expr_type: c_expr) is 
     current_action := getValue(function, ACTION);
     action_name := str(current_action);
     case action_name of
-      when {"ACE_CMP"}:
-        c_expr.expr &:= "&ptrCmpGeneric";
-      when {"ACE_CPY"}:
-        c_expr.expr &:= "&genericCpy";
-      when {"ACE_CREATE"}:
-        c_expr.expr &:= "&genericCreate";
-      when {"ACE_HASHCODE"}:
-        c_expr.expr &:= "&aceHashCode";
+      when {"ACE_CMP"}:         c_expr.expr &:= "&ptrCmpGeneric";
+      when {"ACE_CPY"}:         c_expr.expr &:= "&genericCpy";
+      when {"ACE_CREATE"}:      c_expr.expr &:= "&genericCreate";
+      when {"ACE_HASHCODE"}:    c_expr.expr &:= "&aceHashCode";
       when {"ARR_CPY"}:
         object_type := getType(formalParams(function)[1]);
         process_generic_cpy_declaration(object_type, global_c_expr);
@@ -3171,144 +3167,80 @@ const proc: action_address (in reference: function, inout expr_type: c_expr) is 
         process_generic_destr_declaration(object_type, global_c_expr);
         c_expr.expr &:= "&generic_destr_";
         c_expr.expr &:= str(typeNumber(object_type));
-      when {"BIG_CMP"}:
-        c_expr.expr &:= "&bigCmpGeneric";
-      when {"BIG_CPY"}:
-        c_expr.expr &:= "&bigCpyGeneric";
-      when {"BIG_CREATE"}:
-        c_expr.expr &:= "&bigCreateGeneric";
-      when {"BIG_DESTR"}:
-        c_expr.expr &:= "&bigDestrGeneric";
-      when {"BIG_HASHCODE"}:
-        c_expr.expr &:= "&bigHashCodeGeneric";
-      when {"BIN_CMP"}:
-        c_expr.expr &:= "&uintCmpGeneric";
-      when {"BLN_ORD"}:
-        c_expr.expr &:= "&genericHashCode";
-      when {"BLN_CPY"}:
-        c_expr.expr &:= "&genericCpy";
-      when {"BLN_CREATE"}:
-        c_expr.expr &:= "&genericCreate";
-      when {"BST_CMP"}:
-        c_expr.expr &:= "&bstCmpGeneric";
-      when {"BST_CPY"}:
-        c_expr.expr &:= "&bstCpyGeneric";
-      when {"BST_CREATE"}:
-        c_expr.expr &:= "&bstCreateGeneric";
-      when {"BST_DESTR"}:
-        c_expr.expr &:= "&bstDestrGeneric";
-      when {"BST_HASHCODE"}:
-        c_expr.expr &:= "&bstHashCodeGeneric";
-      when {"CHR_CMP"}:
-        c_expr.expr &:= "&chrCmpGeneric";
-      when {"CHR_CPY"}:
-        c_expr.expr &:= "&genericCpy";
-      when {"CHR_CREATE"}:
-        c_expr.expr &:= "&genericCreate";
-      when {"CHR_HASHCODE"}:
-        c_expr.expr &:= "&genericHashCode";
-      when {"DRW_CMP"}:
-        c_expr.expr &:= "&ptrCmpGeneric";
-      when {"DRW_CPY"}:
-        c_expr.expr &:= "&drwCpyGeneric";
-      when {"DRW_CREATE"}:
-        c_expr.expr &:= "&drwCreateGeneric";
-      when {"DRW_DESTR"}:
-        c_expr.expr &:= "&drwDestrGeneric";
-      when {"DRW_HASHCODE"}:
-        c_expr.expr &:= "&ptrHashCodeGeneric";
-      when {"ENU_CPY"}:
-        c_expr.expr &:= "&genericCpy";
-      when {"ENU_CREATE"}:
-        c_expr.expr &:= "&genericCreate";
-      when {"FIL_CPY"}:
-        c_expr.expr &:= "&filCpyGeneric";
-      when {"FIL_CREATE"}:
-        c_expr.expr &:= "&filCreateGeneric";
-      when {"FIL_DESTR"}:
-        c_expr.expr &:= "&filDestrGeneric";
-      when {"FLT_CMP"}:
-        c_expr.expr &:= "&fltCmpGeneric";
-      when {"FLT_CPY"}:
-        c_expr.expr &:= "&fltCpyGeneric";
-      when {"FLT_CREATE"}:
-        c_expr.expr &:= "&genericCreate";
-      when {"FLT_HASHCODE"}:
-        c_expr.expr &:= "&genericHashCode";
-      when {"GEN_DESTR"}:
-        c_expr.expr &:= "&genericDestr";
-      when {"INT_CMP"}:
-        c_expr.expr &:= "&intCmpGeneric";
-      when {"INT_CPY"}:
-        c_expr.expr &:= "&genericCpy";
-      when {"INT_CREATE"}:
-        c_expr.expr &:= "&genericCreate";
-      when {"INT_HASHCODE"}:
-        c_expr.expr &:= "&genericHashCode";
-      when {"ITF_CMP"}:
-        c_expr.expr &:= "&ptrCmpGeneric";
+      when {"BIG_CMP"}:         c_expr.expr &:= "&bigCmpGeneric";
+      when {"BIG_CPY"}:         c_expr.expr &:= "&bigCpyGeneric";
+      when {"BIG_CREATE"}:      c_expr.expr &:= "&bigCreateGeneric";
+      when {"BIG_DESTR"}:       c_expr.expr &:= "&bigDestrGeneric";
+      when {"BIG_HASHCODE"}:    c_expr.expr &:= "&bigHashCodeGeneric";
+      when {"BIN_CMP"}:         c_expr.expr &:= "&uintCmpGeneric";
+      when {"BLN_ORD"}:         c_expr.expr &:= "&genericHashCode";
+      when {"BLN_CPY"}:         c_expr.expr &:= "&genericCpy";
+      when {"BLN_CREATE"}:      c_expr.expr &:= "&genericCreate";
+      when {"BST_CMP"}:         c_expr.expr &:= "&bstCmpGeneric";
+      when {"BST_CPY"}:         c_expr.expr &:= "&bstCpyGeneric";
+      when {"BST_CREATE"}:      c_expr.expr &:= "&bstCreateGeneric";
+      when {"BST_DESTR"}:       c_expr.expr &:= "&bstDestrGeneric";
+      when {"BST_HASHCODE"}:    c_expr.expr &:= "&bstHashCodeGeneric";
+      when {"CHR_CMP"}:         c_expr.expr &:= "&chrCmpGeneric";
+      when {"CHR_CPY"}:         c_expr.expr &:= "&genericCpy";
+      when {"CHR_CREATE"}:      c_expr.expr &:= "&genericCreate";
+      when {"CHR_HASHCODE"}:    c_expr.expr &:= "&genericHashCode";
+      when {"DRW_CMP"}:         c_expr.expr &:= "&ptrCmpGeneric";
+      when {"DRW_CPY"}:         c_expr.expr &:= "&drwCpyGeneric";
+      when {"DRW_CREATE"}:      c_expr.expr &:= "&drwCreateGeneric";
+      when {"DRW_DESTR"}:       c_expr.expr &:= "&drwDestrGeneric";
+      when {"DRW_HASHCODE"}:    c_expr.expr &:= "&ptrHashCodeGeneric";
+      when {"ENU_CPY"}:         c_expr.expr &:= "&genericCpy";
+      when {"ENU_CREATE"}:      c_expr.expr &:= "&genericCreate";
+      when {"FIL_CPY"}:         c_expr.expr &:= "&filCpyGeneric";
+      when {"FIL_CREATE"}:      c_expr.expr &:= "&filCreateGeneric";
+      when {"FIL_DESTR"}:       c_expr.expr &:= "&filDestrGeneric";
+      when {"FLT_CMP"}:         c_expr.expr &:= "&fltCmpGeneric";
+      when {"FLT_CPY"}:         c_expr.expr &:= "&fltCpyGeneric";
+      when {"FLT_CREATE"}:      c_expr.expr &:= "&genericCreate";
+      when {"FLT_HASHCODE"}:    c_expr.expr &:= "&genericHashCode";
+      when {"GEN_DESTR"}:       c_expr.expr &:= "&genericDestr";
+      when {"INT_CMP"}:         c_expr.expr &:= "&intCmpGeneric";
+      when {"INT_CPY"}:         c_expr.expr &:= "&genericCpy";
+      when {"INT_CREATE"}:      c_expr.expr &:= "&genericCreate";
+      when {"INT_HASHCODE"}:    c_expr.expr &:= "&genericHashCode";
+      when {"ITF_CMP"}:         c_expr.expr &:= "&ptrCmpGeneric";
       when {"ITF_CPY"}:
         object_type := getType(formalParams(function)[1]);
         process_generic_cpy_declaration(object_type, global_c_expr);
         c_expr.expr &:= "&generic_cpy_";
         c_expr.expr &:= str(typeNumber(object_type));
-      when {"ITF_CREATE"}:
-        c_expr.expr &:= "&itfCreateGeneric";
+      when {"ITF_CREATE"}:      c_expr.expr &:= "&itfCreateGeneric";
       when {"ITF_DESTR"}:
         object_type := getType(formalParams(function)[1]);
         process_generic_destr_declaration(object_type, global_c_expr);
         c_expr.expr &:= "&generic_destr_";
         c_expr.expr &:= str(typeNumber(object_type));
-      when {"ITF_HASHCODE"}:
-        c_expr.expr &:= "&ptrHashCodeGeneric";
-      when {"PCS_CMP"}:
-        c_expr.expr &:= "&pcsCmpGeneric";
-      when {"PCS_CPY"}:
-        c_expr.expr &:= "&pcsCpyGeneric";
-      when {"PCS_CREATE"}:
-        c_expr.expr &:= "&pcsCreateGeneric";
-      when {"PCS_DESTR"}:
-        c_expr.expr &:= "&pcsDestrGeneric";
-      when {"PCS_HASHCODE"}:
-        c_expr.expr &:= "&pcsHashCodeGeneric";
-      when {"PLT_CMP"}:
-        c_expr.expr &:= "&bstCmpGeneric";
-      when {"PLT_CPY"}:
-        c_expr.expr &:= "&bstCpyGeneric";
-      when {"PLT_CREATE"}:
-        c_expr.expr &:= "&bstCreateGeneric";
-      when {"PLT_DESTR"}:
-        c_expr.expr &:= "&bstDestrGeneric";
-      when {"PLT_HASHCODE"}:
-        c_expr.expr &:= "&bstHashCodeGeneric";
-      when {"PRC_NOOP"}:
-        c_expr.expr &:= "&prcNoop";
-      when {"PRG_CMP"}:
-        c_expr.expr &:= "&ptrCmpGeneric";
-      when {"PRG_CPY"}:
-        c_expr.expr &:= "&prgCpyGeneric";
-      when {"PRG_CREATE"}:
-        c_expr.expr &:= "&prgCreateGeneric";
-      when {"PRG_DESTR"}:
-        c_expr.expr &:= "&prgDestrGeneric";
-      when {"PRG_HASHCODE"}:
-        c_expr.expr &:= "&ptrHashCodeGeneric";
-      when {"REF_CMP"}:
-        c_expr.expr &:= "&ptrCmpGeneric";
-      when {"REF_CPY"}:
-        c_expr.expr &:= "&ptrCpyGeneric";
-      when {"REF_CREATE"}:
-        c_expr.expr &:= "&ptrCreateGeneric";
-      when {"REF_HASHCODE"}:
-        c_expr.expr &:= "&ptrHashCodeGeneric";
-      when {"RFL_CMP"}:
-        c_expr.expr &:= "&rflCmpGeneric";
-      when {"RFL_CPY"}:
-        c_expr.expr &:= "&rflCpyGeneric";
-      when {"RFL_CREATE"}:
-        c_expr.expr &:= "&rflCreateGeneric";
-      when {"RFL_DESTR"}:
-        c_expr.expr &:= "&rflDestrGeneric";
+      when {"ITF_HASHCODE"}:    c_expr.expr &:= "&ptrHashCodeGeneric";
+      when {"PCS_CMP"}:         c_expr.expr &:= "&pcsCmpGeneric";
+      when {"PCS_CPY"}:         c_expr.expr &:= "&pcsCpyGeneric";
+      when {"PCS_CREATE"}:      c_expr.expr &:= "&pcsCreateGeneric";
+      when {"PCS_DESTR"}:       c_expr.expr &:= "&pcsDestrGeneric";
+      when {"PCS_HASHCODE"}:    c_expr.expr &:= "&pcsHashCodeGeneric";
+      when {"PLT_CMP"}:         c_expr.expr &:= "&bstCmpGeneric";
+      when {"PLT_CPY"}:         c_expr.expr &:= "&bstCpyGeneric";
+      when {"PLT_CREATE"}:      c_expr.expr &:= "&bstCreateGeneric";
+      when {"PLT_DESTR"}:       c_expr.expr &:= "&bstDestrGeneric";
+      when {"PLT_HASHCODE"}:    c_expr.expr &:= "&bstHashCodeGeneric";
+      when {"PRC_NOOP"}:        c_expr.expr &:= "&prcNoop";
+      when {"PRG_CMP"}:         c_expr.expr &:= "&ptrCmpGeneric";
+      when {"PRG_CPY"}:         c_expr.expr &:= "&prgCpyGeneric";
+      when {"PRG_CREATE"}:      c_expr.expr &:= "&prgCreateGeneric";
+      when {"PRG_DESTR"}:       c_expr.expr &:= "&prgDestrGeneric";
+      when {"PRG_HASHCODE"}:    c_expr.expr &:= "&ptrHashCodeGeneric";
+      when {"REF_CMP"}:         c_expr.expr &:= "&ptrCmpGeneric";
+      when {"REF_CPY"}:         c_expr.expr &:= "&ptrCpyGeneric";
+      when {"REF_CREATE"}:      c_expr.expr &:= "&ptrCreateGeneric";
+      when {"REF_HASHCODE"}:    c_expr.expr &:= "&ptrHashCodeGeneric";
+      when {"RFL_CMP"}:         c_expr.expr &:= "&rflCmpGeneric";
+      when {"RFL_CPY"}:         c_expr.expr &:= "&rflCpyGeneric";
+      when {"RFL_CREATE"}:      c_expr.expr &:= "&rflCreateGeneric";
+      when {"RFL_DESTR"}:       c_expr.expr &:= "&rflDestrGeneric";
       when {"SCT_CPY"}:
         object_type := getType(formalParams(function)[1]);
         process_generic_cpy_declaration(object_type, global_c_expr);
@@ -3325,66 +3257,36 @@ const proc: action_address (in reference: function, inout expr_type: c_expr) is 
         process_generic_destr_declaration(object_type, global_c_expr);
         c_expr.expr &:= "&generic_destr_";
         c_expr.expr &:= str(typeNumber(object_type));
-      when {"SEL_CMP"}:
-        c_expr.expr &:= "&ptrCmpGeneric";
-      when {"SEL_CPY"}:
-        c_expr.expr &:= "&genericCpy";
-      when {"SEL_CREATE"}:
-        c_expr.expr &:= "&genericCreate";
-      when {"SEL_HASHCODE"}:
-        c_expr.expr &:= "&ptrHashCodeGeneric";
-      when {"SET_CMP"}:
-        c_expr.expr &:= "&setCmpGeneric";
-      when {"SET_CPY"}:
-        c_expr.expr &:= "&setCpyGeneric";
-      when {"SET_CREATE"}:
-        c_expr.expr &:= "&setCreateGeneric";
-      when {"SET_DESTR"}:
-        c_expr.expr &:= "&setDestrGeneric";
-      when {"SET_HASHCODE"}:
-        c_expr.expr &:= "&setHashCodeGeneric";
-      when {"SOC_CPY"}:
-        c_expr.expr &:= "&socCpyGeneric";
-      when {"SOC_CREATE"}:
-        c_expr.expr &:= "&socCreateGeneric";
-      when {"SOC_DESTR"}:
-        c_expr.expr &:= "&socDestrGeneric";
-      when {"SQL_CMP_DB"}:
-        c_expr.expr &:= "&ptrCmpGeneric";
-      when {"SQL_CPY_DB"}:
-        c_expr.expr &:= "&sqlCpyDbGeneric";
-      when {"SQL_CREATE_DB"}:
-        c_expr.expr &:= "&sqlCreateDbGeneric";
-      when {"SQL_DESTR_DB"}:
-        c_expr.expr &:= "&sqlDestrDbGeneric";
-      when {"SQL_CMP_STMT"}:
-        c_expr.expr &:= "&ptrCmpGeneric";
-      when {"SQL_CPY_STMT"}:
-        c_expr.expr &:= "&sqlCpyStmtGeneric";
-      when {"SQL_CREATE_STMT"}:
-        c_expr.expr &:= "&sqlCreateStmtGeneric";
-      when {"SQL_DESTR_STMT"}:
-        c_expr.expr &:= "&sqlDestrStmtGeneric";
-      when {"STR_CMP"}:
-        c_expr.expr &:= "&strCmpGeneric";
-      when {"STR_CPY"}:
-        c_expr.expr &:= "&strCpyGeneric";
-      when {"STR_CREATE"}:
-        c_expr.expr &:= "&strCreateGeneric";
-      when {"STR_DESTR"}:
-        c_expr.expr &:= "&strDestrGeneric";
-      when {"STR_HASHCODE"}:
-        c_expr.expr &:= "&strHashCodeGeneric";
-      when {"TYP_CMP"}:
-        c_expr.expr &:= "&typCmpGeneric";
-      when {"TYP_CPY"}:
-        c_expr.expr &:= "&ptrCpyGeneric";
-      when {"TYP_CREATE"}:
-        c_expr.expr &:= "&ptrCreateGeneric";
-      when {"TYP_DESTR"}:
-        c_expr.expr &:= "&genericDestr";
-      when {"TYP_HASHCODE"}:
-        c_expr.expr &:= "&ptrHashCodeGeneric";
+      when {"SEL_CMP"}:         c_expr.expr &:= "&ptrCmpGeneric";
+      when {"SEL_CPY"}:         c_expr.expr &:= "&genericCpy";
+      when {"SEL_CREATE"}:      c_expr.expr &:= "&genericCreate";
+      when {"SEL_HASHCODE"}:    c_expr.expr &:= "&ptrHashCodeGeneric";
+      when {"SET_CMP"}:         c_expr.expr &:= "&setCmpGeneric";
+      when {"SET_CPY"}:         c_expr.expr &:= "&setCpyGeneric";
+      when {"SET_CREATE"}:      c_expr.expr &:= "&setCreateGeneric";
+      when {"SET_DESTR"}:       c_expr.expr &:= "&setDestrGeneric";
+      when {"SET_HASHCODE"}:    c_expr.expr &:= "&setHashCodeGeneric";
+      when {"SOC_CPY"}:         c_expr.expr &:= "&socCpyGeneric";
+      when {"SOC_CREATE"}:      c_expr.expr &:= "&socCreateGeneric";
+      when {"SOC_DESTR"}:       c_expr.expr &:= "&socDestrGeneric";
+      when {"SQL_CMP_DB"}:      c_expr.expr &:= "&ptrCmpGeneric";
+      when {"SQL_CPY_DB"}:      c_expr.expr &:= "&sqlCpyDbGeneric";
+      when {"SQL_CREATE_DB"}:   c_expr.expr &:= "&sqlCreateDbGeneric";
+      when {"SQL_DESTR_DB"}:    c_expr.expr &:= "&sqlDestrDbGeneric";
+      when {"SQL_CMP_STMT"}:    c_expr.expr &:= "&ptrCmpGeneric";
+      when {"SQL_CPY_STMT"}:    c_expr.expr &:= "&sqlCpyStmtGeneric";
+      when {"SQL_CREATE_STMT"}: c_expr.expr &:= "&sqlCreateStmtGeneric";
+      when {"SQL_DESTR_STMT"}:  c_expr.expr &:= "&sqlDestrStmtGeneric";
+      when {"STR_CMP"}:         c_expr.expr &:= "&strCmpGeneric";
+      when {"STR_CPY"}:         c_expr.expr &:= "&strCpyGeneric";
+      when {"STR_CREATE"}:      c_expr.expr &:= "&strCreateGeneric";
+      when {"STR_DESTR"}:       c_expr.expr &:= "&strDestrGeneric";
+      when {"STR_HASHCODE"}:    c_expr.expr &:= "&strHashCodeGeneric";
+      when {"TYP_CMP"}:         c_expr.expr &:= "&typCmpGeneric";
+      when {"TYP_CPY"}:         c_expr.expr &:= "&ptrCpyGeneric";
+      when {"TYP_CREATE"}:      c_expr.expr &:= "&ptrCreateGeneric";
+      when {"TYP_DESTR"}:       c_expr.expr &:= "&genericDestr";
+      when {"TYP_HASHCODE"}:    c_expr.expr &:= "&ptrHashCodeGeneric";
       otherwise:
         c_expr.expr &:= "NULL /* ACTOBJECT { ";
         c_expr.expr &:= action_name;
