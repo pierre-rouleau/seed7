@@ -168,8 +168,12 @@ static boolType stdinReady (void)
     if (hKeyboard != INVALID_HANDLE_VALUE &&
         GetNumberOfConsoleInputEvents(hKeyboard, &numEvents) != 0) {
       /* printf("numEvents: %lu\n", (unsigned long) numEvents); */
-      events = malloc(sizeof(INPUT_RECORD) * numEvents);
-      if (events != NULL) {
+      if (unlikely(numEvents > MAX_MEMSIZETYPE / sizeof(INPUT_RECORD))) {
+	events = NULL;
+      } else {
+        events = malloc(numEvents * sizeof(INPUT_RECORD));
+      } /* if */
+      if (likely(events != NULL)) {
         if (PeekConsoleInputW(hKeyboard, events, numEvents, &numEventsRead) != 0) {
           for (idx = 0; idx < numEventsRead; idx++) {
             /* printf("EventType: %d\n", events[idx].EventType); */
