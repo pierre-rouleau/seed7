@@ -1234,6 +1234,7 @@ void filDestr (const fileType oldFile)
         filFree(oldFile);
       } /* if */
     } /* if */
+    logFunction(printf("filDestr -->\n"););
   } /* filDestr */
 
 
@@ -1345,7 +1346,7 @@ void filFree (const fileType oldFile)
 
   { /* filFree */
     logFunction(printf("filFree(" FMT_U_MEM " %s%d"
-                       " (usage=" FMT_U "%s))\n",
+                       " (usage=" FMT_U "%s%s))\n",
                        (memSizeType) oldFile,
                        oldFile == NULL ? "NULL " : "",
                        oldFile != NULL ?
@@ -1353,16 +1354,24 @@ void filFree (const fileType oldFile)
                        oldFile != NULL ?
                            oldFile->usage_count : (uintType) 0,
                        oldFile != NULL && oldFile->isPipe ?
-                           ", isPipe" : ""););
+                           ", isPipe" : "",
+                       oldFile != NULL && oldFile->cFile != NULL ?
+                           ", doClose" : ""););
     assert_file_not_null(oldFile);
     if (oldFile->cFile != NULL) {
 #if HAS_POPEN
       if (oldFile->isPipe) {
+        logMessage(printf("filFree: pclose(%d)\n",
+                          safe_fileno(oldFile->cFile)););
         os_pclose(oldFile->cFile);
       } else {
+        logMessage(printf("filFree: fclose(%d)\n",
+                          safe_fileno(oldFile->cFile)););
         fclose(oldFile->cFile);
       } /* if */
 #else
+      logMessage(printf("filFree: fclose(%d)\n",
+                        safe_fileno(oldFile->cFile)););
       fclose(oldFile->cFile);
 #endif
     } /* if */
