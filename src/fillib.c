@@ -718,19 +718,6 @@ objectType fil_seekable (listType arguments)
 
 
 
-objectType fil_setbuf (listType arguments)
-
-  { /* fil_setbuf */
-    isit_file(arg_1(arguments));
-    isit_int(arg_2(arguments));
-    isit_int(arg_3(arguments));
-    filSetbuf(take_file(arg_1(arguments)),
-        take_int(arg_2(arguments)), take_int(arg_3(arguments)));
-    return SYS_EMPTY_OBJECT;
-  } /* fil_setbuf */
-
-
-
 /**
  *  Obtain the current file position.
  *  The file position is measured in bytes from the start of the file.

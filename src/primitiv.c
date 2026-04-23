@@ -453,7 +453,6 @@ static const actEntryRecord actEntryTable[] = {
     { "FIL_PRINT",                    fil_print,                    },
     { "FIL_SEEK",                     fil_seek,                     },
     { "FIL_SEEKABLE",                 fil_seekable,                 },
-    { "FIL_SETBUF",                   fil_setbuf,                   },
     { "FIL_TELL",                     fil_tell,                     },
     { "FIL_TERMINATED_READ",          fil_terminated_read,          },
     { "FIL_TRUNCATE",                 fil_truncate,                 },

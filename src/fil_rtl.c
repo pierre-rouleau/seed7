@@ -2411,38 +2411,6 @@ boolType filSeekable (const const_fileType aFile)
 
 
 
-void filSetbuf (const const_fileType aFile, intType mode, intType size)
-
-  {
-    cFileType cFile;
-
-  /* filSetbuf */
-    logFunction(printf("filSetbuf(%s%d, " FMT_D ", " FMT_D ")\n",
-                       aFile == NULL ? "NULL " : "",
-                       aFile != NULL ? safe_fileno(aFile->cFile) : 0,
-                       mode, size););
-    assert_file_not_null(aFile);
-    cFile = aFile->cFile;
-    if (unlikely(cFile == NULL)) {
-      logError(printf("filSetbuf: Attempt to set the file buffering of a closed file.\n"););
-      raise_error(FILE_ERROR);
-    } else if (unlikely(mode < 0 || mode > 2 || size < 0 || (uintType) size > MAX_MEMSIZETYPE)) {
-      logError(printf("filSetbuf(%d, " FMT_D ", " FMT_D "): "
-                      "Mode or size not in allowed range.\n",
-                      safe_fileno(cFile), mode, size););
-      raise_error(RANGE_ERROR);
-    } else if (unlikely(setvbuf(cFile, NULL, (int) mode, (memSizeType) size) != 0)) {
-      logError(printf("filSetbuf: "
-                      "setvbuf(%d, NULL, %d, " FMT_U_MEM ") failed.:\n"
-                      "errno=%d\nerror: %s\n",
-                      safe_fileno(cFile), (int) mode, (memSizeType) size,
-                      errno, strerror(errno)););
-      raise_error(FILE_ERROR);
-    } /* if */
-  } /* filSetbuf */
-
-
-
 /**
  *  Obtain the current file position.
  *  The file position is measured in bytes from the start of the file.
