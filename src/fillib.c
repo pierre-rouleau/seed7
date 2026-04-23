@@ -521,7 +521,7 @@ objectType fil_ne (listType arguments)
 
 
 /**
- *  Opens a file with the specified 'path' and 'mode'.
+ *  Open a file with the specified 'path' and 'mode'.
  *  There are text modes and binary modes:
  *  - Binary modes:
  *   - "r"   Open file for reading.
@@ -543,7 +543,7 @@ objectType fil_ne (listType arguments)
  *  @param path/arg_1 Path of the file to be opened. The path must
  *         use the standard path representation.
  *  @param mode/arg_2 Mode of the file to be opened.
- *  @return the file opened, or NULL if it could not be opened or
+ *  @return the file opened, or CLIB_NULL_FILE if it could not be opened or
  *          if 'path' refers to a directory.
  *  @exception MEMORY_ERROR Not enough memory to convert the path
  *             to the system path type.

@@ -2027,7 +2027,7 @@ static cFileType cFileOpen (const const_striType path,
 
 
 /**
- *  Opens a file with the specified 'path' and 'mode'.
+ *  Open a file with the specified 'path' and 'mode'.
  *  There are text modes and binary modes:
  *  - Binary modes:
  *   - "r"   Open file for reading.
