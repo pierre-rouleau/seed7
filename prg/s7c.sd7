@@ -3719,12 +3719,10 @@ const proc: process_database_declaration (in reference: current_object,
     inout expr_type: c_expr) is func
 
   begin
-    if isVar(current_object) then
-      c_expr.expr &:= "databaseType o_";
-      create_name(current_object, c_expr.expr);
-      c_expr.expr &:= "=NULL;\n\n";
-      count_declarations(c_expr);
-    end if;
+    c_expr.expr &:= "databaseType o_";
+    create_name(current_object, c_expr.expr);
+    c_expr.expr &:= "=NULL;\n\n";
+    count_declarations(c_expr);
   end func;
 
 
