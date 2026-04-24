@@ -554,8 +554,17 @@ static void print_real_value (const_objectType anyobject)
         if (anyobject->value.socketValue == NULL) {
           prot_cstri(" *NULL_SOCKET* ");
         } else {
-          prot_cstri("socket ");
-          prot_int((intType) anyobject->value.socketValue->socketNumber);
+          if (anyobject->value.socketValue->socketNumber == EMPTY_SOCKET) {
+            prot_cstri(" *EMPTY_SOCKET* ");
+          } else {
+            prot_cstri("socket ");
+            prot_int((intType) anyobject->value.socketValue->socketNumber);
+            if (anyobject->value.socketValue->usage_count != 0) {
+              prot_cstri("<");
+              prot_int((intType) anyobject->value.socketValue->usage_count);
+              prot_cstri(">");
+            } /* if */
+          } /* if */
         } /* if */
         break;
 #if WITH_FLOAT
