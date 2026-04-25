@@ -3726,6 +3726,17 @@ const proc: process_database_declaration (in reference: current_object,
   end func;
 
 
+const proc: process_sql_stmt_declaration (in reference: current_object,
+    inout expr_type: c_expr) is func
+
+  begin
+    c_expr.expr &:= "sqlStmtType o_";
+    create_name(current_object, c_expr.expr);
+    c_expr.expr &:= "=NULL;\n\n";
+    count_declarations(c_expr);
+  end func;
+
+
 const proc: process_enum_declaration (in reference: current_object,
     inout expr_type: c_expr) is func
 
@@ -5244,6 +5255,8 @@ const proc: process_object_declaration (in reference: current_object,
           process_prog_declaration(current_object, c_expr);
         when {DATABASEOBJECT}:
           process_database_declaration(current_object, c_expr);
+        when {SQLSTMTOBJECT}:
+          process_sql_stmt_declaration(current_object, c_expr);
         when {CONSTENUMOBJECT}:
           process_enum_declaration(current_object, c_expr);
         when {VARENUMOBJECT}:
