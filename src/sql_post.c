@@ -515,12 +515,12 @@ static boolType implicitCommit (const_cstriType query)
       startPos++;
     } /* while */
     beyond = startPos;
-    while (isalpha(*beyond)) {
+    while (isalpha((unsigned char) *beyond)) {
       beyond++;
     } /* while */
     if ((memSizeType) (beyond - startPos) < sizeof(keyword)) {
       for (pos = startPos; pos != beyond; pos++) {
-        keyword[pos - startPos] = (char) toupper(*pos);
+        keyword[pos - startPos] = (char) toupper((unsigned char) *pos);
       } /* for */
       keyword[beyond - startPos] = '\0';
       for (idx = 0; idx < sizeof(explicitCommit) / sizeof(char *) &&
