@@ -54,6 +54,7 @@
 #include "symbol.h"
 #include "analyze.h"
 #include "prg_comp.h"
+#include "objutl.h"
 #include "traceutl.h"
 #include "exec.h"
 #include "option.h"
@@ -472,6 +473,8 @@ int main (int argc, char **argv)
               } /* if */
 #if HEAP_STATISTIC_AT_PROGRAM_EXIT
               prgDestr(currentProg);
+#elif CLOSE_ALL_GLOBAL_OBJECTS
+              closeAllGlobalObjects(currentProg);
 #endif
             } /* if */
           } /* if */
