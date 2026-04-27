@@ -155,7 +155,11 @@ static objectType evaluate_local_decls (objectType local_decls,
       if (CATEGORY_OF_OBJ(local_decls) == MATCHOBJECT ||
           CATEGORY_OF_OBJ(local_decls) == CALLOBJECT) {
         semicol_params = local_decls->value.listValue;
-        if (list_length(semicol_params) == 4 &&
+        if (semicol_params != NULL &&
+            semicol_params->next != NULL &&
+            semicol_params->next->next != NULL &&
+            semicol_params->next->next->next != NULL &&
+            semicol_params->next->next->next->next == NULL &&
             CATEGORY_OF_OBJ(arg_1(semicol_params)) == ACTOBJECT &&
             take_action(arg_1(semicol_params)) == &prc_semicolon) {
           result = process_local_decl(arg_2(semicol_params),
