@@ -435,6 +435,7 @@ objectType prc_case (listType arguments)
     intType switch_value;
     objectType when_objects;
     objectType current_when;
+    listType current_when_list;
     objectType when_values;
     objectType when_set;
     setType set_value;
@@ -452,7 +453,8 @@ objectType prc_case (listType arguments)
     while (err_info == OKAY_NO_ERROR && current_when != NULL &&
         CATEGORY_OF_OBJ(current_when) == MATCHOBJECT &&
         current_when->value.listValue->next->next->next->next != NULL) {
-      when_values = arg_3(current_when->value.listValue);
+      current_when_list = current_when->value.listValue;
+      when_values = arg_3(current_when_list);
       if (CATEGORY_OF_OBJ(when_values) != SETOBJECT) {
         when_set = exec_object(when_values);
         isit_not_null(when_set);
@@ -466,7 +468,7 @@ objectType prc_case (listType arguments)
           when_values->descriptor.property = NULL;
           SET_CATEGORY_OF_OBJ(when_values, SETOBJECT);
           when_values->value.setValue = set_value;
-          current_when->value.listValue->next->next->obj = when_values;
+          current_when_list->next->next->obj = when_values;
           incl_list(&prog->when_value_objects, when_values, &err_info);
           incl_list(&prog->when_set_objects, when_set, &err_info);
         } /* if */
@@ -479,13 +481,13 @@ objectType prc_case (listType arguments)
                           FMT_D " is in more then one \"when\" set.\n",
                           switch_value, switch_value););
           err_info = ACTION_ERROR;
-          err_arguments = current_when->value.listValue->next;
+          err_arguments = current_when_list->next;
         } else {
-          when_statement = arg_5(current_when->value.listValue);
+          when_statement = arg_5(current_when_list);
         } /* if */
       } /* if */
-      if (current_when->value.listValue->next->next->next->next->next != NULL) {
-        current_when = arg_6(current_when->value.listValue);
+      if (current_when_list->next->next->next->next->next != NULL) {
+        current_when = arg_6(current_when_list);
       } else {
         current_when = NULL;
       } /* if */
@@ -509,6 +511,7 @@ objectType prc_case_def (listType arguments)
     objectType when_objects;
     objectType default_statement;
     objectType current_when;
+    listType current_when_list;
     objectType when_values;
     objectType when_set;
     setType set_value;
@@ -526,7 +529,8 @@ objectType prc_case_def (listType arguments)
     while (err_info == OKAY_NO_ERROR && current_when != NULL &&
         CATEGORY_OF_OBJ(current_when) == MATCHOBJECT &&
         current_when->value.listValue->next->next->next->next != NULL) {
-      when_values = arg_3(current_when->value.listValue);
+      current_when_list = current_when->value.listValue;
+      when_values = arg_3(current_when_list);
       if (CATEGORY_OF_OBJ(when_values) != SETOBJECT) {
         when_set = exec_object(when_values);
         isit_not_null(when_set);
@@ -540,7 +544,7 @@ objectType prc_case_def (listType arguments)
           when_values->descriptor.property = NULL;
           SET_CATEGORY_OF_OBJ(when_values, SETOBJECT);
           when_values->value.setValue = set_value;
-          current_when->value.listValue->next->next->obj = when_values;
+          current_when_list->next->next->obj = when_values;
           incl_list(&prog->when_value_objects, when_values, &err_info);
           incl_list(&prog->when_set_objects, when_set, &err_info);
         } /* if */
@@ -553,13 +557,13 @@ objectType prc_case_def (listType arguments)
                           FMT_D " is in more then one \"when\" set.\n",
                           switch_value, switch_value););
           err_info = ACTION_ERROR;
-          err_arguments = current_when->value.listValue->next;
+          err_arguments = current_when_list->next;
         } else {
-          when_statement = arg_5(current_when->value.listValue);
+          when_statement = arg_5(current_when_list);
         } /* if */
       } /* if */
-      if (current_when->value.listValue->next->next->next->next->next != NULL) {
-        current_when = arg_6(current_when->value.listValue);
+      if (current_when_list->next->next->next->next->next != NULL) {
+        current_when = arg_6(current_when_list);
       } else {
         current_when = NULL;
       } /* if */
@@ -584,6 +588,7 @@ objectType prc_case_hashset (listType arguments)
     objectType switch_object;
     objectType when_objects;
     objectType current_when;
+    listType current_when_list;
     objectType when_values;
     objectType when_set;
     hashType hashMap_value;
@@ -600,7 +605,8 @@ objectType prc_case_hashset (listType arguments)
     while (err_info == OKAY_NO_ERROR && current_when != NULL &&
         CATEGORY_OF_OBJ(current_when) == MATCHOBJECT &&
         current_when->value.listValue->next->next->next->next != NULL) {
-      when_values = arg_3(current_when->value.listValue);
+      current_when_list = current_when->value.listValue;
+      when_values = arg_3(current_when_list);
       if (CATEGORY_OF_OBJ(when_values) != HASHOBJECT) {
         when_set = exec_object(when_values);
         isit_not_null(when_set);
@@ -614,7 +620,7 @@ objectType prc_case_hashset (listType arguments)
           when_values->descriptor.property = NULL;
           SET_CATEGORY_OF_OBJ(when_values, HASHOBJECT);
           when_values->value.hashValue = hashMap_value;
-          current_when->value.listValue->next->next->obj = when_values;
+          current_when_list->next->next->obj = when_values;
           incl_list(&prog->when_value_objects, when_values, &err_info);
           incl_list(&prog->when_set_objects, when_set, &err_info);
         } /* if */
@@ -624,13 +630,13 @@ objectType prc_case_hashset (listType arguments)
           logError(printf("prc_case_hashset: "
                           "Switch value in more then one \"when\" set.\n"););
           err_info = ACTION_ERROR;
-          err_arguments = current_when->value.listValue->next;
+          err_arguments = current_when_list->next;
         } else {
-          when_statement = arg_5(current_when->value.listValue);
+          when_statement = arg_5(current_when_list);
         } /* if */
       } /* if */
-      if (current_when->value.listValue->next->next->next->next->next != NULL) {
-        current_when = arg_6(current_when->value.listValue);
+      if (current_when_list->next->next->next->next->next != NULL) {
+        current_when = arg_6(current_when_list);
       } else {
         current_when = NULL;
       } /* if */
@@ -653,6 +659,7 @@ objectType prc_case_hashset_def (listType arguments)
     objectType when_objects;
     objectType default_statement;
     objectType current_when;
+    listType current_when_list;
     objectType when_values;
     objectType when_set;
     hashType hashMap_value;
@@ -669,7 +676,8 @@ objectType prc_case_hashset_def (listType arguments)
     while (err_info == OKAY_NO_ERROR && current_when != NULL &&
         CATEGORY_OF_OBJ(current_when) == MATCHOBJECT &&
         current_when->value.listValue->next->next->next->next != NULL) {
-      when_values = arg_3(current_when->value.listValue);
+      current_when_list = current_when->value.listValue;
+      when_values = arg_3(current_when_list);
       if (CATEGORY_OF_OBJ(when_values) != HASHOBJECT) {
         when_set = exec_object(when_values);
         isit_not_null(when_set);
@@ -683,7 +691,7 @@ objectType prc_case_hashset_def (listType arguments)
           when_values->descriptor.property = NULL;
           SET_CATEGORY_OF_OBJ(when_values, HASHOBJECT);
           when_values->value.hashValue = hashMap_value;
-          current_when->value.listValue->next->next->obj = when_values;
+          current_when_list->next->next->obj = when_values;
           incl_list(&prog->when_value_objects, when_values, &err_info);
           incl_list(&prog->when_set_objects, when_set, &err_info);
         } /* if */
@@ -693,13 +701,13 @@ objectType prc_case_hashset_def (listType arguments)
           logError(printf("prc_case_hashset_def: "
                           "Switch value in more then one \"when\" set.\n"););
           err_info = ACTION_ERROR;
-          err_arguments = current_when->value.listValue->next;
+          err_arguments = current_when_list->next;
         } else {
-          when_statement = arg_5(current_when->value.listValue);
+          when_statement = arg_5(current_when_list);
         } /* if */
       } /* if */
-      if (current_when->value.listValue->next->next->next->next->next != NULL) {
-        current_when = arg_6(current_when->value.listValue);
+      if (current_when_list->next->next->next->next->next != NULL) {
+        current_when = arg_6(current_when_list);
       } else {
         current_when = NULL;
       } /* if */
