@@ -1361,7 +1361,7 @@ floatType fltParse (const const_striType stri)
         next_ch++;
       } /* while */
 #endif
-      if (isspace(buffer_ptr[0])) {
+      if (isspace((unsigned char) buffer_ptr[0])) {
         logError(printf("fltParse(\"%s\"): String starts with whitespace.\n",
                         striAsUnquotedCStri(stri)););
         err_info = RANGE_ERROR;

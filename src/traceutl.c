@@ -1163,7 +1163,7 @@ void prot_dot_expr (const_listType list)
             if (HAS_ENTITY(list->obj) &&
                 GET_ENTITY(list->obj)->ident != NULL) {
               idString = id_string(GET_ENTITY(list->obj)->ident);
-              if (isalpha(idString[0])) {
+              if (isalpha((unsigned char) idString[0])) {
                 prot_cstri8(idString);
               } else {
                 prot_cstri(" ");
