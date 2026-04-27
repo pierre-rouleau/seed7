@@ -249,7 +249,7 @@ int setenv7 (const char *name, const char *value, int overwrite)
                 return -1;
               } else {
                 *p = c;
-                strcpy(&c[nameLen + 1], value);
+                memcpy(&c[nameLen + 1], value, valueLen + 1);
               } /* if */
             } /* if **/
             return 0;
@@ -272,7 +272,7 @@ int setenv7 (const char *name, const char *value, int overwrite)
         } else {
           memcpy(c, name, nameLen);
           c[nameLen] = '=';
-          strcpy(&c[nameLen + 1], value);
+          memcpy(&c[nameLen + 1], value, valueLen + 1);
           environ7[nameCount] = c;
           environ7[nameCount + 1] = NULL;
           return 0;

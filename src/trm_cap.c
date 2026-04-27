@@ -324,9 +324,9 @@ char *my_tgetstr (char *code, char **area)
             pos++;
           } /* while */
           if (pos < CAP_VALUE_BUFFER_SIZE) {
-            value[pos] = '\0';
             if (ALLOC_CSTRI(cap_value, pos)) {
-              strcpy(cap_value, value);
+              memcpy(cap_value, value, pos);
+              cap_value[pos] = '\0';
             } /* if */
           } /* if */
         } /* if */
