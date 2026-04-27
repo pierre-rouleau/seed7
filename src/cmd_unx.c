@@ -222,7 +222,7 @@ int setenv7 (const char *name, const char *value, int overwrite)
 
   /* setenv7 */
     logFunction(printf("setenv7(%s\"%s\", %s\"%s\", %d)\n",
-                       name != NULL ? "NULL " : "",
+                       name == NULL ? "NULL " : "",
                        name != NULL ? name : "",
                        value == NULL ? "NULL " : "",
                        value != NULL ? value : "",
