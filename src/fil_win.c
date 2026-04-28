@@ -173,7 +173,9 @@ static boolType stdinReady (void)
       } else {
         events = malloc(numEvents * sizeof(INPUT_RECORD));
       } /* if */
-      if (likely(events != NULL)) {
+      if (unlikely(events == NULL)) {
+        raise_error(MEMORY_ERROR);
+      } else {
         if (PeekConsoleInputW(hKeyboard, events, numEvents, &numEventsRead) != 0) {
           for (idx = 0; idx < numEventsRead; idx++) {
             /* printf("EventType: %d\n", events[idx].EventType); */
