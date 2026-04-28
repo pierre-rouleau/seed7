@@ -169,7 +169,7 @@ static boolType stdinReady (void)
         GetNumberOfConsoleInputEvents(hKeyboard, &numEvents) != 0) {
       /* printf("numEvents: %lu\n", (unsigned long) numEvents); */
       if (unlikely(numEvents > MAX_MEMSIZETYPE / sizeof(INPUT_RECORD))) {
-	events = NULL;
+        events = NULL;
       } else {
         events = malloc(numEvents * sizeof(INPUT_RECORD));
       } /* if */

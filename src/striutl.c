@@ -3485,7 +3485,7 @@ striType escapeCommand (const const_striType stri, errInfoType *err_info)
         memmove(&result->mem[1], result->mem, sizeof(os_charType) * outPos);
         result->mem[0] = '\"';
         result->mem[outPos + 1] = '\"';
-	outPos += 2;
+        outPos += 2;
       } /* if */
       if (unlikely(*err_info != OKAY_NO_ERROR)) {
         FREE_STRI2(result, stri->size + numOfQuotes);
