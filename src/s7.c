@@ -71,6 +71,7 @@
 #include "fil_drv.h"
 #include "big_drv.h"
 #include "drw_drv.h"
+#include "cmd_drv.h"
 #include "rtl_err.h"
 
 #ifdef USE_WINMAIN
@@ -487,6 +488,7 @@ int main (int argc, char **argv)
 #if HEAP_STATISTIC_AT_PROGRAM_EXIT
       leaveExceptionHandling();
       freeActPtrTable();
+      freeNameCache();
       drawClose();
       closeBig();
       heapStatistic();

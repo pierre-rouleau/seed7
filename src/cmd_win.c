@@ -1370,6 +1370,13 @@ static boolType setupWellKnownSids (void)
 
 
 
+void freeNameCache (void)
+
+  { /* freeNameCache */
+  } /* freeNameCache */
+
+
+
 static striType getNameFromSid (PSID sid, errInfoType *err_info)
 
   {

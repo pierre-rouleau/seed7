@@ -500,6 +500,21 @@ static rtlHashType addNameToCache (rtlHashType nameCache, genericType id, striTy
 
 
 
+void freeNameCache (void)
+
+  { /* freeNameCache */
+#if CACHE_GID_TO_NAME
+    hshDestr(groupCache, (destrFuncType) &genericDestr,
+             (destrFuncType) &destrNameCacheEntry);
+#endif
+#if CACHE_UID_TO_NAME
+    hshDestr(userCache, (destrFuncType) &genericDestr,
+             (destrFuncType) &destrNameCacheEntry);
+#endif
+  } /* freeNameCache */
+
+
+
 static striType getGroupFromGid (gid_t gid, errInfoType *err_info)
 
   {
