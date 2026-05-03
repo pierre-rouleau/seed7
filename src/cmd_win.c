@@ -62,6 +62,10 @@
 #include "cmd_drv.h"
 
 
+#if DO_HEAP_STATISTIC
+size_t sizeof_nameCacheEntryRecord = 0;
+#endif
+
 #ifndef PATH_MAX
 #define PATH_MAX 2048
 #endif
