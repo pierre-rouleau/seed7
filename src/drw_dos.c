@@ -468,6 +468,13 @@ void drwSetPos (const_winType actual_window, intType xPos, intType yPos)
 
 
 
+void drwSetSize (winType actual_window, intType width, intType height)
+
+  { /* drwSetSize */
+  } /* drwSetSize */
+
+
+
 void drwSetTransparentColor (winType pixmap, intType col)
 
   { /* drwSetTransparentColor */

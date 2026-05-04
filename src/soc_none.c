@@ -44,7 +44,8 @@
 
 
 
-socketType socAccept (socketType listenerSocket, bstriType *address)
+socketType socAccept (const const_socketType listenerSocket,
+    bstriType *const address)
 
   { /* socAccept */
     raise_error(FILE_ERROR);
@@ -80,7 +81,8 @@ striType socAddrService (const const_bstriType address)
 
 
 
-void socBind (socketType listenerSocket, const_bstriType address)
+void socBind (const const_socketType listenerSocket,
+    const const_bstriType address)
 
   { /* socBind */
     raise_error(FILE_ERROR);
@@ -88,7 +90,7 @@ void socBind (socketType listenerSocket, const_bstriType address)
 
 
 
-void socClose (socketType aSocket)
+void socClose (const socketType aSocket)
 
   { /* socClose */
     raise_error(FILE_ERROR);
@@ -96,7 +98,8 @@ void socClose (socketType aSocket)
 
 
 
-void socConnect (socketType aSocket, const_bstriType address)
+void socConnect (const const_socketType aSocket,
+    const const_bstriType address)
 
   { /* socConnect */
     raise_error(FILE_ERROR);
@@ -104,7 +107,23 @@ void socConnect (socketType aSocket, const_bstriType address)
 
 
 
-charType socGetc (socketType inSocket, charType *const eofIndicator)
+void socDestr (const socketType oldSocket)
+
+  { /* socDestr */
+    raise_error(FILE_ERROR);
+  } /* socDestr */
+
+
+
+void socFree (const socketType oldSocket)
+
+  { /* socFree */
+  } /* socFree */
+
+
+
+charType socGetc (const const_socketType inSocket,
+    charType *const eofIndicator)
 
   { /* socGetc */
     raise_error(FILE_ERROR);
@@ -113,7 +132,8 @@ charType socGetc (socketType inSocket, charType *const eofIndicator)
 
 
 
-striType socGets (socketType inSocket, intType length, charType *const eofIndicator)
+striType socGets (const const_socketType inSocket, intType length,
+    charType *const eofIndicator)
 
   { /* socGets */
     raise_error(FILE_ERROR);
@@ -131,7 +151,7 @@ striType socGetHostname (void)
 
 
 
-bstriType socGetLocalAddr (socketType sock)
+bstriType socGetLocalAddr (const const_socketType aSocket)
 
   { /* socGetLocalAddr */
     raise_error(FILE_ERROR);
@@ -140,7 +160,7 @@ bstriType socGetLocalAddr (socketType sock)
 
 
 
-bstriType socGetPeerAddr (socketType sock)
+bstriType socGetPeerAddr (const const_socketType aSocket)
 
   { /* socGetPeerAddr */
     raise_error(FILE_ERROR);
@@ -149,7 +169,7 @@ bstriType socGetPeerAddr (socketType sock)
 
 
 
-boolType socHasNext (socketType inSocket)
+boolType socHasNext (const const_socketType inSocket)
 
   { /* socHasNext */
     raise_error(FILE_ERROR);
@@ -158,7 +178,7 @@ boolType socHasNext (socketType inSocket)
 
 
 
-bstriType socInetAddr (const const_striType host_name, intType port)
+bstriType socInetAddr (const const_striType hostName, intType port)
 
   { /* socInetAddr */
     raise_error(FILE_ERROR);
@@ -185,7 +205,8 @@ bstriType socInetServAddr (intType port)
 
 
 
-boolType socInputReady (socketType sock, intType seconds, intType micro_seconds)
+boolType socInputReady (const const_socketType inSocket,
+    intType seconds, intType micro_seconds)
 
   { /* socInputReady */
     raise_error(FILE_ERROR);
@@ -194,7 +215,8 @@ boolType socInputReady (socketType sock, intType seconds, intType micro_seconds)
 
 
 
-striType socLineRead (socketType inSocket, charType *const terminationChar)
+striType socLineRead (const const_socketType inSocket,
+    charType *const terminationChar)
 
   { /* socLineRead */
     raise_error(FILE_ERROR);
@@ -203,7 +225,7 @@ striType socLineRead (socketType inSocket, charType *const terminationChar)
 
 
 
-void socListen (socketType listenerSocket, intType backlog)
+void socListen (const const_socketType listenerSocket, intType backlog)
 
   { /* socListen */
     raise_error(FILE_ERROR);
@@ -211,7 +233,8 @@ void socListen (socketType listenerSocket, intType backlog)
 
 
 
-intType socRecv (socketType sock, striType *stri, intType length, intType flags)
+intType socRecv (const const_socketType inSocket, striType *const stri,
+    intType length, intType flags)
 
   { /* socRecv */
     raise_error(FILE_ERROR);
@@ -220,8 +243,8 @@ intType socRecv (socketType sock, striType *stri, intType length, intType flags)
 
 
 
-intType socRecvfrom (socketType sock, striType *stri, intType length, intType flags,
-    bstriType *address)
+intType socRecvfrom (const const_socketType inSocket, striType *const stri,
+    intType length, intType flags, bstriType *const address)
 
   { /* socRecvfrom */
     raise_error(FILE_ERROR);
@@ -230,7 +253,8 @@ intType socRecvfrom (socketType sock, striType *stri, intType length, intType fl
 
 
 
-intType socSend (socketType sock, const const_striType stri, intType flags)
+intType socSend (const const_socketType outSocket,
+    const const_striType stri, intType flags)
 
   { /* socSend */
     raise_error(FILE_ERROR);
@@ -239,8 +263,8 @@ intType socSend (socketType sock, const const_striType stri, intType flags)
 
 
 
-intType socSendto (socketType sock, const const_striType stri, intType flags,
-    const_bstriType address)
+intType socSendto (const const_socketType outSocket,
+    const const_striType stri, intType flags, const_bstriType address)
 
   { /* socSendto */
     raise_error(FILE_ERROR);
@@ -249,7 +273,8 @@ intType socSendto (socketType sock, const const_striType stri, intType flags,
 
 
 
-void socSetOptBool (socketType sock, intType optname, boolType optval)
+void socSetOptBool (const const_socketType aSocket, intType optname,
+    boolType optval)
 
   { /* socSetOptBool */
     raise_error(FILE_ERROR);
@@ -266,7 +291,8 @@ socketType socSocket (intType domain, intType type, intType protocol)
 
 
 
-striType socWordRead (socketType inSocket, charType *const terminationChar)
+striType socWordRead (const const_socketType inSocket,
+    charType *const terminationChar)
 
   { /* socWordRead */
     raise_error(FILE_ERROR);
@@ -275,7 +301,8 @@ striType socWordRead (socketType inSocket, charType *const terminationChar)
 
 
 
-void socWrite (socketType outSocket, const const_striType stri)
+void socWrite (const const_socketType outSocket,
+    const const_striType stri)
 
   { /* socWrite */
     raise_error(FILE_ERROR);
