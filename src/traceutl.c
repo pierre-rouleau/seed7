@@ -58,6 +58,7 @@
 #include "flt_rtl.h"
 #include "set_rtl.h"
 #include "str_rtl.h"
+#include "fil_rtl.h"
 #include "ut8_rtl.h"
 #include "big_drv.h"
 #include "con_rtl.h"
