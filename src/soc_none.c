@@ -29,6 +29,9 @@
 /*                                                                  */
 /********************************************************************/
 
+#define LOG_FUNCTIONS 0
+#define VERBOSE_EXCEPTIONS 0
+
 #include "version.h"
 
 #if SOCKET_LIB == NO_SOCKETS
@@ -40,6 +43,7 @@
 
 #undef EXTERN
 #define EXTERN
+#define DO_INIT
 #include "soc_rtl.h"
 
 
@@ -48,6 +52,7 @@ socketType socAccept (const const_socketType listenerSocket,
     bstriType *const address)
 
   { /* socAccept */
+    logError(printf("socAccept: No socket support.\n"););
     raise_error(FILE_ERROR);
     return 0;
   } /* socAccept */
@@ -57,6 +62,7 @@ socketType socAccept (const const_socketType listenerSocket,
 intType socAddrFamily (const const_bstriType address)
 
   { /* socAddrFamily */
+    logError(printf("socAddrFamily: No socket support.\n"););
     raise_error(FILE_ERROR);
     return 0;
   } /* socAddrFamily */
@@ -66,6 +72,7 @@ intType socAddrFamily (const const_bstriType address)
 striType socAddrNumeric (const const_bstriType address)
 
   { /* socAddrNumeric */
+    logError(printf("socAddrNumeric: No socket support.\n"););
     raise_error(FILE_ERROR);
     return NULL;
   } /* socAddrNumeric */
@@ -75,6 +82,7 @@ striType socAddrNumeric (const const_bstriType address)
 striType socAddrService (const const_bstriType address)
 
   { /* socAddrService */
+    logError(printf("socAddrService: No socket support.\n"););
     raise_error(FILE_ERROR);
     return NULL;
   } /* socAddrService */
@@ -85,6 +93,7 @@ void socBind (const const_socketType listenerSocket,
     const const_bstriType address)
 
   { /* socBind */
+    logError(printf("socBind: No socket support.\n"););
     raise_error(FILE_ERROR);
   } /* socBind */
 
@@ -93,6 +102,7 @@ void socBind (const const_socketType listenerSocket,
 void socClose (const socketType aSocket)
 
   { /* socClose */
+    logError(printf("socClose: No socket support.\n"););
     raise_error(FILE_ERROR);
   } /* socClose */
 
@@ -102,6 +112,7 @@ void socConnect (const const_socketType aSocket,
     const const_bstriType address)
 
   { /* socConnect */
+    logError(printf("socConnect: No socket support.\n"););
     raise_error(FILE_ERROR);
   } /* socConnect */
 
@@ -110,7 +121,6 @@ void socConnect (const const_socketType aSocket,
 void socDestr (const socketType oldSocket)
 
   { /* socDestr */
-    raise_error(FILE_ERROR);
   } /* socDestr */
 
 
@@ -126,6 +136,7 @@ charType socGetc (const const_socketType inSocket,
     charType *const eofIndicator)
 
   { /* socGetc */
+    logError(printf("socGetc: No socket support.\n"););
     raise_error(FILE_ERROR);
     return (charType) EOF;
   } /* socGetc */
@@ -136,6 +147,7 @@ striType socGets (const const_socketType inSocket, intType length,
     charType *const eofIndicator)
 
   { /* socGets */
+    logError(printf("socGets: No socket support.\n"););
     raise_error(FILE_ERROR);
     return NULL;
   } /* socGets */
@@ -145,6 +157,7 @@ striType socGets (const const_socketType inSocket, intType length,
 striType socGetHostname (void)
 
   { /* socGetHostname */
+    logError(printf("socGetHostname: No socket support.\n"););
     raise_error(FILE_ERROR);
     return NULL;
   } /* socGetHostname */
@@ -154,6 +167,7 @@ striType socGetHostname (void)
 bstriType socGetLocalAddr (const const_socketType aSocket)
 
   { /* socGetLocalAddr */
+    logError(printf("socGetLocalAddr: No socket support.\n"););
     raise_error(FILE_ERROR);
     return NULL;
   } /* socGetLocalAddr */
@@ -163,6 +177,7 @@ bstriType socGetLocalAddr (const const_socketType aSocket)
 bstriType socGetPeerAddr (const const_socketType aSocket)
 
   { /* socGetPeerAddr */
+    logError(printf("socGetPeerAddr: No socket support.\n"););
     raise_error(FILE_ERROR);
     return NULL;
   } /* socGetPeerAddr */
@@ -172,6 +187,7 @@ bstriType socGetPeerAddr (const const_socketType aSocket)
 boolType socHasNext (const const_socketType inSocket)
 
   { /* socHasNext */
+    logError(printf("socHasNext: No socket support.\n"););
     raise_error(FILE_ERROR);
     return TRUE;
   } /* socHasNext */
@@ -181,6 +197,7 @@ boolType socHasNext (const const_socketType inSocket)
 bstriType socInetAddr (const const_striType hostName, intType port)
 
   { /* socInetAddr */
+    logError(printf("socInetAddr: No socket support.\n"););
     raise_error(FILE_ERROR);
     return NULL;
   } /* socInetAddr */
@@ -190,6 +207,7 @@ bstriType socInetAddr (const const_striType hostName, intType port)
 bstriType socInetLocalAddr (intType port)
 
   { /* socInetLocalAddr */
+    logError(printf("socInetLocalAddr: No socket support.\n"););
     raise_error(FILE_ERROR);
     return NULL;
   } /* socInetLocalAddr */
@@ -199,6 +217,7 @@ bstriType socInetLocalAddr (intType port)
 bstriType socInetServAddr (intType port)
 
   { /* socInetServAddr */
+    logError(printf("socInetServAddr: No socket support.\n"););
     raise_error(FILE_ERROR);
     return NULL;
   } /* socInetServAddr */
@@ -209,6 +228,7 @@ boolType socInputReady (const const_socketType inSocket,
     intType seconds, intType micro_seconds)
 
   { /* socInputReady */
+    logError(printf("socInputReady: No socket support.\n"););
     raise_error(FILE_ERROR);
     return FALSE;
   } /* socInputReady */
@@ -219,6 +239,7 @@ striType socLineRead (const const_socketType inSocket,
     charType *const terminationChar)
 
   { /* socLineRead */
+    logError(printf("socLineRead: No socket support.\n"););
     raise_error(FILE_ERROR);
     return NULL;
   } /* socLineRead */
@@ -228,6 +249,7 @@ striType socLineRead (const const_socketType inSocket,
 void socListen (const const_socketType listenerSocket, intType backlog)
 
   { /* socListen */
+    logError(printf("socListen: No socket support.\n"););
     raise_error(FILE_ERROR);
   } /* socListen */
 
@@ -237,6 +259,7 @@ intType socRecv (const const_socketType inSocket, striType *const stri,
     intType length, intType flags)
 
   { /* socRecv */
+    logError(printf("socRecv: No socket support.\n"););
     raise_error(FILE_ERROR);
     return 0;
   } /* socRecv */
@@ -247,6 +270,7 @@ intType socRecvfrom (const const_socketType inSocket, striType *const stri,
     intType length, intType flags, bstriType *const address)
 
   { /* socRecvfrom */
+    logError(printf("socRecvfrom: No socket support.\n"););
     raise_error(FILE_ERROR);
     return 0;
   } /* socRecvfrom */
@@ -257,6 +281,7 @@ intType socSend (const const_socketType outSocket,
     const const_striType stri, intType flags)
 
   { /* socSend */
+    logError(printf("socSend: No socket support.\n"););
     raise_error(FILE_ERROR);
     return 0;
   } /* socSend */
@@ -267,6 +292,7 @@ intType socSendto (const const_socketType outSocket,
     const const_striType stri, intType flags, const_bstriType address)
 
   { /* socSendto */
+    logError(printf("socSendto: No socket support.\n"););
     raise_error(FILE_ERROR);
     return 0;
   } /* socSendto */
@@ -277,6 +303,7 @@ void socSetOptBool (const const_socketType aSocket, intType optname,
     boolType optval)
 
   { /* socSetOptBool */
+    logError(printf("socSetOptBool: No socket support.\n"););
     raise_error(FILE_ERROR);
   } /* socSetOptBool */
 
@@ -285,6 +312,7 @@ void socSetOptBool (const const_socketType aSocket, intType optname,
 socketType socSocket (intType domain, intType type, intType protocol)
 
   { /* socSocket */
+    logError(printf("socSocket: No socket support.\n"););
     raise_error(FILE_ERROR);
     return 0;
   } /* socSocket */
@@ -295,6 +323,7 @@ striType socWordRead (const const_socketType inSocket,
     charType *const terminationChar)
 
   { /* socWordRead */
+    logError(printf("socWordRead: No socket support.\n"););
     raise_error(FILE_ERROR);
     return NULL;
   } /* socWordRead */
@@ -305,6 +334,7 @@ void socWrite (const const_socketType outSocket,
     const const_striType stri)
 
   { /* socWrite */
+    logError(printf("socWrite: No socket support.\n"););
     raise_error(FILE_ERROR);
   } /* socWrite */
 
