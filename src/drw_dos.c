@@ -29,10 +29,14 @@
 /*                                                                  */
 /********************************************************************/
 
+#define LOG_FUNCTIONS 0
+#define VERBOSE_EXCEPTIONS 0
+
 #include "version.h"
 
 #include "stdlib.h"
 #include "stdio.h"
+#include "string.h"
 
 #include "common.h"
 #include "data_rtl.h"
@@ -42,6 +46,34 @@
 #undef EXTERN
 #define EXTERN
 #include "drw_drv.h"
+
+
+static boolType init_called = FALSE;
+
+static winType emptyWindow = NULL;
+
+
+
+static winType generateEmptyWindow (void)
+
+  {
+    winType newWindow;
+
+  /* generateEmptyWindow */
+    logFunction(printf("generateEmptyWindow()\n"););
+    if (unlikely(!ALLOC_RECORD2(newWindow, winRecord, count.win, count.win_bytes))) {
+      raise_error(MEMORY_ERROR);
+    } else {
+      memset(newWindow, 0, sizeof(winRecord));
+      newWindow->usage_count = 0;  /* Do not use reference counting (will not be freed). */
+    } /* if */
+    logFunction(printf("generateEmptyWindow --> " FMT_U_MEM
+                       " (usage=" FMT_U ")\n",
+                       (memSizeType) newWindow,
+                       newWindow != NULL ?
+                           newWindow->usage_count : (uintType) 0););
+    return newWindow;
+  } /* generateEmptyWindow */
 
 
 
@@ -118,6 +150,12 @@ void drawClose (void)
 void drawInit (void)
 
   { /* drawInit */
+    if (emptyWindow == NULL) {
+      emptyWindow = generateEmptyWindow();
+    } /* if */
+    if (emptyWindow != NULL) {
+      init_called = TRUE;
+    } /* if */
   } /* drawInit */
 
 
@@ -229,7 +267,14 @@ void drwFlush (void)
 winType drwEmpty (void)
 
   { /* drwEmpty */
-    return NULL;
+    logFunction(printf("drwEmpty()\n"););
+    if (!init_called) {
+      drawInit();
+    } /* if */
+    logFunction(printf("drwEmpty --> " FMT_U_MEM " (usage=" FMT_U ")\n",
+                       (memSizeType) emptyWindow,
+                       emptyWindow != NULL ? emptyWindow->usage_count : (uintType) 0););
+    return emptyWindow;
   } /* drwEmpty */
 
 
