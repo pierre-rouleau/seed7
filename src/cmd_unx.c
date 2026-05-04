@@ -408,7 +408,7 @@ static void destrNameCacheEntry (genericType genericCacheEntry)
     nameCacheEntryType cacheEntry;
 
   /* destrNameCacheEntry */
-    cacheEntry = (nameCacheEntryType) genericCacheEntry;
+    cacheEntry = (nameCacheEntryType) (memSizeType) genericCacheEntry;
     FREE_STRI(cacheEntry->name);
     FREE_RECORD(cacheEntry, nameCacheEntryRecord, count.name_cache);
   } /* destrNameCacheEntry */
@@ -423,9 +423,10 @@ static striType getCachedNameFromId (rtlHashType nameCache, genericType id)
 
   /* getCachedNameFromId */
     if (nameCache != NULL &&
-        (cacheEntry = (nameCacheEntryType)
+        (cacheEntry = (nameCacheEntryType) (memSizeType)
             hshIdxWithDefault(nameCache, id,
-                              (genericType) NULL, (intType) id,
+                              (genericType) (memSizeType) NULL,
+                              (intType) id,
                               (compareType) &genericCmp)) != NULL) {
       if (cacheEntry->timestamp + 10000000 < timMicroSec()) {
         hshExcl(nameCache, id, (intType) id,
