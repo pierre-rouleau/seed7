@@ -419,8 +419,19 @@ rtlArrayType drwConvPointList (const const_bstriType pointList)
 
 bstriType drwGenPointList (const const_rtlArrayType xyArray)
 
-  { /* drwGenPointList */
-    return NULL;
+  {
+    emptyBStriType result;
+
+  /* drwGenPointList */
+    if (unlikely(!ALLOC_EMPTY_BSTRI(result))) {
+      raise_error(MEMORY_ERROR);
+    } else {
+      result->size = 0;
+      /* Note that the size of the allocated memory is smaller than */
+      /* the size of bstriStruct. But this is okay, because the */
+      /* elements 'mem' respectively 'mem1' are not used. */
+    } /* if */
+    return (bstriType) result;
   } /* drwGenPointList */
 
 
