@@ -4827,6 +4827,8 @@ intType cmdShellExecute (const const_striType command,
       raise_error(err_info);
       returnCode = 0;
     } else {
+      logMessage(printf("cmdShellExecute: commandLine: \"%s\"\n",
+                        striAsUnquotedCStri(commandLine)););
       os_command = stri_to_os_stri(commandLine, &err_info);
       if (unlikely(os_command == NULL)) {
         logError(printf("cmdShellExecute: "
