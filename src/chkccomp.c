@@ -6948,6 +6948,14 @@ static void determineOsFunctions (FILE *versionFile)
                          "    strchr(buffer, '\\\\') == NULL);\n"
                          "return 0;}\n") && doTest() == 1) {
       fprintf(versionFile, "#define OS_GETCWD_RETURNS_SLASH\n");
+    } else if (compileAndLinkOk("#include <stdio.h>\n#include <unistd.h>\n"
+                                "#include <string.h>\n"
+                                "int main(int argc,char *argv[])\n"
+                                "{char buffer[1024];\n"
+                                "printf(\"%d\\n\", getcwd(buffer, 1024) != NULL &&\n"
+                                "    strchr(buffer, '\\\\') == NULL);\n"
+                                "return 0;}\n") && doTest() == 1) {
+      fprintf(versionFile, "#define OS_GETCWD_RETURNS_SLASH\n");
     } /* if */
 #endif
     determineEnvironDefines(versionFile);
